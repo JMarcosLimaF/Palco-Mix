@@ -30,7 +30,7 @@ export function FilterSection({ title, count = 0, defaultOpen = true, children, 
           aria-expanded={open}
           aria-controls={panelId}
           onClick={() => setOpen((v) => !v)}
-          className="group flex min-h-10 w-full items-center justify-between gap-3 rounded-lg text-left text-sm font-bold text-fg"
+          className="group flex min-h-11 w-full items-center justify-between gap-3 rounded-lg text-left text-[0.9375rem] font-bold text-fg lg:min-h-10 lg:text-sm"
         >
           <span className="flex items-center gap-2">
             {title}

@@ -21,12 +21,13 @@ export function AdminTopbar() {
   const onNewProduct = pathname.replace(/\/+$/, '') === NEW_PRODUCT_PATH
 
   return (
-    <header className="sticky top-0 z-20 border-b border-line bg-bg/75 backdrop-blur-xl backdrop-saturate-150">
-      <div className="flex h-16 items-center gap-2 px-4 sm:gap-3 sm:px-6 lg:px-8">
+    // pt: área do relógio/notch quando aberto como app (standalone); no navegador é 0
+    <header className="sticky top-0 z-20 border-b border-line bg-bg/75 pt-[env(safe-area-inset-top)] backdrop-blur-xl backdrop-saturate-150">
+      <div className="flex h-16 items-center gap-1.5 px-4 sm:gap-3 sm:px-6 lg:px-8">
         <Button
           variant="ghost"
           size="icon"
-          className="-ml-2 lg:hidden"
+          className="-ml-2 max-sm:size-11 lg:hidden"
           onClick={() => setMenuOpen(true)}
           aria-label="Abrir menu do painel"
           aria-haspopup="dialog"
@@ -35,7 +36,11 @@ export function AdminTopbar() {
           <Menu aria-hidden />
         </Button>
 
-        <Link to="/admin/painel" className="rounded-md text-fg lg:hidden" aria-label="Ir para o painel">
+        <Link
+          to="/admin/painel"
+          className="inline-flex h-10 shrink-0 items-center rounded-lg px-1 text-fg lg:hidden"
+          aria-label="Ir para o painel"
+        >
           <LogoMark className="h-6" />
         </Link>
 
@@ -63,7 +68,7 @@ export function AdminTopbar() {
           {!onNewProduct && (
             <Link
               to={NEW_PRODUCT_PATH}
-              className={buttonVariants({ size: 'sm', className: 'max-sm:size-10 max-sm:px-0' })}
+              className={buttonVariants({ size: 'sm', className: 'max-sm:size-11 max-sm:px-0 max-sm:[&_svg]:size-5' })}
               title="Novo produto"
             >
               <Plus aria-hidden />

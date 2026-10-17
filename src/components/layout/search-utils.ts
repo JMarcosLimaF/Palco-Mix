@@ -1,5 +1,6 @@
 /** Utilidades puras da busca do cabeçalho (sem React). */
-import { normalizeText } from '@/lib/utils'
+import { formatBRL, hasPromo, isPriceOnRequest, normalizeText } from '@/lib/utils'
+import type { Product } from '@/types/catalog'
 
 export interface HighlightPart {
   text: string
@@ -83,6 +84,23 @@ export function nameScore(name: string, term: string): number {
   if (n.startsWith(q)) return 2
   if (n.includes(q)) return 1
   return 0
+}
+
+/**
+ * Preço de uma sugestão de produto:
+ * price 0 → "Sob consulta"; promoPrice válido → à vista (desconto) + a prazo; senão, preço único.
+ */
+export type SuggestionPrice =
+  | { kind: 'on-request' }
+  | { kind: 'single'; value: string }
+  | { kind: 'cash'; cash: string; installment: string }
+
+export function suggestionPrice(product: Pick<Product, 'price' | 'promoPrice'>): SuggestionPrice {
+  if (isPriceOnRequest(product)) return { kind: 'on-request' }
+  if (hasPromo(product)) {
+    return { kind: 'cash', cash: formatBRL(product.promoPrice as number), installment: formatBRL(product.price) }
+  }
+  return { kind: 'single', value: formatBRL(product.price) }
 }
 
 /** id DOM de uma opção da lista de sugestões (aria-activedescendant). */

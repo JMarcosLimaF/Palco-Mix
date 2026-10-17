@@ -2,6 +2,7 @@
  * Tudo o que fica abaixo do hero. Carregado sob demanda pela HomePage
  * (React.lazy) para a primeira dobra chegar mais rápido.
  */
+import { site } from '@/config/site'
 import { BrandMarquee } from './brand-marquee'
 import { CategoryShowcase } from './category-showcase'
 import { LatestProducts } from './latest-products'
@@ -11,13 +12,14 @@ import { WhatsAppCta } from './whatsapp-cta'
 
 export default function HomeSections() {
   return (
-    <div className="pb-16 sm:pb-24">
+    <div className="pb-12 sm:pb-24">
       <ValueStrip />
       <CategoryShowcase />
       <FeaturedSection />
       <BrandMarquee />
       <LatestProducts />
-      <OffersSection />
+      {/* a vitrine não mostra preços: sem seção de desconto à vista */}
+      {site.showPrices && <OffersSection />}
       <WhatsAppCta />
     </div>
   )

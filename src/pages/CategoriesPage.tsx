@@ -11,7 +11,8 @@ import { EmptyState } from '@/components/ui/feedback'
 import { useCategories } from '@/hooks/catalog'
 import { useDocumentTitle } from '@/hooks/use-document-title'
 
-const GRID = 'grid gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3'
+// celular: lista de cards horizontais compactos; sm+: grade 2/3 colunas
+const GRID = 'grid gap-3 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3'
 
 export default function CategoriesPage() {
   useDocumentTitle('Categorias')
@@ -44,7 +45,7 @@ export default function CategoriesPage() {
         ]}
       />
 
-      <section aria-label="Lista de categorias" className="container-page py-10 sm:py-14">
+      <section aria-label="Lista de categorias" className="container-page py-6 sm:py-14">
         {loading ? (
           <div className={GRID} role="status" aria-label="Carregando categorias">
             {Array.from({ length: 6 }, (_, i) => (

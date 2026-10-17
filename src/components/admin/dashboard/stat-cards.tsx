@@ -63,7 +63,7 @@ export function StatCard({
         to={to}
         className={cn(
           cardBase,
-          'gap-6 border border-line bg-elevated p-4 shadow-card hover:border-line-strong hover:shadow-card-hover sm:p-5',
+          'gap-4 border border-line bg-elevated p-4 shadow-card hover:border-line-strong hover:shadow-card-hover sm:gap-6 sm:p-5',
         )}
       >
         <div className="flex items-start justify-between gap-3">
@@ -79,8 +79,9 @@ export function StatCard({
           <p className="text-[2rem] leading-none font-extrabold tracking-tight text-fg tabular-nums">
             {formatCount(value)}
           </p>
-          <p className="mt-2 truncate text-sm font-bold text-fg">{label}</p>
-          <p className="mt-0.5 line-clamp-2 text-xs text-muted">{caption}</p>
+          {/* celular (~126px úteis em 360px): rótulo e legenda quebram em vez de sumir no "…" */}
+          <p className="mt-2 text-sm leading-snug font-bold text-fg sm:truncate">{label}</p>
+          <p className="mt-0.5 line-clamp-3 text-xs text-muted sm:line-clamp-2">{caption}</p>
         </div>
       </Link>
     </Reveal>
@@ -90,7 +91,7 @@ export function StatCard({
 export function StatCardSkeleton({ className }: { className?: string }) {
   return (
     <div
-      className={cn('flex flex-col gap-6 rounded-2xl border border-line bg-elevated p-4 shadow-card sm:p-5', className)}
+      className={cn('flex flex-col gap-4 rounded-2xl border border-line bg-elevated p-4 shadow-card sm:gap-6 sm:p-5', className)}
     >
       <Skeleton className="size-10" />
       <div className="space-y-2">
@@ -120,7 +121,7 @@ export function TotalProductsCard({ total, active, inactive, className }: TotalP
         aria-label={`Total de produtos: ${formatCount(total)} (${formatCount(active)} ativos, ${formatCount(inactive)} inativos). Gerenciar produtos`}
         className={cn(
           cardBase,
-          'min-h-56 gap-8 bg-ink-950 p-5 text-white shadow-card ring-1 ring-white/10 hover:shadow-glow sm:p-6',
+          'gap-5 bg-ink-950 p-5 text-white shadow-card ring-1 ring-white/10 hover:shadow-glow sm:min-h-56 sm:gap-8 sm:p-6',
         )}
       >
         <div
@@ -149,7 +150,7 @@ export function TotalProductsCard({ total, active, inactive, className }: TotalP
           <p className="eyebrow text-white/55">Total de produtos</p>
           <p className="title-display mt-2 pr-2 text-6xl tabular-nums sm:text-7xl">{formatCount(total)}</p>
 
-          <div className="mt-6">
+          <div className="mt-4 sm:mt-6">
             <div
               className="flex h-2 overflow-hidden rounded-full bg-white/12"
               role="img"
@@ -181,7 +182,7 @@ export function TotalProductsCard({ total, active, inactive, className }: TotalP
 
 export function TotalProductsCardSkeleton({ className }: { className?: string }) {
   return (
-    <div className={cn('flex min-h-56 flex-col justify-between gap-8 rounded-2xl bg-ink-950 p-5 sm:p-6', className)}>
+    <div className={cn('flex flex-col justify-between gap-5 rounded-2xl bg-ink-950 p-5 sm:min-h-56 sm:gap-8 sm:p-6', className)}>
       <div className="size-10 rounded-xl bg-white/10" />
       <div className="space-y-3">
         <div className="h-3 w-28 animate-pulse rounded bg-white/10" />

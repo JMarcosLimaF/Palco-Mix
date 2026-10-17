@@ -87,15 +87,17 @@ export function ChipsInput({
     setAnnouncement(`Removido: ${item}`)
   }
 
+  // o limite por item vale para o rascunho, não para o campo: um maxLength no
+  // <input> cortaria listas coladas ("a, b, c") antes de separar os itens
   function handleChange(text: string) {
     if (text.includes(',')) {
       const parts = text.split(',')
       const rest = parts.pop() ?? ''
       add(parts)
-      setDraft(rest.trimStart())
+      setDraft(rest.trimStart().slice(0, maxLength))
       return
     }
-    setDraft(text)
+    setDraft(text.slice(0, maxLength))
   }
 
   function handleKeyDown(e: KeyboardEvent<HTMLInputElement>) {
@@ -136,8 +138,10 @@ export function ChipsInput({
                 initial={{ opacity: 0, scale: 0.85 }}
                 animate={{ opacity: 1, scale: 1, transition: { duration: 0.25, ease: EASE } }}
                 exit={{ opacity: 0, scale: 0.85, transition: { duration: 0.15 } }}
+                // celular: chip de 36px e "×" com 40px de toque (transborda 2px sem fundo visível)
                 className={cn(
                   'inline-flex h-7 max-w-full items-center gap-1.5 rounded-full bg-surface-2 pr-1 pl-2.5 text-xs font-semibold text-fg ring-1 ring-line',
+                  'max-sm:h-9 max-sm:gap-1 max-sm:pr-0 max-sm:pl-3 max-sm:text-[0.8125rem]',
                   'transition-[box-shadow,background-color] duration-300',
                   flash === item && 'bg-brand-500/10 ring-2 ring-brand-500',
                 )}
@@ -151,9 +155,9 @@ export function ChipsInput({
                     inputRef.current?.focus()
                   }}
                   aria-label={`Remover ${itemLabel} ${item}`}
-                  className="inline-flex size-5 shrink-0 items-center justify-center rounded-full text-subtle transition-colors hover:bg-line hover:text-fg focus-visible:outline-2 focus-visible:outline-brand-500"
+                  className="inline-flex size-5 shrink-0 items-center justify-center rounded-full text-subtle transition-colors hover:bg-line hover:text-fg focus-visible:outline-2 focus-visible:outline-brand-500 active:bg-line max-sm:-my-0.5 max-sm:size-10"
                 >
-                  <X className="size-3" aria-hidden />
+                  <X className="size-3 max-sm:size-3.5" aria-hidden />
                 </button>
               </m.li>
             ))}
@@ -173,26 +177,26 @@ export function ChipsInput({
               setDraft('')
             }
           }}
-          maxLength={maxLength}
           placeholder={full ? 'Limite atingido' : value.length ? 'Adicionar mais…' : placeholder}
           aria-describedby={describedBy}
           aria-invalid={invalid || undefined}
           autoComplete="off"
           enterKeyHint="enter"
-          className="h-7 min-w-[9ch] flex-1 bg-transparent px-1.5 text-sm text-fg outline-none placeholder:text-subtle disabled:cursor-not-allowed"
+          className="h-7 min-w-[9ch] flex-1 bg-transparent px-1.5 text-sm text-fg outline-none placeholder:text-subtle disabled:cursor-not-allowed max-sm:h-9"
         />
       </div>
 
       {visibleSuggestions.length > 0 && !full && (
-        <div className="flex flex-wrap items-center gap-1.5">
-          <span className="mr-0.5 text-xs text-subtle">Sugestões:</span>
+        // celular: uma linha com rolagem lateral (a borda esmaecida indica que há mais)
+        <div className="flex flex-wrap items-center gap-1.5 max-sm:scrollbar-none max-sm:-my-1 max-sm:snap-x max-sm:flex-nowrap max-sm:gap-2 max-sm:overflow-x-auto max-sm:py-1 max-sm:pr-8 max-sm:[mask-image:linear-gradient(to_right,black_82%,transparent)]">
+          <span className="mr-0.5 shrink-0 snap-start text-xs text-subtle">Sugestões:</span>
           {visibleSuggestions.map((s) => (
             <button
               key={s}
               type="button"
               onClick={() => add([s])}
               aria-label={`Adicionar ${itemLabel} ${s}`}
-              className="inline-flex h-7 items-center gap-1 rounded-full border border-dashed border-line-strong px-2.5 text-xs font-medium text-muted transition-colors duration-200 hover:border-brand-500 hover:bg-brand-500/5 hover:text-brand-600 dark:hover:text-brand-400"
+              className="inline-flex h-7 shrink-0 snap-start items-center gap-1 rounded-full border border-dashed border-line-strong px-2.5 text-xs font-medium whitespace-nowrap text-muted transition-colors duration-200 hover:border-brand-500 hover:bg-brand-500/5 hover:text-brand-600 active:bg-brand-500/5 max-sm:h-10 max-sm:px-3.5 max-sm:text-[0.8125rem] dark:hover:text-brand-400"
             >
               <Plus className="size-3" aria-hidden />
               {renderPrefix?.(s)}

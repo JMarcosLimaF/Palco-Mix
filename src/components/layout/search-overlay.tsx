@@ -1,10 +1,12 @@
 import * as Dialog from '@radix-ui/react-dialog'
 import { LoaderCircle, Search, X } from 'lucide-react'
 import { AnimatePresence, m } from 'motion/react'
-import { useId, useRef } from 'react'
+import { useId, useLayoutEffect, useRef, type RefObject } from 'react'
+import { cn } from '@/lib/utils'
 import { SearchResults } from './search-results'
 import { optionDomId } from './search-utils'
 import { useSearchSuggestionsModel } from './use-search-suggestions-model'
+import { useVisualViewport } from './use-visual-viewport'
 
 const EASE = [0.16, 1, 0.3, 1] as const
 
@@ -15,6 +17,16 @@ export interface SearchOverlayProps {
 
 /** Busca em tela cheia (mobile): campo grande com foco automático + as mesmas sugestões do desktop. */
 export function SearchOverlay({ open, onOpenChange }: SearchOverlayProps) {
+  // quem abriu a busca (botão do cabeçalho ou da barra inferior) recebe o foco de volta ao cancelar.
+  // O Radix guardaria o próprio campo (o autoFocus acontece antes dele registrar o foco anterior).
+  const returnFocusRef = useRef<ReturnFocus | null>(null)
+  useLayoutEffect(() => {
+    if (!open) return
+    const active = document.activeElement
+    returnFocusRef.current =
+      active instanceof HTMLElement && active !== document.body ? { element: active, href: window.location.href } : null
+  }, [open])
+
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <AnimatePresence>
@@ -29,20 +41,7 @@ export function SearchOverlay({ open, onOpenChange }: SearchOverlayProps) {
                 exit={{ opacity: 0, transition: { duration: 0.18 } }}
               />
             </Dialog.Overlay>
-            <Dialog.Content asChild forceMount>
-              <m.div
-                className="fixed inset-0 z-50 flex flex-col bg-bg text-fg"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0, transition: { duration: 0.32, ease: EASE } }}
-                exit={{ opacity: 0, y: 12, transition: { duration: 0.16 } }}
-              >
-                <Dialog.Title className="sr-only">Buscar no catálogo</Dialog.Title>
-                <Dialog.Description className="sr-only">
-                  Digite o nome, a marca, a categoria ou o código do produto. Use as setas para percorrer as sugestões.
-                </Dialog.Description>
-                <SearchOverlayBody />
-              </m.div>
-            </Dialog.Content>
+            <SearchOverlayPanel returnFocusRef={returnFocusRef} />
           </Dialog.Portal>
         )}
       </AnimatePresence>
@@ -50,12 +49,60 @@ export function SearchOverlay({ open, onOpenChange }: SearchOverlayProps) {
   )
 }
 
-/** Montado só com o overlay aberto: o valor inicial vem de ?q= quando no catálogo. */
+interface ReturnFocus {
+  element: HTMLElement
+  /** URL na abertura: se mudou (abriu um resultado), o foco vai ao conteúdo, não ao botão */
+  href: string
+}
+
+/** Painel do diálogo — só existe aberto (o acompanhamento do teclado não roda à toa). */
+function SearchOverlayPanel({ returnFocusRef }: { returnFocusRef: RefObject<ReturnFocus | null> }) {
+  const viewport = useVisualViewport()
+  return (
+    <Dialog.Content
+      asChild
+      forceMount
+      onCloseAutoFocus={(event) => {
+        const target = returnFocusRef.current
+        if (target && target.href !== window.location.href) {
+          // abriu um resultado: se nada mais pegou o foco (ex.: só a busca da URL mudou), vai ao conteúdo
+          const active = document.activeElement
+          if (!active || active === document.body || (event.currentTarget as Node).contains(active)) {
+            event.preventDefault()
+            document.getElementById('conteudo')?.focus({ preventScroll: true })
+          }
+          return
+        }
+        if (!target?.element.isConnected) return
+        event.preventDefault()
+        target.element.focus({ preventScroll: true })
+      }}
+    >
+      <m.div
+        // com o teclado aberto, ocupa só a área visível: campo, sugestões e "ver todos" acima do teclado
+        style={viewport ? { top: viewport.offsetTop, height: viewport.height } : undefined}
+        className="fixed inset-0 z-50 flex flex-col bg-bg text-fg"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0, transition: { duration: 0.32, ease: EASE } }}
+        exit={{ opacity: 0, y: 12, transition: { duration: 0.16 } }}
+      >
+        <Dialog.Title className="sr-only">Buscar no catálogo</Dialog.Title>
+        <Dialog.Description className="sr-only">
+          Digite o nome, a marca, a categoria ou o código do produto. Use as setas para percorrer as sugestões.
+        </Dialog.Description>
+        <SearchOverlayBody />
+      </m.div>
+    </Dialog.Content>
+  )
+}
+
+/** Montado só com o overlay aberto: cada abertura começa uma busca nova (busca global). */
 function SearchOverlayBody() {
   const model = useSearchSuggestionsModel()
   const listboxId = useId()
   const inputRef = useRef<HTMLInputElement>(null)
-  const activeDescendant = model.activeKey ? optionDomId(listboxId, model.activeKey) : undefined
+  // só aponta para opções que existem na lista atual
+  const activeDescendant = model.activeOption ? optionDomId(listboxId, model.activeOption.key) : undefined
 
   return (
     <>
@@ -103,10 +150,14 @@ function SearchOverlayBody() {
               onKeyDown={(event) => {
                 model.handleKeyDown(event)
               }}
-              className="h-12 w-full rounded-full bg-surface-2 pr-12 pl-12 text-base text-fg ring-1 ring-transparent transition-[box-shadow,background-color] duration-200 placeholder:text-subtle focus:bg-elevated focus:ring-brand-500/60 focus:outline-none focus-visible:outline-none"
+              className={cn(
+                'h-12 w-full rounded-full bg-surface-2 pl-12 text-base text-fg ring-1 ring-transparent transition-[box-shadow,background-color] duration-200 placeholder:text-subtle focus:bg-elevated focus:ring-brand-500/60 focus:outline-none focus-visible:outline-none',
+                // só reserva espaço para o "limpar" quando há texto (o placeholder cabe inteiro)
+                model.value ? 'pr-12' : 'pr-4',
+              )}
             />
             {model.value && (
-              <span className="absolute top-1/2 right-1.5 flex -translate-y-1/2 items-center">
+              <span className="absolute top-1/2 right-1 flex -translate-y-1/2 items-center">
                 <button
                   type="button"
                   onMouseDown={(event) => event.preventDefault()}
@@ -115,7 +166,7 @@ function SearchOverlayBody() {
                     inputRef.current?.focus()
                   }}
                   aria-label="Limpar busca"
-                  className="inline-flex size-9 items-center justify-center rounded-full text-muted transition-colors hover:bg-line hover:text-fg"
+                  className="inline-flex size-10 items-center justify-center rounded-full text-muted transition-colors hover:bg-line hover:text-fg"
                 >
                   <X className="size-4" aria-hidden />
                 </button>
@@ -127,7 +178,13 @@ function SearchOverlayBody() {
           </Dialog.Close>
         </form>
       </div>
-      <div className="flex min-h-0 flex-1 flex-col">
+      <div
+        className="flex min-h-0 flex-1 flex-col"
+        // arrastar a lista fecha o teclado (mais espaço para ver os resultados)
+        onTouchMove={() => {
+          if (document.activeElement === inputRef.current) inputRef.current?.blur()
+        }}
+      >
         <SearchResults model={model} listboxId={listboxId} variant="sheet" />
       </div>
     </>

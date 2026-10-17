@@ -1,6 +1,6 @@
 import { useId, useMemo } from 'react'
+import { expandSizes } from '@/lib/sizes'
 import { cn } from '@/lib/utils'
-import { parseSizeOptions } from './catalog-helpers'
 
 export interface SizePickerProps {
   /** numeração do produto, ex.: "34 ao 39" */
@@ -12,19 +12,20 @@ export interface SizePickerProps {
 
 /**
  * Numeração como seletor (um tamanho por vez; clicar de novo desmarca).
- * Formatos não reconhecidos são exibidos como texto.
+ * Mesma regra do admin (`expandSizes`); formatos não reconhecidos são exibidos como texto.
  */
 export function SizePicker({ sizes, value, onChange, className }: SizePickerProps) {
-  const parsed = useMemo(() => parseSizeOptions(sizes), [sizes])
+  const text = sizes?.trim()
+  const options = useMemo(() => expandSizes(text), [text])
   const labelId = useId()
 
-  if (!parsed) return null
+  if (!text) return null
 
-  if (parsed.kind === 'text') {
+  if (!options) {
     return (
       <div className={className}>
         <p className="text-sm font-bold text-fg">Numeração</p>
-        <p className="mt-1.5 text-sm text-muted">{parsed.text}</p>
+        <p className="mt-1.5 text-sm text-muted">{text}</p>
       </div>
     )
   }
@@ -46,7 +47,7 @@ export function SizePicker({ sizes, value, onChange, className }: SizePickerProp
         </p>
       </div>
       <div role="group" aria-labelledby={labelId} className="mt-3 flex flex-wrap gap-2">
-        {parsed.options.map((option) => {
+        {options.map((option) => {
           const selected = option === value
           return (
             <button

@@ -9,15 +9,26 @@ import { whatsappLink } from '@/config/site'
 import { cn } from '@/lib/utils'
 import { CategoriesMenu } from './categories-menu'
 import { MobileNav } from './mobile-nav'
+import { MobileTabBar } from './mobile-tab-bar'
 import { NavActivePill } from './nav-active-pill'
-import { activeNavKey, CONTACT_MESSAGE, HEADER_LINKS, HEADER_NAV_ITEM, NAV_ITEMS, type NavItem } from './nav-config'
+import {
+  activeNavKey,
+  activeTabKey,
+  CONTACT_MESSAGE,
+  HEADER_LINKS,
+  HEADER_NAV_ITEM,
+  NAV_ITEMS,
+  type NavItem,
+} from './nav-config'
 import { SearchBox } from './search-box'
 import { SearchOverlay } from './search-overlay'
+import { useMobileTabBarVisible } from './use-mobile-tab-bar-visible'
 import { useScrolledPast } from './use-scrolled-past'
 import { useSearchHotkeys } from './use-search-hotkeys'
 
+// 44px no celular (alvo do polegar), 40px a partir do md
 const ICON_BUTTON =
-  'inline-flex size-10 shrink-0 items-center justify-center rounded-full text-fg transition-colors duration-200 hover:bg-surface-2 ' +
+  'inline-flex size-11 shrink-0 md:size-10 items-center justify-center rounded-full text-fg transition-colors duration-200 hover:bg-surface-2 ' +
   'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500 [&_svg]:size-[1.15rem]'
 
 /**
@@ -27,6 +38,7 @@ const ICON_BUTTON =
 export function SiteHeader() {
   const scrolled = useScrolledPast(8)
   const location = useLocation()
+  const tabBarVisible = useMobileTabBarVisible()
   const activeKey = activeNavKey(location.pathname, location.search)
   const [menuOpen, setMenuOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
@@ -65,21 +77,22 @@ export function SiteHeader() {
         <Link
           to="/"
           aria-label="Palco Mix — página inicial"
-          className="-ml-1 shrink-0 rounded-xl px-1 py-1 transition-opacity hover:opacity-85"
+          className="-ml-1 flex h-11 shrink-0 items-center rounded-xl px-1 transition-opacity hover:opacity-85"
         >
           <Logo />
         </Link>
 
         <nav aria-label="Principal" className="hidden min-w-0 flex-1 justify-center lg:flex">
           <ul className="flex items-center gap-0.5">
-            <li className="hidden xl:block">
+            <li>
               <HeaderLink item={NAV_ITEMS.catalogo} active={activeKey === 'catalogo'} />
             </li>
             <li>
               <CategoriesMenu active={activeKey === 'categorias'} />
             </li>
             {HEADER_LINKS.map((key) => (
-              <li key={key}>
+              // entre lg e xl não cabem todos: Lançamentos (também no rodapé e na Home) sai antes do Catálogo
+              <li key={key} className={key === 'lancamentos' ? 'hidden xl:block' : undefined}>
                 <HeaderLink item={NAV_ITEMS[key]} active={activeKey === key} />
               </li>
             ))}
@@ -132,7 +145,7 @@ export function SiteHeader() {
             aria-label="Abrir menu"
             aria-haspopup="dialog"
             aria-expanded={menuOpen}
-            className={cn(ICON_BUTTON, '-mr-1.5 lg:hidden')}
+            className={cn(ICON_BUTTON, '-mr-2 md:-mr-1.5 lg:hidden')}
           >
             <Menu aria-hidden />
           </button>
@@ -146,6 +159,13 @@ export function SiteHeader() {
         activeKey={activeKey}
         onSearch={() => setSearchOpen(true)}
       />
+      {tabBarVisible && (
+        <MobileTabBar
+          activeKey={activeTabKey(location.pathname)}
+          onSearch={() => setSearchOpen(true)}
+          searchOpen={searchOpen}
+        />
+      )}
     </header>
   )
 }

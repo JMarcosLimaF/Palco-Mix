@@ -140,6 +140,17 @@
   input[type='search']::-webkit-search-cancel-button {
     appearance: none;
   }
+  /*
+   * Celular: campos com fonte < 16px fazem o iOS dar zoom ao tocar (e a página "pula").
+   * Garante 16px em todos os campos de texto abaixo de md, sem mexer no desktop.
+   */
+  @media (width < 48rem) {
+    input:not([type='checkbox'], [type='radio'], [type='range'], [type='color'], [type='file']),
+    select,
+    textarea {
+      font-size: max(16px, 1em) !important;
+    }
+  }
   @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
@@ -218,8 +229,13 @@
   animation: var(--animate-shimmer);
 }
 
-/* Pula renderização de cards fora da tela (grades longas) */
+/* Pula renderização de cards fora da tela (grades longas). Contém a pintura:
+   aplique num invólucro com folga (padding), nunca no elemento que recebe foco.
+   Só a altura é estimada (a largura vem da grade), perto do card real. */
 @utility cv-auto {
   content-visibility: auto;
-  contain-intrinsic-size: auto 420px;
+  contain-intrinsic-height: auto 300px;
+  @media (width >= 40rem) {
+    contain-intrinsic-height: auto 390px;
+  }
 }

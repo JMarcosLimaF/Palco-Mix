@@ -51,7 +51,7 @@ Tipografia: Plus Jakarta Sans Variable (já carregada). Títulos de seção: `ti
 | `@/components/brand/social-icons` → `InstagramIcon WhatsAppIcon` | lucide v1 não tem ícones de marcas |
 | `@/components/catalog/product-image` → `ProductImage` | srcset WebP + lazy + cor dominante + fade. Pai precisa de `relative` + proporção (`aspect-[5/6]`). Passe `sizes` real e `priority` acima da dobra |
 | `@/components/catalog/product-card` → `ProductCard ProductCardSkeleton` | card padrão (clique abre Visualização Rápida). Passe `distributorName`/`categoryName` resolvidos |
-| `@/components/catalog/price` → `Price` | preço efetivo + "de" riscado + `showDiscount` |
+| `@/components/catalog/price` → `Price` | preço efetivo + "à vista" e o valor "a prazo" ao lado (sem riscar); `showDiscount` = selo "-X% à vista" |
 | `@/components/admin/ui` → `AdminPageHeader Panel PanelHeader` | |
 | `@/components/admin/table-styles` → `tableStyles` | classes de tabela do admin |
 | `@/components/admin/image-library-dialog` → `ImageLibraryDialog` | seletor de imagens de /produtos/ (`open onOpenChange onSelect(paths) multiple exclude`) |
@@ -71,7 +71,7 @@ Toasts: `import { toast } from 'sonner'` → `toast.success('Produto salvo')`, `
 
 Hooks em `@/hooks/catalog` (TanStack Query):
 
-- Leitura: `useProductQuery(query)` (filtros+facetas+paginação, mantém resultado anterior durante a troca), `useProducts({includeInactive})`, `useFeaturedProducts(limit)`, `useProduct(id)`, `useRelatedProducts(product)`, `useSearchSuggestions(termoDebounced)`, `useCategories()`, `useDistributors()`, `useCategoryUsage()`, `useDistributorUsage()`, `useDashboardStats()`, `useCatalogLookups()` (mapas id→nome).
+- Leitura: `useProductQuery(query)` (filtros+facetas+paginação, mantém resultado anterior durante a troca), `useProducts({includeInactive})`, `useFeaturedProducts(limit)`, `useProduct(id)`, `useRelatedProducts(product)`, `useSearchSuggestions(termoDebounced)`, `useCategories()`, `useDistributors()`, `useCategoryUsage()`, `useDistributorUsage()`, `useCatalogLookups()` (mapas id→nome). Métricas do painel: `useDashboardStats()` em `@/components/admin/dashboard/use-dashboard-stats` (fica fora do bundle público).
 - Escrita: `useCreateProduct`, `useUpdateProduct`, `usePatchProduct`, `useSetProductsStatus`, `useDeleteProduct(s)`, `useSaveCategory`, `useDeleteCategory`, `useSaveDistributor`, `useDeleteDistributor`. O cache se invalida sozinho após qualquer escrita (não invalide manualmente).
 - Ferramentas: `adminService` (`@/services/admin`): `exportJson`, `importJson`, `reset`, `generateStressData(n)`, `clearStressData`, `storageInfo`.
 - Regras de negócio/erros: services lançam `ServiceError` com mensagem pt-BR pronta.
@@ -81,8 +81,9 @@ Hooks em `@/hooks/catalog` (TanStack Query):
 ### Preço sob consulta e numeração
 
 - `price === 0` significa **preço sob consulta** (`isPriceOnRequest(p)` em `@/lib/utils`). `Price` já exibe "Sob consulta"; CTAs devem levar ao WhatsApp. Ficam fora de filtros por faixa de preço e no fim das ordenações por preço.
-- Numeração: `expandSizes(product.sizes)` (`@/lib/sizes`) transforma "34 ao 39" / "33/34 ao 39/40" em chips; `null` → exiba o texto.
-- Selo de desconto no card só a partir de 10% (diferenças à vista × a prazo de 2–5% aparecem apenas como preço "de" riscado).
+- `promoPrice` é o preço **à vista** e `price` o preço **a prazo** (normal). Nunca chame de "promoção" nem risque o preço a prazo — ele continua valendo. Filtros/títulos usam "Desconto à vista" (URL `promo=1`).
+- Numeração: `expandSizes(product.sizes)` (`@/lib/sizes`) é o único parser — aceita "34 ao 39", "do 34 ao 39", "34 até 39", "33/34 ao 39/40", listas "35, 36, 37" e par único "33/34"; `null` → exiba o texto original.
+- Selo de desconto no card só a partir de 10% ("-X% à vista").
 
 ## 6. URL da vitrine e Visualização Rápida
 
@@ -92,7 +93,7 @@ Hooks em `@/hooks/catalog` (TanStack Query):
 
 ## 7. Performance (requisito)
 
-- Grade: paginação (24/página) + `ProductCard` memoizado + `cv-auto`. Só os primeiros 4 cards com `priority`.
+- Grade: paginação (24/página) + `ProductCard` memoizado. `cv-auto` vai num invólucro com folga (`cv-auto -m-2 p-2` no `<li>`), nunca no elemento que recebe foco (a contenção de pintura cortaria o anel de foco). Só os primeiros 4 cards com `priority`.
 - Imagens sempre via `ProductImage` com `sizes` coerente com a grade. Nunca `<img src="/produtos/...JPG">` cru em listas (originais têm 300 KB+).
 - Busca com debounce (`useDebouncedValue`, 200–250ms).
 - Evite estados globais desnecessários e re-renders da grade inteira; derive com `useMemo`.

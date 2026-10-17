@@ -24,6 +24,8 @@ export interface TaxonomyCopy {
   /** rótulo acessível do campo de busca */
   searchLabel: string
   searchPlaceholder: string
+  /** versão curta para o celular (o campo tem fonte de 16px e ~270px úteis) */
+  searchPlaceholderShort: string
   emptyTitle: string
   emptyDescription: string
   /** "Criada" | "Criado" */
@@ -61,6 +63,7 @@ export const TAXONOMY_COPY: Record<TaxonomyKind, TaxonomyCopy> = {
     descriptionPlaceholder: 'Uma frase curta sobre o que a pessoa encontra aqui.',
     searchLabel: 'Buscar categorias',
     searchPlaceholder: 'Buscar por nome ou descrição',
+    searchPlaceholderShort: 'Nome ou descrição',
     emptyTitle: 'Nenhuma categoria cadastrada',
     emptyDescription: 'Crie a primeira categoria para organizar os produtos e os filtros da vitrine.',
     createdLabel: 'Criada',
@@ -89,6 +92,7 @@ export const TAXONOMY_COPY: Record<TaxonomyKind, TaxonomyCopy> = {
     descriptionPlaceholder: 'Linhas, estilos ou observações sobre a marca.',
     searchLabel: 'Buscar distribuidores',
     searchPlaceholder: 'Buscar por nome, descrição ou contato',
+    searchPlaceholderShort: 'Nome, descrição ou contato',
     emptyTitle: 'Nenhum distribuidor cadastrado',
     emptyDescription: 'Cadastre a primeira marca ou fornecedor para vincular aos produtos.',
     createdLabel: 'Criado',

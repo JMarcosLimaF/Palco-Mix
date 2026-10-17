@@ -9,7 +9,6 @@
  * e todo o painel admin fica fora do bundle público.
  */
 import { createBrowserRouter, Navigate } from 'react-router'
-import { RequireAuth } from '@/components/admin/require-auth'
 import { PublicLayout } from '@/layouts/PublicLayout'
 import HomePage from '@/pages/HomePage'
 import { AppBootFallback, RootLayout } from './root-layout'
@@ -43,16 +42,8 @@ export const router = createBrowserRouter([
         children: [
           { index: true, lazy: page(() => import('@/pages/admin/LoginPage')) },
           {
-            lazy: async () => {
-              const { AdminLayout } = await import('@/layouts/AdminLayout')
-              return {
-                Component: () => (
-                  <RequireAuth>
-                    <AdminLayout />
-                  </RequireAuth>
-                ),
-              }
-            },
+            // guard + store/serviço de auth vêm no mesmo chunk lazy (nada do admin no bundle público)
+            lazy: async () => ({ Component: (await import('@/layouts/AdminLayout')).ProtectedAdminLayout }),
             children: [
               { path: 'painel', lazy: page(() => import('@/pages/admin/DashboardPage')) },
               { path: 'produtos', lazy: page(() => import('@/pages/admin/ProductsPage')) },

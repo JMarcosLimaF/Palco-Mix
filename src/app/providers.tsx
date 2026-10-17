@@ -4,7 +4,7 @@ import { useEffect, useState, type ReactNode } from 'react'
 import { Toaster } from 'sonner'
 import { localDb } from '@/lib/db/local-db'
 import { catalogKeys } from '@/hooks/catalog'
-import { applyTheme, resolveTheme, useThemeStore } from '@/store/theme'
+import { applyTheme, useResolvedTheme } from '@/store/theme'
 
 const loadMotionFeatures = () => import('./motion-features').then((mod) => mod.default)
 
@@ -34,21 +34,19 @@ function CatalogSync() {
 
 /** Mantém a classe .dark sincronizada com a preferência (e com o SO no modo "system"). */
 function ThemeSync() {
-  const mode = useThemeStore((s) => s.mode)
-  useEffect(() => {
-    applyTheme(mode)
-    if (mode !== 'system') return
-    const mql = window.matchMedia('(prefers-color-scheme: dark)')
-    const onChange = () => applyTheme('system')
-    mql.addEventListener('change', onChange)
-    return () => mql.removeEventListener('change', onChange)
-  }, [mode])
+  const theme = useResolvedTheme()
+  useEffect(() => applyTheme(theme), [theme])
   return null
+}
+
+/** Toasts no tema efetivo — isolado para a troca de tema não re-renderizar os providers. */
+function AppToaster() {
+  const theme = useResolvedTheme()
+  return <Toaster theme={theme} position="top-center" richColors closeButton toastOptions={{ className: 'font-sans' }} />
 }
 
 export function AppProviders({ children }: { children: ReactNode }) {
   const [queryClient] = useState(createQueryClient)
-  const mode = useThemeStore((s) => s.mode)
   return (
     <QueryClientProvider client={queryClient}>
       <LazyMotion features={loadMotionFeatures} strict>
@@ -56,13 +54,7 @@ export function AppProviders({ children }: { children: ReactNode }) {
         <CatalogSync />
         <ThemeSync />
         {children}
-        <Toaster
-          theme={resolveTheme(mode)}
-          position="top-center"
-          richColors
-          closeButton
-          toastOptions={{ className: 'font-sans' }}
-        />
+        <AppToaster />
       </MotionConfig>
       </LazyMotion>
     </QueryClientProvider>

@@ -91,14 +91,14 @@ export function FacetList({
             onChange={(e) => setFilter(e.target.value)}
             placeholder={searchPlaceholder}
             aria-label={searchPlaceholder}
-            className="h-9 w-full rounded-full border border-line bg-surface pr-8 pl-8 text-[0.8125rem] text-fg placeholder:text-subtle transition-[border-color,box-shadow] duration-200 hover:border-line-strong focus:border-brand-500 focus:ring-4 focus:ring-brand-500/15 focus:outline-none"
+            className="h-11 w-full rounded-full border border-line bg-surface pr-11 pl-8 text-[0.8125rem] lg:h-9 lg:pr-8 text-fg placeholder:text-subtle transition-[border-color,box-shadow] duration-200 hover:border-line-strong focus:border-brand-500 focus:ring-4 focus:ring-brand-500/15 focus:outline-none"
           />
           {filter && (
             <button
               type="button"
               onClick={() => setFilter('')}
               aria-label="Limpar filtro"
-              className="absolute top-1/2 right-1.5 inline-flex size-6 -translate-y-1/2 items-center justify-center rounded-full text-subtle transition hover:bg-surface-2 hover:text-fg"
+              className="absolute top-1/2 right-0.5 inline-flex size-10 -translate-y-1/2 items-center justify-center rounded-full text-subtle transition hover:bg-surface-2 hover:text-fg lg:right-1.5 lg:size-6"
             >
               <X className="size-3.5" aria-hidden />
             </button>
@@ -120,7 +120,8 @@ export function FacetList({
                 label={option.name}
                 hint={count === undefined ? '' : count}
                 className={cn(
-                  '-mx-2 min-h-10 rounded-lg px-2 transition-colors duration-150 hover:bg-surface-2',
+                  // linha inteira tocável: 44px no drawer (celular/tablet), 40px na sidebar
+                  '-mx-2 min-h-11 rounded-lg px-2 transition-colors duration-150 hover:bg-surface-2 active:bg-surface-2 lg:min-h-10',
                   isSelected && '[&>span:first-of-type]:font-semibold',
                   empty && 'cursor-not-allowed opacity-45 hover:bg-transparent',
                 )}
@@ -137,7 +138,7 @@ export function FacetList({
           type="button"
           onClick={() => setExpanded((v) => !v)}
           aria-expanded={expanded}
-          className="mt-1 inline-flex min-h-9 items-center rounded-full text-xs font-bold text-brand-600 transition-colors hover:text-brand-700 dark:text-brand-400 dark:hover:text-brand-300"
+          className="mt-1 inline-flex min-h-11 items-center rounded-full text-[0.8125rem] font-bold text-brand-600 lg:min-h-9 lg:text-xs transition-colors hover:text-brand-700 dark:text-brand-400 dark:hover:text-brand-300"
         >
           {expanded ? 'Mostrar menos' : `Mostrar mais (${hiddenCount})`}
         </button>

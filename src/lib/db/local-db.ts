@@ -1,9 +1,11 @@
 /**
  * Banco local (localStorage) do catálogo — modo desenvolvimento/demonstração.
  *
- * - Primeira carga: usa o seed `src/data/db.json` (datas rebaseadas para "agora",
- *   assim os selos "Novo" e "Lançamentos" continuam fazendo sentido).
+ * - Primeira carga: usa o seed `src/data/db.json` com as datas reais (o selo
+ *   "Novo" e "Lançamentos" refletem quando cada produto entrou de fato).
  * - Escritas: persistem o snapshot inteiro em `palcomix:db` (só após a 1ª alteração).
+ * - Leitura/importação validam item a item (`validate.ts`): banco salvo inválido
+ *   cai no seed em vez de quebrar a loja.
  * - Sincroniza entre abas via evento `storage`.
  *
  * A UI nunca fala com este módulo diretamente: use `src/services/*`.
@@ -11,9 +13,10 @@
  */
 import seed from '@/data/db.json'
 import type { CatalogData } from '@/types/catalog'
+import { validateCatalogData } from './validate'
 
+export { DB_SCHEMA_VERSION } from './validate'
 export const DB_STORAGE_KEY = 'palcomix:db'
-export const DB_SCHEMA_VERSION = 1
 
 export class StorageQuotaError extends Error {
   constructor() {
@@ -24,44 +27,18 @@ export class StorageQuotaError extends Error {
 
 type Listener = () => void
 
-function isCatalogData(value: unknown): value is CatalogData {
-  const v = value as CatalogData
-  return (
-    !!v &&
-    v.schemaVersion === DB_SCHEMA_VERSION &&
-    Array.isArray(v.products) &&
-    Array.isArray(v.categories) &&
-    Array.isArray(v.distributors)
-  )
-}
-
-/** Desloca as datas do seed para que o item mais recente seja "agora". */
-function rebaseSeedDates(data: CatalogData, now = Date.now()): CatalogData {
-  const times = data.products.map((p) => new Date(p.createdAt).getTime()).filter((t) => !Number.isNaN(t))
-  if (times.length === 0) return data
-  const delta = now - 60 * 60 * 1000 - Math.max(...times)
-  const shift = (iso: string) => {
-    const t = new Date(iso).getTime()
-    return Number.isNaN(t) ? iso : new Date(t + delta).toISOString()
-  }
-  return {
-    ...data,
-    products: data.products.map((p) => ({ ...p, createdAt: shift(p.createdAt) })),
-    categories: data.categories.map((c) => ({ ...c, createdAt: shift(c.createdAt) })),
-    distributors: data.distributors.map((d) => ({ ...d, createdAt: shift(d.createdAt) })),
-  }
-}
-
 function fromSeed(): CatalogData {
-  return rebaseSeedDates(structuredClone(seed) as CatalogData)
+  return structuredClone(seed) as CatalogData
 }
 
 function readStorage(): CatalogData | null {
   try {
     const raw = localStorage.getItem(DB_STORAGE_KEY)
     if (!raw) return null
-    const parsed: unknown = JSON.parse(raw)
-    return isCatalogData(parsed) ? parsed : null
+    const result = validateCatalogData(JSON.parse(raw))
+    if (result.ok) return result.data
+    console.warn(`[palcomix] banco local inválido, usando os dados iniciais. ${result.error}`)
+    return null
   } catch {
     return null
   }
@@ -70,6 +47,8 @@ function readStorage(): CatalogData | null {
 class LocalDb {
   private data: CatalogData
   private listeners = new Set<Listener>()
+  /** Uma gravação já estourou a cota nesta sessão (o limite real varia por navegador). */
+  private quotaHit = false
 
   constructor() {
     this.data = readStorage() ?? fromSeed()
@@ -93,10 +72,13 @@ class LocalDb {
       localStorage.setItem(DB_STORAGE_KEY, JSON.stringify(next))
     } catch (error) {
       if (error instanceof DOMException && (error.name === 'QuotaExceededError' || error.code === 22)) {
+        this.quotaHit = true
         throw new StorageQuotaError()
       }
       throw error
     }
+    // gravou: o aviso de cota cheia deixa de valer
+    this.quotaHit = false
     this.data = next
     this.emit()
   }
@@ -111,23 +93,30 @@ class LocalDb {
   /** Descarta alterações locais e volta ao seed. */
   reset(): void {
     localStorage.removeItem(DB_STORAGE_KEY)
+    this.quotaHit = false
     this.data = fromSeed()
     this.emit()
   }
 
   /** Substitui todo o banco (importação de backup). */
   replace(data: unknown): void {
-    if (!isCatalogData(data)) throw new Error('Arquivo inválido: estrutura do banco não reconhecida.')
-    this.commit(data)
+    const result = validateCatalogData(data)
+    if (!result.ok) throw new Error(`Arquivo inválido. ${result.error}`)
+    this.commit(result.data)
   }
 
-  /** Bytes ocupados no localStorage pelo banco. */
+  /** Bytes ocupados no localStorage pelo banco (UTF-16: 2 por caractere — estimativa). */
   usageBytes(): number {
     try {
       return (localStorage.getItem(DB_STORAGE_KEY)?.length ?? 0) * 2
     } catch {
       return 0
     }
+  }
+
+  /** Alguma gravação desta sessão foi recusada por falta de espaço? */
+  quotaExceeded(): boolean {
+    return this.quotaHit
   }
 
   isPristine(): boolean {

@@ -150,7 +150,8 @@ function ItemActions({
   size,
 }: Pick<ItemProps, 'distributor' | 'onEdit' | 'onDelete'> & { size: 'icon' | 'icon-sm' }) {
   return (
-    <div className="inline-flex items-center justify-end gap-0.5">
+    // cards (celular): mais espaço entre os alvos de 40px
+    <div className={cn('inline-flex items-center justify-end', size === 'icon' ? '-mr-1.5 gap-1.5' : 'gap-0.5')}>
       <a
         href={storeHref('distributors', distributor.id)}
         target="_blank"
@@ -218,6 +219,7 @@ const DistributorCard = memo(function DistributorCard({ distributor, count, high
         highlighted && 'border-brand-500 ring-4 ring-brand-500/20',
       )}
     >
+      {/* o nome usa a largura toda (a contagem de produtos desce para o rodapé, ao lado das ações) */}
       <div className="flex items-start gap-3">
         <Monogram name={distributor.name} />
         <div className="min-w-0 flex-1">
@@ -225,13 +227,10 @@ const DistributorCard = memo(function DistributorCard({ distributor, count, high
             {distributor.name}
           </h3>
           <p className="truncate font-mono text-xs text-subtle">{distributor.id}</p>
+          <p className="mt-0.5 text-xs text-subtle">
+            Criado em <time dateTime={distributor.createdAt}>{formatDate(distributor.createdAt)}</time>
+          </p>
         </div>
-        <UsageBadge
-          count={count}
-          to={adminProductsHref('distributors', distributor.id)}
-          itemName={distributor.name}
-          className="mt-0.5 shrink-0"
-        />
       </div>
 
       {distributor.description ? (
@@ -256,10 +255,13 @@ const DistributorCard = memo(function DistributorCard({ distributor, count, high
         </ul>
       ) : null}
 
-      <div className="mt-3 flex items-center justify-between gap-2 border-t border-line pt-3">
-        <p className="text-xs text-subtle">
-          Criado em <time dateTime={distributor.createdAt}>{formatDate(distributor.createdAt)}</time>
-        </p>
+      <div className="mt-3 flex items-center justify-between gap-2 border-t border-line pt-2">
+        <UsageBadge
+          count={count}
+          to={adminProductsHref('distributors', distributor.id)}
+          itemName={distributor.name}
+          className="shrink-0"
+        />
         <ItemActions distributor={distributor} onEdit={onEdit} onDelete={onDelete} size="icon" />
       </div>
     </article>

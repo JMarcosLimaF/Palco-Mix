@@ -174,7 +174,7 @@ const ProductRow = memo(function ProductRow({
       <td className={cn(td, COL.category, 'whitespace-nowrap text-muted')}>{categoryName}</td>
       <td className={cn(td, COL.distributor, 'whitespace-nowrap text-muted')}>{distributorName}</td>
       <td className={cn(td, 'whitespace-nowrap')}>
-        <Price product={product} size="sm" className="flex-col items-start gap-y-0" />
+        <Price internal product={product} size="sm" className="flex-col items-start gap-y-0" />
       </td>
       <td className={td}>
         <StatusToggle product={product} pending={statusPending} onToggle={onToggleStatus} />

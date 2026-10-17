@@ -267,7 +267,7 @@ export function TaxonomyManager<T extends TaxonomyEntityBase, I extends Taxonomy
   const editingUsage = editing ? (usageMap[editing.id] ?? 0) : 0
 
   return (
-    <div className="flex flex-col gap-6 sm:gap-8">
+    <div className="flex flex-col gap-5 sm:gap-8">
       <AdminPageHeader
         title={
           <>
@@ -297,6 +297,7 @@ export function TaxonomyManager<T extends TaxonomyEntityBase, I extends Taxonomy
           onSortChange={setSort}
           searchLabel={copy.searchLabel}
           searchPlaceholder={copy.searchPlaceholder}
+          searchPlaceholderShort={copy.searchPlaceholderShort}
           status={status}
           showStatus={isFiltering}
         />

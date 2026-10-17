@@ -12,20 +12,22 @@ import {
   clearAdminFilters,
   FROM_LIST_STATE,
   hasAdminFilters,
+  PAGE_SIZE_OPTIONS,
   parseAdminProductParams,
   type AdminFiltersPatch,
 } from '@/components/admin/products/products-params'
 import { ProductsTable, ProductsTableSkeleton } from '@/components/admin/products/products-table'
 import { ProductsToolbar } from '@/components/admin/products/products-toolbar'
+import { useDashboardStats } from '@/components/admin/dashboard/use-dashboard-stats'
 import { useProductQuickActions } from '@/components/admin/products/use-product-quick-actions'
 import { AdminPageHeader, Panel } from '@/components/admin/ui'
 import { Button } from '@/components/ui/button'
 import { buttonVariants } from '@/components/ui/button-variants'
 import { EmptyState } from '@/components/ui/feedback'
+import { Select } from '@/components/ui/form'
 import { Pagination } from '@/components/ui/pagination'
 import {
   useCatalogLookups,
-  useDashboardStats,
   useDeleteProduct,
   useDeleteProducts,
   useProductQuery,
@@ -254,6 +256,7 @@ export default function ProductsPage() {
         distributorName={lookups.distributorName}
         selectedIds={selectedIds}
         onToggleSelect={toggleSelect}
+        onToggleAll={toggleAll}
         actions={actions}
         onDelete={requestDelete}
         stale={isPlaceholderData}
@@ -262,7 +265,7 @@ export default function ProductsPage() {
   }
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-5 sm:gap-6">
       <AdminPageHeader
         title="Produtos"
         description={
@@ -272,7 +275,7 @@ export default function ProductsPage() {
               <span className="text-subtle"> · </span>
               {pluralize(s.activeProducts, 'ativo', 'ativos')}
               <span className="text-subtle"> · </span>
-              {s.featuredProducts.toLocaleString('pt-BR')} em destaque
+              {pluralize(s.featuredProducts, 'destaque ativo', 'destaques ativos')}
             </>
           ) : (
             <>
@@ -311,7 +314,28 @@ export default function ProductsPage() {
                 de <span className="font-semibold text-fg">{total.toLocaleString('pt-BR')}</span>
                 {filtered ? (total === 1 ? ' resultado' : ' resultados') : total === 1 ? ' produto' : ' produtos'}
               </p>
-              <Pagination page={data.page} pageCount={data.pageCount} onPageChange={goToPage} />
+              {/* celular: paginação + itens por página na mesma linha (no sm+ o seletor fica na barra de filtros) */}
+              <div className="flex w-full items-center justify-between gap-3 sm:w-auto">
+                <Pagination
+                  page={data.page}
+                  pageCount={data.pageCount}
+                  onPageChange={goToPage}
+                  className="shrink-0 max-sm:-ml-2"
+                />
+                <div className="ml-auto w-full max-w-36 min-w-0 sm:hidden">
+                  <Select
+                    aria-label="Itens por página"
+                    value={String(filters.pageSize)}
+                    onChange={(e) => updateFilters({ pageSize: Number(e.currentTarget.value) })}
+                  >
+                    {PAGE_SIZE_OPTIONS.map((n) => (
+                      <option key={n} value={n}>
+                        {n} itens
+                      </option>
+                    ))}
+                  </Select>
+                </div>
+              </div>
             </div>
           )}
         </Panel>

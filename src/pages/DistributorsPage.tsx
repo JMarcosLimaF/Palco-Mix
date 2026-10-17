@@ -13,7 +13,19 @@ import { useDistributors } from '@/hooks/catalog'
 import { useDocumentTitle } from '@/hooks/use-document-title'
 import { normalizeText, pluralize } from '@/lib/utils'
 
-const GRID = 'grid gap-4 sm:grid-cols-2 sm:gap-6 xl:grid-cols-3'
+// celular: 2 colunas de cards compactos (15 marcas em ~3 telas); sm+: cards completos em 2/3 colunas
+const GRID = 'grid grid-cols-2 gap-3 sm:gap-6 xl:grid-cols-3'
+
+/**
+ * No celular, ao focar a busca, leva o campo para o topo da tela: o teclado virtual
+ * ocupa metade da altura e, sem isso, a lista filtrada ficaria escondida atrás dele.
+ */
+function bringSearchIntoView(input: HTMLInputElement) {
+  if (!window.matchMedia('(max-width: 639px) and (pointer: coarse)').matches) return
+  const smooth = !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  // espera o teclado começar a abrir (o viewport visual encolhe) antes de rolar
+  window.setTimeout(() => input.scrollIntoView({ block: 'start', behavior: smooth ? 'smooth' : 'auto' }), 150)
+}
 
 export default function DistributorsPage() {
   useDocumentTitle('Distribuidores')
@@ -68,8 +80,8 @@ export default function DistributorsPage() {
         ]}
       />
 
-      <section aria-label="Lista de marcas" className="container-page py-8 sm:py-12">
-        <div className="mb-8 flex flex-col gap-3 sm:mb-10 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
+      <section aria-label="Lista de marcas" className="container-page pt-5 pb-8 sm:py-12">
+        <div className="mb-5 flex flex-col gap-2.5 sm:mb-10 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
           <div className="relative w-full sm:max-w-sm">
             <label htmlFor="busca-marca" className="sr-only">
               Buscar marca pelo nome
@@ -84,6 +96,7 @@ export default function DistributorsPage() {
               type="search"
               value={term}
               onChange={(event) => setTerm(event.target.value)}
+              onFocus={(event) => bringSearchIntoView(event.currentTarget)}
               onKeyDown={(event) => {
                 if (event.key === 'Escape' && term) {
                   event.preventDefault()
@@ -102,7 +115,7 @@ export default function DistributorsPage() {
                 type="button"
                 onClick={clearSearch}
                 aria-label="Limpar busca"
-                className="absolute top-1/2 right-2 inline-flex size-9 -translate-y-1/2 items-center justify-center rounded-full text-subtle transition-colors hover:bg-surface-2 hover:text-fg"
+                className="absolute top-1/2 right-1 inline-flex size-10 -translate-y-1/2 items-center justify-center rounded-full text-subtle transition-colors hover:bg-surface-2 hover:text-fg sm:right-2 sm:size-9"
               >
                 <X aria-hidden className="size-4" />
               </button>
@@ -156,7 +169,7 @@ export default function DistributorsPage() {
           <ul className={GRID}>
             {visible.map((item, i) => (
               <li key={item.distributor.id}>
-                <Reveal className="h-full" delay={(i % 3) * 0.06}>
+                <Reveal className="h-full" delay={(i % 2) * 0.06}>
                   <DistributorCard
                     distributor={item.distributor}
                     count={item.count}

@@ -92,24 +92,21 @@ export function Modal({
                   {hideHeader ? (
                     <>
                       <Dialog.Title className="sr-only">{title}</Dialog.Title>
-                      {description ? (
-                        <Dialog.Description className="sr-only">{description}</Dialog.Description>
-                      ) : (
-                        <Dialog.Description className="sr-only">{title}</Dialog.Description>
-                      )}
+                      {/* sem descrição não há Description: o Radix omite o aria-describedby (não repete o título) */}
+                      {description && <Dialog.Description className="sr-only">{description}</Dialog.Description>}
                     </>
                   ) : (
                     <div className="flex shrink-0 items-start justify-between gap-4 px-5 pt-4 pb-2 sm:px-6 sm:pt-6">
                       <div className="min-w-0">
                         <Dialog.Title className="text-lg font-bold tracking-tight">{title}</Dialog.Title>
-                        <Dialog.Description className={description ? 'mt-1 text-sm text-muted' : 'sr-only'}>
-                          {description ?? title}
-                        </Dialog.Description>
+                        {description && (
+                          <Dialog.Description className="mt-1 text-sm text-muted">{description}</Dialog.Description>
+                        )}
                       </div>
                     </div>
                   )}
                   <Dialog.Close
-                    className="absolute top-3 right-3 z-10 inline-flex size-9 items-center justify-center rounded-full bg-elevated/80 text-muted backdrop-blur transition hover:bg-surface-2 hover:text-fg sm:top-4 sm:right-4"
+                    className="absolute top-2.5 right-2.5 z-10 inline-flex size-11 items-center justify-center rounded-full bg-elevated/80 text-muted backdrop-blur transition hover:bg-surface-2 hover:text-fg sm:top-4 sm:right-4 sm:size-9"
                     aria-label="Fechar"
                   >
                     <X className="size-[1.1rem]" />
@@ -173,12 +170,12 @@ export function Drawer({ open, onOpenChange, title, description, side = 'right',
                 <div className="flex shrink-0 items-center justify-between gap-4 border-b border-line px-5 py-4">
                   <div className="min-w-0">
                     <Dialog.Title className="text-base font-bold tracking-tight">{title}</Dialog.Title>
-                    <Dialog.Description className={description ? 'mt-0.5 text-xs text-muted' : 'sr-only'}>
-                      {description ?? title}
-                    </Dialog.Description>
+                    {description && (
+                      <Dialog.Description className="mt-0.5 text-xs text-muted">{description}</Dialog.Description>
+                    )}
                   </div>
                   <Dialog.Close
-                    className="inline-flex size-9 items-center justify-center rounded-full text-muted transition hover:bg-surface-2 hover:text-fg"
+                    className="inline-flex size-11 items-center justify-center rounded-full text-muted transition hover:bg-surface-2 hover:text-fg sm:size-9"
                     aria-label="Fechar"
                   >
                     <X className="size-[1.1rem]" />

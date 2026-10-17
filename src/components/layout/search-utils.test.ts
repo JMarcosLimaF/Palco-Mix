@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { activeNavKey } from './nav-config'
-import { highlightParts, isPlainLeftClick, nameMatches, nameScore, optionDomId } from './search-utils'
+import { activeNavKey, activeTabKey, productIdFromPath } from './nav-config'
+import { highlightParts, isPlainLeftClick, nameMatches, nameScore, optionDomId, suggestionPrice } from './search-utils'
 
 const marked = (text: string, query: string) =>
   highlightParts(text, query)
@@ -62,6 +62,48 @@ describe('activeNavKey', () => {
     expect(activeNavKey('/catalogo', '?distribuidor=pegada')).toBe('distribuidores')
     expect(activeNavKey('/catalogo', '?q=tenis')).toBe('catalogo')
     expect(activeNavKey('/produto/pm-0001', '')).toBeNull()
+  })
+})
+
+describe('barra inferior (celular)', () => {
+  it('a aba ativa segue a página, não os filtros', () => {
+    expect(activeTabKey('/')).toBe('inicio')
+    expect(activeTabKey('/catalogo')).toBe('catalogo')
+    expect(activeTabKey('/categorias')).toBe('categorias')
+    expect(activeTabKey('/distribuidores')).toBeNull()
+    expect(activeTabKey('/qualquer-coisa')).toBeNull()
+  })
+
+  it('reconhece a página do produto (onde a barra inferior dá lugar à de compra)', () => {
+    expect(productIdFromPath('/')).toBeUndefined()
+    expect(productIdFromPath('/catalogo')).toBeUndefined()
+    expect(productIdFromPath('/produto/pm-0001')).toBe('pm-0001')
+  })
+})
+
+describe('suggestionPrice', () => {
+  // o Intl usa espaço não separável entre "R$" e o valor
+  const brl = (text: string) => text.replace(/\s/g, ' ')
+
+  it('price 0 é "sob consulta" (nunca R$ 0,00), mesmo com promoPrice', () => {
+    expect(suggestionPrice({ price: 0 })).toEqual({ kind: 'on-request' })
+    expect(suggestionPrice({ price: 0, promoPrice: 10 })).toEqual({ kind: 'on-request' })
+  })
+
+  it('promoPrice válido vira preço à vista + preço a prazo', () => {
+    const price = suggestionPrice({ price: 100, promoPrice: 95 })
+    expect(price.kind).toBe('cash')
+    if (price.kind !== 'cash') return
+    expect(brl(price.cash)).toBe('R$ 95,00')
+    expect(brl(price.installment)).toBe('R$ 100,00')
+  })
+
+  it('sem desconto válido mostra só o preço normal', () => {
+    for (const product of [{ price: 80 }, { price: 80, promoPrice: 80 }, { price: 80, promoPrice: 0 }]) {
+      const price = suggestionPrice(product)
+      expect(price.kind).toBe('single')
+      if (price.kind === 'single') expect(brl(price.value)).toBe('R$ 80,00')
+    }
   })
 })
 

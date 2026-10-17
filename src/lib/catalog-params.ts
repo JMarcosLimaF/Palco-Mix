@@ -6,6 +6,7 @@
  *   ordem=recentes|relevancia|menor-preco|maior-preco|a-z|z-a
  *   destaque=1  promo=1  pagina=2
  */
+import { site } from '@/config/site'
 import type { ProductQuery, ProductSort } from '@/types/catalog'
 
 const SORT_TO_PARAM: Record<ProductSort, string> = {
@@ -21,7 +22,7 @@ const PARAM_TO_SORT = Object.fromEntries(
   Object.entries(SORT_TO_PARAM).map(([k, v]) => [v, k as ProductSort]),
 ) as Record<string, ProductSort>
 
-export const SORT_OPTIONS: Array<{ value: ProductSort; label: string }> = [
+const ALL_SORT_OPTIONS: Array<{ value: ProductSort; label: string }> = [
   { value: 'relevance', label: 'Mais relevantes' },
   { value: 'recent', label: 'Mais recentes' },
   { value: 'price-asc', label: 'Menor preço' },
@@ -29,6 +30,25 @@ export const SORT_OPTIONS: Array<{ value: ProductSort; label: string }> = [
   { value: 'name-asc', label: 'Nome (A–Z)' },
   { value: 'name-desc', label: 'Nome (Z–A)' },
 ]
+
+const PRICE_SORTS = new Set<ProductSort>(['price-asc', 'price-desc'])
+
+/** Ordenações da vitrine (sem as de preço quando a loja não mostra preços). */
+export const SORT_OPTIONS = site.showPrices ? ALL_SORT_OPTIONS : ALL_SORT_OPTIONS.filter((o) => !PRICE_SORTS.has(o.value))
+
+/**
+ * Remove da consulta da vitrine o que depende de preço (faixa, desconto à vista,
+ * ordenação por preço) quando a loja não exibe preços — links antigos continuam válidos.
+ */
+export function storefrontQuery(query: ProductQuery): ProductQuery {
+  if (site.showPrices) return query
+  const { minPrice: _min, maxPrice: _max, onSale: _sale, ...rest } = query
+  void _min
+  void _max
+  void _sale
+  if (rest.sort && PRICE_SORTS.has(rest.sort)) delete rest.sort
+  return rest
+}
 
 /** Parâmetro da URL que abre a Visualização Rápida de um produto. */
 export const QUICK_VIEW_PARAM = 'p'

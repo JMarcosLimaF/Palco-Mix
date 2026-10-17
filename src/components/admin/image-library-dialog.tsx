@@ -102,7 +102,7 @@ export function ImageLibraryDialog({
       {filtered.length === 0 ? (
         <p className="py-10 text-center text-sm text-muted">Nenhuma imagem encontrada.</p>
       ) : (
-        <ul className="grid grid-cols-3 gap-3 sm:grid-cols-4 lg:grid-cols-6">
+        <ul className="grid grid-cols-3 gap-2 sm:grid-cols-4 sm:gap-3 lg:grid-cols-6">
           {filtered.slice(0, limit).map((path) => {
             const used = excluded.has(path)
             const order = picked.indexOf(path)
@@ -124,7 +124,7 @@ export function ImageLibraryDialog({
                 >
                   <ProductImage path={path} alt={path.split('/').pop() ?? ''} sizes="160px" />
                   {(selected || used) && (
-                    <span className="absolute top-1.5 right-1.5 inline-flex size-6 items-center justify-center rounded-full bg-brand-500 text-[0.7rem] font-bold text-white shadow">
+                    <span className="absolute top-1.5 right-1.5 inline-flex size-6 items-center justify-center rounded-full bg-brand-500 text-xs font-bold text-white shadow">
                       {used ? <Check className="size-3.5" aria-hidden /> : order + 1}
                     </span>
                   )}
@@ -136,7 +136,7 @@ export function ImageLibraryDialog({
       )}
       {filtered.length > limit && (
         <div className="mt-5 flex justify-center">
-          <Button variant="outline" size="sm" onClick={() => setLimit((l) => l + PAGE)}>
+          <Button variant="outline" size="sm" className="max-sm:h-11 max-sm:w-full" onClick={() => setLimit((l) => l + PAGE)}>
             Carregar mais ({filtered.length - limit})
           </Button>
         </div>

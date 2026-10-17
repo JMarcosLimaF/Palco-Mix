@@ -1,12 +1,23 @@
 /**
  * Moldura do painel administrativo: sidebar fixa (lg+), topbar com blur e
  * conteúdo com transição curta de entrada a cada troca de rota.
- * A proteção de acesso (RequireAuth) é aplicada no router.
+ * A proteção de acesso (RequireAuth) vem junto, em `ProtectedAdminLayout`, para
+ * guard, store e serviço de auth ficarem só no chunk lazy do admin.
  */
 import { m } from 'motion/react'
 import { Outlet, useLocation } from 'react-router'
 import { AdminSidebar } from '@/components/admin/layout/admin-sidebar'
 import { AdminTopbar } from '@/components/admin/layout/admin-topbar'
+import { RequireAuth } from '@/components/admin/require-auth'
+
+/** Layout do painel com a proteção de acesso — usado pela rota lazy do router. */
+export function ProtectedAdminLayout() {
+  return (
+    <RequireAuth>
+      <AdminLayout />
+    </RequireAuth>
+  )
+}
 
 export function AdminLayout() {
   const { pathname } = useLocation()
@@ -35,7 +46,8 @@ export function AdminLayout() {
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
-            className="mx-auto w-full max-w-7xl p-4 sm:p-6 lg:p-8"
+            // celular: o fim da página não fica sob a barra de gestos (viewport-fit=cover)
+            className="mx-auto w-full max-w-7xl p-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:p-6 lg:p-8"
           >
             <Outlet />
           </m.div>

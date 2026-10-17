@@ -68,7 +68,7 @@ export function BarListPanel({
         actions={
           <Link
             to={manageHref}
-            className="group/manage inline-flex h-8 shrink-0 items-center gap-1 rounded-full px-3 text-xs font-semibold text-muted transition-colors duration-200 hover:bg-surface-2 hover:text-fg"
+            className="group/manage -my-1 -mr-2 inline-flex h-10 shrink-0 items-center gap-1 rounded-full px-3 text-xs font-semibold text-muted transition-colors duration-200 hover:bg-surface-2 hover:text-fg sm:my-0 sm:mr-0 sm:h-8"
           >
             Gerenciar
             <ArrowRight

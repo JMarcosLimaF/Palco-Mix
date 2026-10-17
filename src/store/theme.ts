@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
+import { useMediaQuery } from '@/hooks/use-media-query'
 
 export type ThemeMode = 'light' | 'dark' | 'system'
 
@@ -34,3 +35,13 @@ export const useThemeStore = create<ThemeState>()(
     { name: 'palcomix:theme', version: 1 },
   ),
 )
+
+/**
+ * Tema efetivo reativo: no modo "system" acompanha a troca de tema do SO
+ * (resolveTheme só lê o SO no momento da chamada).
+ */
+export function useResolvedTheme(): 'light' | 'dark' {
+  const mode = useThemeStore((s) => s.mode)
+  const systemDark = useMediaQuery('(prefers-color-scheme: dark)')
+  return mode === 'system' ? (systemDark ? 'dark' : 'light') : mode
+}

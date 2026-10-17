@@ -2,6 +2,7 @@ import { ArrowDownUp, BadgePercent, CircleDot, Rows3, Search, SlidersHorizontal,
 import { useEffect, useId, useRef, useState, type ReactNode } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input, Select } from '@/components/ui/form'
+import { useMediaQuery } from '@/hooks/use-media-query'
 import { cn } from '@/lib/utils'
 import type { Category, Distributor } from '@/types/catalog'
 import {
@@ -68,22 +69,41 @@ export function ProductsToolbar({ filters, onChange, onClear, categories, distri
     </IconSelect>
   )
 
+  const toggleClass = (on: boolean) =>
+    cn(
+      // celular: pílulas com a largura do rótulo (lado a lado); sm+: botões como antes
+      'inline-flex h-10 items-center justify-center gap-2 rounded-full border px-3.5 text-sm font-semibold whitespace-nowrap sm:h-11 sm:rounded-xl sm:px-4',
+      'transition-[background-color,border-color,color,box-shadow] duration-200 ease-out-expo',
+      'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500',
+      on
+        ? 'border-brand-500 bg-brand-500/10 text-brand-600 dark:text-brand-400'
+        : 'border-line bg-elevated text-muted hover:border-line-strong hover:text-fg',
+    )
+
   return (
     <div className="flex flex-col gap-3 border-b border-line p-3 sm:p-4">
       <div className="flex items-center gap-2">
         <SearchField value={filters.search} onCommit={(search) => onChange({ search }, { replace: true })} />
 
+        {/* celular: só o ícone (o campo de busca fica com mais espaço); o número indica filtros ativos */}
         <Button
           variant="outline"
-          className="h-11 px-4 sm:hidden"
+          className={cn(
+            'relative size-11 rounded-xl px-0 sm:hidden',
+            (mobileOpen || activeCount > 0) && 'border-brand-500/60 text-brand-600 dark:text-brand-400',
+          )}
           aria-expanded={mobileOpen}
           aria-controls={panelId}
+          aria-label={activeCount > 0 ? `Filtros e ordenação (${activeCount} ativos)` : 'Filtros e ordenação'}
+          title="Filtros e ordenação"
           onClick={() => setMobileOpen((o) => !o)}
         >
           <SlidersHorizontal aria-hidden />
-          Filtros
           {activeCount > 0 && (
-            <span className="-mr-1 inline-flex size-5 items-center justify-center rounded-full bg-brand-500 text-[0.6875rem] font-bold text-white tabular-nums">
+            <span
+              aria-hidden
+              className="absolute -top-1.5 -right-1.5 inline-flex size-5 items-center justify-center rounded-full bg-brand-500 text-[0.6875rem] font-bold text-white tabular-nums ring-2 ring-elevated"
+            >
               {activeCount}
             </span>
           )}
@@ -150,43 +170,32 @@ export function ProductsToolbar({ filters, onChange, onClear, categories, distri
           </IconSelect>
         </div>
 
-        <button
-          type="button"
-          aria-pressed={filters.featured}
-          onClick={() => onChange({ featured: !filters.featured })}
-          className={cn(
-            'inline-flex h-11 items-center justify-center gap-2 rounded-xl border px-4 text-sm font-semibold whitespace-nowrap',
-            'transition-[background-color,border-color,color,box-shadow] duration-200 ease-out-expo',
-            'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500',
-            filters.featured
-              ? 'border-brand-500 bg-brand-500/10 text-brand-600 dark:text-brand-400'
-              : 'border-line bg-elevated text-muted hover:border-line-strong hover:text-fg',
-          )}
-        >
-          <Star className={cn('size-4 transition-transform duration-300', filters.featured && 'scale-110 fill-current')} aria-hidden />
-          Somente destaques
-        </button>
+        {/* celular: as duas pílulas dividem a linha (quebram se não couberem); sm+: o invólucro some */}
+        <div className="col-span-2 flex flex-wrap gap-2 sm:contents">
+          <button
+            type="button"
+            aria-pressed={filters.featured}
+            onClick={() => onChange({ featured: !filters.featured })}
+            className={toggleClass(filters.featured)}
+          >
+            <Star className={cn('size-4 transition-transform duration-300', filters.featured && 'scale-110 fill-current')} aria-hidden />
+            <span className="sm:hidden">Destaques</span>
+            <span className="max-sm:hidden">Somente destaques</span>
+          </button>
 
-        <button
-          type="button"
-          aria-pressed={filters.onSale}
-          onClick={() => onChange({ onSale: !filters.onSale })}
-          className={cn(
-            'inline-flex h-11 items-center justify-center gap-2 rounded-xl border px-4 text-sm font-semibold whitespace-nowrap',
-            'transition-[background-color,border-color,color,box-shadow] duration-200 ease-out-expo',
-            'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500',
-            filters.onSale
-              ? 'border-brand-500 bg-brand-500/10 text-brand-600 dark:text-brand-400'
-              : 'border-line bg-elevated text-muted hover:border-line-strong hover:text-fg',
-          )}
-        >
-          <BadgePercent className={cn('size-4 transition-transform duration-300', filters.onSale && 'scale-110')} aria-hidden />
-          Em promoção
-        </button>
+          <button
+            type="button"
+            aria-pressed={filters.onSale}
+            onClick={() => onChange({ onSale: !filters.onSale })}
+            className={toggleClass(filters.onSale)}
+          >
+            <BadgePercent className={cn('size-4 transition-transform duration-300', filters.onSale && 'scale-110')} aria-hidden />
+            Desconto à vista
+          </button>
+        </div>
 
-        {/* ordenação e paginação ficam no painel recolhível só no celular */}
-        <div className="sm:hidden">{sortSelect}</div>
-        <div className="sm:hidden">{pageSizeSelect}</div>
+        {/* ordenação fica no painel recolhível só no celular; itens por página vão para o rodapé da lista */}
+        <div className="col-span-2 sm:hidden">{sortSelect}</div>
 
         {canClear && (
           <Button
@@ -251,6 +260,8 @@ function SearchField({ value: urlValue, onCommit }: SearchFieldProps) {
   const inputRef = useRef<HTMLInputElement>(null)
   const timer = useRef<number | undefined>(undefined)
   const commitRef = useRef(onCommit)
+  // no celular o campo é estreito (fonte de 16px): dica curta em vez de cortada no meio
+  const wide = useMediaQuery('(min-width: 640px)')
 
   // a URL mudou por fora (Limpar, voltar/avançar): reflete no campo
   if (urlValue !== syncedUrlValue) {
@@ -294,19 +305,19 @@ function SearchField({ value: urlValue, onCommit }: SearchFieldProps) {
             clear()
           }
         }}
-        placeholder="Buscar por nome, marca, categoria ou código…"
+        placeholder={wide ? 'Buscar por nome, marca, categoria ou código…' : 'Nome, marca ou código…'}
         aria-label="Buscar produtos"
         autoComplete="off"
         spellCheck={false}
         enterKeyHint="search"
-        className="pr-10 pl-10"
+        className={cn('pl-10', value ? 'pr-11 sm:pr-10' : 'pr-3 sm:pr-10')}
       />
       {value && (
         <button
           type="button"
           onClick={clear}
           aria-label="Limpar busca"
-          className="absolute top-1/2 right-1.5 inline-flex size-8 -translate-y-1/2 items-center justify-center rounded-full text-subtle transition-colors hover:bg-surface-2 hover:text-fg"
+          className="absolute top-1/2 right-0.5 inline-flex size-10 -translate-y-1/2 items-center justify-center rounded-full text-subtle transition-colors hover:bg-surface-2 hover:text-fg sm:right-1.5 sm:size-8"
         >
           <X className="size-4" aria-hidden />
         </button>

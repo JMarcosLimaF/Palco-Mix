@@ -1,6 +1,6 @@
-import { ArrowUpRight, Check, ChevronLeft, CircleAlert, MessageCircle, Save, Trash2 } from 'lucide-react'
+import { ArrowUpRight, Check, ChevronLeft, CircleAlert, LoaderCircle, MessageCircle, Save, Trash2 } from 'lucide-react'
 import { AnimatePresence, m, useReducedMotion } from 'motion/react'
-import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { Link, useBlocker, useLocation, useNavigate, type BlockerFunction } from 'react-router'
 import { toast } from 'sonner'
 import { AdminPageHeader, Panel, PanelHeader } from '@/components/admin/ui'
@@ -86,6 +86,8 @@ export function ProductForm({ product, onCreateAnother, onDeleted }: ProductForm
   const [submitted, setSubmitted] = useState(false)
   const [saving, setSaving] = useState<SaveMode | null>(null)
   const [deleteOpen, setDeleteOpen] = useState(false)
+  // imagens ainda na fila/otimizando no ImageManager
+  const [pendingUploads, setPendingUploads] = useState(0)
   const [previewBase] = useState(() => ({
     id: product?.id ?? 'pm-novo',
     createdAt: product?.createdAt ?? new Date().toISOString(),
@@ -93,6 +95,9 @@ export function ProductForm({ product, onCreateAnother, onDeleted }: ProductForm
 
   const errors = useMemo(() => validateProductForm(values), [values])
   const isDirty = useMemo(() => snapshotValues(values) !== initial.snapshot, [values, initial.snapshot])
+  const uploading = pendingUploads > 0
+  // envio em andamento também é alteração: sair agora perde as imagens
+  const hasUnsaved = isDirty || uploading
   const visibleError = (field: ProductFormField) => (submitted || touched[field] ? errors[field] : undefined)
 
   function setField<K extends keyof ProductFormValues>(key: K, value: ProductFormValues[K]) {
@@ -129,11 +134,11 @@ export function ProductForm({ product, onCreateAnother, onDeleted }: ProductForm
   const off = hasDiscount ? discountPercent({ price: priceValue, promoPrice: promoValue }) : 0
 
   // ------------------------------------------------------------ saída / bloqueio
-  const dirtyRef = useRef(isDirty)
+  const dirtyRef = useRef(hasUnsaved)
   const allowLeaveRef = useRef(false)
   useEffect(() => {
-    dirtyRef.current = isDirty
-  }, [isDirty])
+    dirtyRef.current = hasUnsaved
+  }, [hasUnsaved])
 
   const shouldBlock = useCallback<BlockerFunction>(
     ({ currentLocation, nextLocation }) =>
@@ -144,7 +149,7 @@ export function ProductForm({ product, onCreateAnother, onDeleted }: ProductForm
 
   // fechar/recarregar a aba com alterações pendentes
   useEffect(() => {
-    if (!isDirty) return
+    if (!hasUnsaved) return
     const onBeforeUnload = (e: BeforeUnloadEvent) => {
       if (allowLeaveRef.current) return
       e.preventDefault()
@@ -152,12 +157,17 @@ export function ProductForm({ product, onCreateAnother, onDeleted }: ProductForm
     }
     window.addEventListener('beforeunload', onBeforeUnload)
     return () => window.removeEventListener('beforeunload', onBeforeUnload)
-  }, [isDirty])
+  }, [hasUnsaved])
 
-  const goBack = useCallback(() => {
-    if (fromList) navigate(-1)
-    else navigate('/admin/produtos')
-  }, [fromList, navigate])
+  // depois de salvar/excluir, a lista substitui o formulário no histórico: o Voltar
+  // do navegador não reabre um produto excluído nem um cadastro em branco
+  const goBack = useCallback(
+    (afterWrite = false) => {
+      if (fromList) navigate(-1)
+      else navigate('/admin/produtos', { replace: afterWrite })
+    },
+    [fromList, navigate],
+  )
 
   // ------------------------------------------------------------ salvar
   function focusField(field: ProductFormField) {
@@ -169,6 +179,13 @@ export function ProductForm({ product, onCreateAnother, onDeleted }: ProductForm
 
   async function save(mode: SaveMode) {
     if (saving) return
+    if (uploading) {
+      // salvar agora gravaria o produto sem as imagens que ainda estão na fila
+      toast.info('Aguarde o envio das imagens', {
+        description: 'Você pode salvar assim que elas terminarem de processar.',
+      })
+      return
+    }
     setSubmitted(true)
     const errs = validateProductForm(values)
     if (hasErrors(errs)) {
@@ -191,27 +208,40 @@ export function ProductForm({ product, onCreateAnother, onDeleted }: ProductForm
         onCreateAnother()
       } else {
         toast.success(product ? 'Alterações salvas' : 'Produto criado', { description: saved.name })
-        goBack()
+        goBack(true)
       }
+      // sucesso: `saving` fica ligado até o formulário sair da tela. A navegação pode
+      // esperar o download da rota da lista, e um 2º toque criaria um produto duplicado.
     } catch (err) {
       toast.error(errorMessage(err))
-    } finally {
       setSaving(null)
     }
   }
 
-  // Cmd/Ctrl+S salva (sempre com a versão mais recente de `save`)
+  // Cmd/Ctrl+S salva (sempre com a versão mais recente de `save`; layout effect
+  // garante a versão nova logo após o commit, antes do setTimeout do atalho)
   const saveRef = useRef(save)
-  useEffect(() => {
+  useLayoutEffect(() => {
     saveRef.current = save
   })
   useEffect(() => {
     function onKeyDown(e: KeyboardEvent) {
       if (!(e.metaKey || e.ctrlKey) || e.altKey || e.key.toLowerCase() !== 's') return
       e.preventDefault()
+      if (e.repeat) return
       // com um diálogo aberto (biblioteca, confirmação) o atalho não dispara
       if (document.querySelector('[role="dialog"][data-state="open"]')) return
-      void saveRef.current('default')
+      // tira o foco do campo antes de salvar: aplica o que só entra no blur (ex.: cor ou
+      // tag digitada sem Enter no ChipsInput). O save roda depois do re-render.
+      const active = document.activeElement
+      const field = active instanceof HTMLElement && active !== document.body ? active : null
+      field?.blur()
+      window.setTimeout(() => {
+        void saveRef.current('default').finally(() => {
+          // não saiu da tela e a validação não moveu o foco: devolve ao campo
+          if (field?.isConnected && document.activeElement === document.body) field.focus({ preventScroll: true })
+        })
+      })
     }
     window.addEventListener('keydown', onKeyDown)
     return () => window.removeEventListener('keydown', onKeyDown)
@@ -224,7 +254,7 @@ export function ProductForm({ product, onCreateAnother, onDeleted }: ProductForm
       allowLeaveRef.current = true
       toast.success('Produto excluído', { description: product.name })
       onDeleted()
-      goBack()
+      goBack(true)
     } catch (err) {
       toast.error(errorMessage(err))
       throw err
@@ -295,7 +325,8 @@ export function ProductForm({ product, onCreateAnother, onDeleted }: ProductForm
     </Panel>
   )
 
-  const sectionBody = 'grid gap-5 p-5 sm:p-6'
+  // grid-cols-1 = minmax(0, 1fr): conteúdo com rolagem lateral (sugestões) não alarga a coluna
+  const sectionBody = 'grid grid-cols-1 gap-5 p-5 sm:p-6'
 
   return (
     <form
@@ -305,28 +336,57 @@ export function ProductForm({ product, onCreateAnother, onDeleted }: ProductForm
         e.preventDefault()
         void save('default')
       }}
-      className="flex flex-col gap-6"
+      className="flex flex-col gap-4 sm:gap-6"
       aria-label={isEdit ? 'Editar produto' : 'Novo produto'}
     >
       <AdminPageHeader
         eyebrow={
-          <button
-            type="button"
-            onClick={goBack}
-            className="group -ml-1 inline-flex h-8 items-center gap-1 rounded-full pr-2.5 pl-1 font-semibold text-muted transition-colors hover:bg-surface-2 hover:text-fg"
-          >
-            <ChevronLeft className="size-4 transition-transform duration-200 ease-out-expo group-hover:-translate-x-0.5" aria-hidden />
-            Produtos
-          </button>
+          <div className="flex items-center justify-between gap-2">
+            <button
+              type="button"
+              onClick={() => goBack()}
+              className="group -ml-1.5 inline-flex h-11 items-center gap-1 rounded-full pr-3.5 pl-1.5 font-semibold text-muted transition-colors hover:bg-surface-2 hover:text-fg sm:-ml-1 sm:h-8 sm:pr-2.5 sm:pl-1"
+            >
+              <ChevronLeft className="size-4 transition-transform duration-200 ease-out-expo group-hover:-translate-x-0.5" aria-hidden />
+              Produtos
+            </button>
+            {/* celular: ações do produto como ícones na linha do "voltar" (economiza uma linha inteira) */}
+            {product && (
+              <div className="-mr-1.5 flex items-center gap-1 sm:hidden">
+                <a
+                  href={`/produto/${product.id}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label="Ver na loja (abre em nova aba)"
+                  title="Ver na loja"
+                  className={buttonVariants({ variant: 'ghost', size: 'icon', className: 'size-11 text-muted hover:text-fg' })}
+                >
+                  <ArrowUpRight aria-hidden />
+                </a>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="size-11 text-danger-500 hover:bg-red-500/10"
+                  onClick={() => setDeleteOpen(true)}
+                  aria-label="Excluir produto"
+                  title="Excluir"
+                >
+                  <Trash2 aria-hidden />
+                </Button>
+              </div>
+            )}
+          </div>
         }
+        actionsClassName="max-sm:hidden"
         title={isEdit ? 'Editar produto' : 'Novo produto'}
         description={
           product ? (
-            <span className="flex flex-wrap items-center gap-x-2 gap-y-1">
-              <Badge tone="outline" className="tabular-nums">
+            <span className="flex items-start gap-2 sm:flex-wrap sm:items-center sm:gap-y-1">
+              <Badge tone="outline" className="mt-px shrink-0 tabular-nums sm:mt-0">
                 {productCode(product.id)}
               </Badge>
-              <span className="min-w-0 truncate">{product.name}</span>
+              {/* no celular o nome quebra em até 2 linhas em vez de sumir no "…" */}
+              <span className="min-w-0 max-sm:line-clamp-2 sm:truncate">{product.name}</span>
             </span>
           ) : (
             'Cadastre um produto para a vitrine. Campos com * são obrigatórios.'
@@ -358,8 +418,8 @@ export function ProductForm({ product, onCreateAnother, onDeleted }: ProductForm
         }
       />
 
-      <div className="grid gap-6 lg:grid-cols-3 lg:items-start">
-        <div className="flex min-w-0 flex-col gap-6 lg:col-span-2">
+      <div className="grid gap-4 sm:gap-6 lg:grid-cols-3 lg:items-start">
+        <div className="flex min-w-0 flex-col gap-4 sm:gap-6 lg:col-span-2">
           {!isDesktop && preview}
 
           <Panel>
@@ -410,7 +470,7 @@ export function ProductForm({ product, onCreateAnother, onDeleted }: ProductForm
           <Panel>
             <PanelHeader
               title="Preço"
-              description="Com preço promocional, a loja mostra o valor em destaque e o preço normal riscado."
+              description="Com desconto à vista, a loja destaca o preço à vista e mostra o valor a prazo ao lado."
             />
             <div className={sectionBody}>
               <Switch
@@ -427,7 +487,7 @@ export function ProductForm({ product, onCreateAnother, onDeleted }: ProductForm
                 </p>
               ) : (
                 <div className="grid animate-fade-in gap-5 sm:grid-cols-2">
-                  <Field label="Preço" required error={visibleError('price')}>
+                  <Field label="Preço a prazo (normal)" required error={visibleError('price')}>
                     <PriceInput
                       id={fieldId('price')}
                       value={values.price}
@@ -437,9 +497,9 @@ export function ProductForm({ product, onCreateAnother, onDeleted }: ProductForm
                     />
                   </Field>
                   <Field
-                    label="Preço promocional"
+                    label="Preço à vista (com desconto)"
                     error={visibleError('promoPrice')}
-                    hint="Opcional. Deixe vazio se não houver promoção."
+                    hint="Opcional. Deixe vazio se não houver desconto à vista."
                     aside={
                       <AnimatePresence initial={false}>
                         {off > 0 && (
@@ -450,7 +510,7 @@ export function ProductForm({ product, onCreateAnother, onDeleted }: ProductForm
                             exit={{ opacity: 0, scale: 0.8, transition: { duration: 0.15 } }}
                             className="rounded-full bg-brand-500/10 px-2 py-0.5 text-[0.6875rem] font-bold whitespace-nowrap text-brand-600 tabular-nums dark:text-brand-400"
                           >
-                            -{off}% de desconto
+                            -{off}% à vista
                           </m.span>
                         )}
                       </AnimatePresence>
@@ -469,10 +529,10 @@ export function ProductForm({ product, onCreateAnother, onDeleted }: ProductForm
                       className="animate-fade-in rounded-xl bg-surface px-3.5 py-2.5 text-xs text-muted sm:col-span-2"
                       aria-live="polite"
                     >
-                      O cliente paga{' '}
-                      <strong className="font-bold text-fg tabular-nums">{formatBRL(promoValue)}</strong> em vez de{' '}
-                      <span className="tabular-nums line-through">{formatBRL(priceValue)}</span> · economia de{' '}
-                      <strong className="font-semibold text-fg tabular-nums">{formatBRL(priceValue - promoValue)}</strong>
+                      À vista o cliente paga{' '}
+                      <strong className="font-bold text-fg tabular-nums">{formatBRL(promoValue)}</strong> e economiza{' '}
+                      <strong className="font-semibold text-fg tabular-nums">{formatBRL(priceValue - promoValue)}</strong>. A
+                      prazo, continua <span className="tabular-nums">{formatBRL(priceValue)}</span>.
                     </p>
                   )}
                 </div>
@@ -592,7 +652,13 @@ export function ProductForm({ product, onCreateAnother, onDeleted }: ProductForm
           <Panel>
             <PanelHeader
               title="Imagens"
-              description="A primeira é a capa do produto. Arraste ou use as setas para reordenar."
+              description={
+                <>
+                  A primeira é a capa do produto.{' '}
+                  <span className="pointer-coarse:hidden">Arraste ou use as setas para reordenar.</span>
+                  <span className="hidden pointer-coarse:inline">Use as setas para reordenar.</span>
+                </>
+              }
               actions={
                 values.images.length > 0 ? (
                   <Badge tone="neutral" className="tabular-nums">
@@ -601,8 +667,13 @@ export function ProductForm({ product, onCreateAnother, onDeleted }: ProductForm
                 ) : undefined
               }
             />
-            <div className="p-5 sm:p-6">
-              <ImageManager images={values.images} onChange={setImages} productName={values.name} />
+            <div className="p-4 sm:p-6">
+              <ImageManager
+                images={values.images}
+                onChange={setImages}
+                productName={values.name}
+                onPendingChange={setPendingUploads}
+              />
             </div>
           </Panel>
 
@@ -622,30 +693,61 @@ export function ProductForm({ product, onCreateAnother, onDeleted }: ProductForm
         )}
       </div>
 
-      {/* barra de ações fixa no rodapé */}
-      <div className="sticky bottom-[max(0.75rem,env(safe-area-inset-bottom))] z-30">
-        <div className="flex items-center gap-2 rounded-2xl border border-line bg-elevated/85 p-2 shadow-pop backdrop-blur-xl sm:gap-3 sm:pl-4 dark:bg-elevated/80">
-          <div className="hidden min-w-0 flex-1 items-center gap-2 text-xs sm:flex" aria-live="polite">
-            {isDirty ? (
+      {/* barra de ações fixa no rodapé: no celular ocupa a largura toda, colada à borda
+          (respeita a barra de gestos); do sm em diante, cartão flutuante */}
+      <div className="sticky bottom-0 z-30 -mx-4 mb-[calc(-1*max(1rem,env(safe-area-inset-bottom)))] sm:bottom-[max(0.75rem,env(safe-area-inset-bottom))] sm:mx-0 sm:mb-0">
+        <div className="flex items-center gap-2 border-t border-line bg-elevated/90 px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] shadow-[0_-12px_32px_-20px_rgb(13_13_13/0.45)] backdrop-blur-xl sm:gap-3 sm:rounded-2xl sm:border sm:bg-elevated/85 sm:p-2 sm:pl-4 sm:shadow-pop dark:bg-elevated/85 sm:dark:bg-elevated/80">
+          {/* status: no cadastro novo o celular não tem espaço (3 botões) */}
+          <div
+            className={cn('min-w-0 flex-1 items-center gap-2 text-xs', isEdit ? 'flex' : 'hidden sm:flex')}
+            aria-live="polite"
+          >
+            {uploading ? (
               <>
-                <span className="relative flex size-2" aria-hidden>
+                <LoaderCircle className="size-3.5 shrink-0 animate-spin text-brand-500" aria-hidden />
+                <span className="truncate font-semibold text-fg">
+                  <span className="sm:hidden">Enviando…</span>
+                  <span className="max-sm:hidden">Enviando imagens…</span>
+                </span>
+              </>
+            ) : isDirty ? (
+              <>
+                <span className="relative flex size-2 shrink-0" aria-hidden>
                   <span className="absolute inline-flex size-full animate-ping rounded-full bg-amber-500/60" />
                   <span className="relative inline-flex size-2 rounded-full bg-amber-500" />
                 </span>
-                <span className="truncate font-semibold text-fg">Alterações não salvas</span>
+                <span className="truncate font-semibold text-fg">
+                  <span className="sm:hidden">Não salvo</span>
+                  <span className="max-sm:hidden">Alterações não salvas</span>
+                </span>
               </>
             ) : (
               <>
                 <Check className="size-3.5 shrink-0 text-emerald-500" aria-hidden />
-                <span className="truncate text-muted">{isEdit ? 'Nenhuma alteração' : 'Formulário em branco'}</span>
+                <span className="truncate text-muted">
+                  {isEdit ? (
+                    <>
+                      <span className="sm:hidden">Sem alterações</span>
+                      <span className="max-sm:hidden">Nenhuma alteração</span>
+                    </>
+                  ) : (
+                    'Formulário em branco'
+                  )}
+                </span>
               </>
             )}
             <kbd className="ml-1 hidden rounded-md border border-line bg-surface px-1.5 py-0.5 font-sans text-[0.6875rem] font-semibold text-subtle md:inline-block">
               {IS_MAC ? '⌘' : 'Ctrl'} S
             </kbd>
           </div>
-          <div className="ml-auto flex items-center gap-1.5 sm:gap-2">
-            <Button variant="ghost" size="sm" onClick={goBack} disabled={saving !== null} className="px-3 sm:px-4">
+          <div className={cn('flex items-center gap-2', isEdit ? 'ml-auto' : 'w-full sm:ml-auto sm:w-auto')}>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => goBack()}
+              disabled={saving !== null}
+              className="px-3.5 max-sm:h-11 sm:px-4"
+            >
               Cancelar
             </Button>
             {!isEdit && (
@@ -655,14 +757,20 @@ export function ProductForm({ product, onCreateAnother, onDeleted }: ProductForm
                 onClick={() => void save('another')}
                 loading={saving === 'another'}
                 disabled={saving !== null}
-                className="px-3 sm:px-4"
+                className="px-3.5 max-sm:h-11 sm:px-4"
               >
                 <span className="sm:hidden">Salvar + novo</span>
                 <span className="hidden sm:inline">Salvar e criar outro</span>
               </Button>
             )}
-            <Button type="submit" size="sm" loading={saving === 'default'} disabled={saving !== null} className="px-4 sm:px-5">
-              {saving !== 'default' && <Save className="hidden sm:block" aria-hidden />}
+            <Button
+              type="submit"
+              size="sm"
+              loading={saving === 'default'}
+              disabled={saving !== null}
+              className={cn('px-5 max-sm:h-11', !isEdit && 'max-sm:flex-1')}
+            >
+              {saving !== 'default' && <Save className={isEdit ? undefined : 'hidden sm:block'} aria-hidden />}
               Salvar
             </Button>
           </div>
@@ -675,7 +783,11 @@ export function ProductForm({ product, onCreateAnother, onDeleted }: ProductForm
           if (!open && !allowLeaveRef.current) blocker.reset?.()
         }}
         title="Descartar alterações?"
-        description="Você tem alterações não salvas neste produto. Se sair agora, elas serão perdidas."
+        description={
+          uploading
+            ? 'Ainda há imagens sendo enviadas. Se sair agora, elas e as demais alterações serão perdidas.'
+            : 'Você tem alterações não salvas neste produto. Se sair agora, elas serão perdidas.'
+        }
         confirmLabel="Descartar e sair"
         cancelLabel="Continuar editando"
         onConfirm={() => {
@@ -708,14 +820,23 @@ function ChipsHelp() {
   )
 }
 
+/**
+ * Abre em nova aba para não obrigar a descartar o cadastro em andamento; o que for
+ * criado lá aparece aqui sozinho (sincronização entre abas). rel="opener" leva junto
+ * a sessão não lembrada (sessionStorage), que uma aba noopener não herdaria.
+ */
 function ManageLink({ to, label }: { to: string; label: string }) {
   return (
     <Link
       to={to}
-      aria-label={label}
-      className="text-xs font-semibold text-brand-600 transition-colors hover:text-brand-500 hover:underline dark:text-brand-400"
+      target="_blank"
+      rel="opener"
+      aria-label={`${label} (abre em nova aba)`}
+      // celular: área de toque maior sem mexer no alinhamento do rótulo
+      className="inline-flex items-center gap-0.5 text-xs font-semibold text-brand-600 transition-colors hover:text-brand-500 hover:underline max-sm:-my-3 max-sm:-mr-2 max-sm:py-3 max-sm:pr-2 max-sm:pl-3 dark:text-brand-400"
     >
       Gerenciar
+      <ArrowUpRight className="size-3" aria-hidden />
     </Link>
   )
 }

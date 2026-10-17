@@ -10,14 +10,29 @@ import { ServiceError } from './errors'
 
 const ID_PREFIX = 'pm-'
 
-function nextProductId(products: Product[]): string {
+/** Maior número entre os ids "pm-0001" existentes (ignora outros formatos, ex.: pm-t1). */
+function maxProductIdNumber(products: Array<Pick<Product, 'id'>>): number {
   let max = 0
   for (const p of products) {
     if (!p.id.startsWith(ID_PREFIX)) continue
     const n = Number(p.id.slice(ID_PREFIX.length))
-    if (Number.isFinite(n) && n > max) max = n
+    if (Number.isInteger(n) && n > max) max = n
   }
-  return `${ID_PREFIX}${String(max + 1).padStart(4, '0')}`
+  return max
+}
+
+/**
+ * Próximo número da sequência de códigos. Contador monotônico: excluir o
+ * produto mais recente não libera o código dele. Sem `productSeq` (seed ou
+ * backup antigo), parte do maior id existente.
+ */
+export function nextProductSeq(data: { products: Array<Pick<Product, 'id'>>; productSeq?: number }): number {
+  const stored = data.productSeq !== undefined && Number.isInteger(data.productSeq) ? data.productSeq : 0
+  return Math.max(stored, maxProductIdNumber(data.products)) + 1
+}
+
+export function productIdFromSeq(seq: number): string {
+  return `${ID_PREFIX}${String(seq).padStart(4, '0')}`
 }
 
 function round2(n: number) {
@@ -36,11 +51,12 @@ export function sanitizeProductInput(input: ProductInput, data: CatalogData): Pr
     input.promoPrice === undefined || input.promoPrice === null || Number.isNaN(input.promoPrice)
       ? undefined
       : round2(input.promoPrice)
+  // promoPrice = preço à vista (com desconto); price = preço a prazo (normal)
   if (promo !== undefined && input.price === 0) {
-    throw new ServiceError('validation', 'Produto sob consulta não pode ter preço promocional.')
+    throw new ServiceError('validation', 'Produto sob consulta não pode ter preço à vista.')
   }
   if (promo !== undefined && (promo <= 0 || promo >= input.price)) {
-    throw new ServiceError('validation', 'O preço promocional deve ser menor que o preço normal.')
+    throw new ServiceError('validation', 'O preço à vista deve ser menor que o preço a prazo.')
   }
   if (!data.categories.some((c) => c.id === input.category)) {
     throw new ServiceError('validation', 'Selecione uma categoria válida.')
@@ -108,8 +124,9 @@ export const productService = {
     const data = localDb.get()
     const clean = sanitizeProductInput(input, data)
     const now = new Date().toISOString()
-    const product: Product = { ...clean, id: nextProductId(data.products), createdAt: now, updatedAt: now }
-    localDb.commit({ ...data, products: [product, ...data.products] })
+    const seq = nextProductSeq(data)
+    const product: Product = { ...clean, id: productIdFromSeq(seq), createdAt: now, updatedAt: now }
+    localDb.commit({ ...data, productSeq: seq, products: [product, ...data.products] })
     return product
   },
 
@@ -145,14 +162,16 @@ export const productService = {
   async remove(id: string): Promise<void> {
     const data = localDb.get()
     if (!data.products.some((p) => p.id === id)) throw new ServiceError('not_found', 'Produto não encontrado.')
-    localDb.commit({ ...data, products: data.products.filter((p) => p.id !== id) })
+    // fixa o contador antes de remover: o código do excluído não volta a ser usado
+    const products = data.products.filter((p) => p.id !== id)
+    localDb.commit({ ...data, productSeq: nextProductSeq(data) - 1, products })
   },
 
   async removeMany(ids: string[]): Promise<number> {
     const set = new Set(ids)
     const data = localDb.get()
     const products = data.products.filter((p) => !set.has(p.id))
-    localDb.commit({ ...data, products })
+    localDb.commit({ ...data, productSeq: nextProductSeq(data) - 1, products })
     return data.products.length - products.length
   },
 

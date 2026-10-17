@@ -1,7 +1,7 @@
 import * as Dialog from '@radix-ui/react-dialog'
 import { ChevronLeft, ChevronRight, X } from 'lucide-react'
 import { AnimatePresence, m } from 'motion/react'
-import { useEffect, useRef, type KeyboardEvent, type PointerEvent } from 'react'
+import { useEffect, useRef, useState, type KeyboardEvent, type PointerEvent } from 'react'
 import { cn } from '@/lib/utils'
 import { THUMB_IMAGE_SIZES } from './catalog-helpers'
 import { ZoomImage } from './image-zoom'
@@ -30,7 +30,8 @@ export interface ImageLightboxProps {
 
 /**
  * Visualizador em tela cheia: imagem original em alta resolução, navegação por
- * setas/teclado/swipe, miniaturas e zoom 2x no clique (mouse).
+ * setas/teclado/swipe, miniaturas e zoom 2x no clique ou toque (no toque,
+ * ampliada, o arrasto move a imagem).
  * Radix Dialog cuida de foco preso, Esc e bloqueio de rolagem.
  */
 export function ImageLightbox({ open, onOpenChange, images, name, index, onIndexChange }: ImageLightboxProps) {
@@ -42,6 +43,21 @@ export function ImageLightbox({ open, onOpenChange, images, name, index, onIndex
     if (!multiple) return
     onIndexChange((index + delta + count) % count)
   }
+
+  // imagem ampliada (por índice: trocar de imagem volta ao normal); zera ao fechar
+  const [zoomedIndex, setZoomedIndex] = useState<number | null>(null)
+  const [wasOpen, setWasOpen] = useState(open)
+  if (open !== wasOpen) {
+    setWasOpen(open)
+    if (!open) setZoomedIndex(null)
+  }
+  // trocar de imagem (miniatura, teclado, swipe) sempre volta ao tamanho normal
+  const [prevIndex, setPrevIndex] = useState(index)
+  if (index !== prevIndex) {
+    setPrevIndex(index)
+    setZoomedIndex(null)
+  }
+  const zoomed = zoomedIndex === index
 
   // pré-carrega os originais vizinhos enquanto o visualizador está aberto
   useEffect(() => {
@@ -77,6 +93,8 @@ export function ImageLightbox({ open, onOpenChange, images, name, index, onIndex
     const start = swipe.current
     swipe.current = null
     if (!start) return
+    // ampliada (zoom do visualizador ou pinça do navegador): arrastar só move a imagem
+    if (zoomed || (window.visualViewport?.scale ?? 1) > 1.01) return
     const dx = event.clientX - start.x
     const dy = event.clientY - start.y
     if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.2) go(dx < 0 ? 1 : -1)
@@ -107,8 +125,8 @@ export function ImageLightbox({ open, onOpenChange, images, name, index, onIndex
                 <Dialog.Title className="sr-only">Imagens de {name}</Dialog.Title>
                 <Dialog.Description className="sr-only">
                   {multiple
-                    ? 'Use as setas do teclado para navegar entre as imagens. Clique na imagem para ampliar.'
-                    : 'Clique na imagem para ampliar.'}
+                    ? 'Use as setas do teclado para navegar entre as imagens. Clique ou toque na imagem para ampliar.'
+                    : 'Clique ou toque na imagem para ampliar.'}
                 </Dialog.Description>
 
                 <div className="flex shrink-0 items-center justify-between gap-4 px-4 pt-[max(0.75rem,env(safe-area-inset-top))] pb-3 sm:px-6">
@@ -147,6 +165,7 @@ export function ImageLightbox({ open, onOpenChange, images, name, index, onIndex
                         alt={multiple ? `${name} — imagem ${index + 1} de ${count}` : name}
                         sizes={VIEWER_SIZES}
                         mode="click"
+                        onZoomChange={(active) => setZoomedIndex(active ? index : null)}
                         eagerHiRes
                         priority
                         className="[&_img]:bg-transparent!"

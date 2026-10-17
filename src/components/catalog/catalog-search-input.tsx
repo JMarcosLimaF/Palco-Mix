@@ -18,28 +18,36 @@ export interface CatalogSearchInputProps {
  */
 export function CatalogSearchInput({ value, onCommit, className, delay = 250 }: CatalogSearchInputProps) {
   const [text, setText] = useState(value)
-  // último termo enviado/recebido da URL — distingue o "eco" da nossa própria
-  // atualização de uma mudança externa (chip removido, "limpar", voltar)
-  const [echo, setEcho] = useState(value)
-  if (value !== echo) {
-    setEcho(value)
-    setText(value)
+  // último termo enviado ou recebido da URL (evita reenviar o que ela já tem)
+  const [sent, setSent] = useState(value)
+  // último valor da prop: só uma MUDANÇA da URL mexe no texto. O router aplica
+  // a navegação numa transição, então há renders com a prop ainda antiga logo
+  // após o envio — compará-la com `sent` apagaria o que foi digitado.
+  const [prevValue, setPrevValue] = useState(value)
+  if (value !== prevValue) {
+    setPrevValue(value)
+    // eco do nosso próprio envio: o texto já está certo (e pode ter avançado)
+    if (value !== sent) {
+      // mudança externa (chip removido, "limpar", voltar)
+      setSent(value)
+      setText(value)
+    }
   }
 
   useEffect(() => {
     const term = text.trim()
-    if (term === echo) return
+    if (term === sent) return
     const timer = window.setTimeout(() => {
-      setEcho(term)
+      setSent(term)
       onCommit(term)
     }, delay)
     return () => window.clearTimeout(timer)
-  }, [text, echo, onCommit, delay])
+  }, [text, sent, onCommit, delay])
 
   function commitNow(next: string) {
     const term = next.trim()
-    if (term === echo) return
-    setEcho(term)
+    if (term === sent) return
+    setSent(term)
     onCommit(term)
   }
 
@@ -61,7 +69,7 @@ export function CatalogSearchInput({ value, onCommit, className, delay = 250 }: 
         enterKeyHint="search"
         autoComplete="off"
         spellCheck={false}
-        className="h-11 w-full rounded-full border border-line bg-surface pr-10 pl-10 text-sm text-fg placeholder:text-subtle transition-[border-color,box-shadow,background-color] duration-200 hover:border-line-strong focus:border-brand-500 focus:bg-elevated focus:ring-4 focus:ring-brand-500/15 focus:outline-none"
+        className="h-11 w-full rounded-full border border-line bg-surface pr-11 pl-10 text-sm text-fg placeholder:text-subtle transition-[border-color,box-shadow,background-color] duration-200 hover:border-line-strong focus:border-brand-500 focus:bg-elevated focus:ring-4 focus:ring-brand-500/15 focus:outline-none"
       />
       {text && (
         <button
@@ -71,7 +79,7 @@ export function CatalogSearchInput({ value, onCommit, className, delay = 250 }: 
             commitNow('')
           }}
           aria-label="Limpar busca"
-          className="absolute top-1/2 right-2 inline-flex size-7 -translate-y-1/2 items-center justify-center rounded-full text-subtle transition hover:bg-surface-2 hover:text-fg"
+          className="absolute top-1/2 right-0.5 inline-flex size-10 -translate-y-1/2 items-center justify-center rounded-full text-subtle transition hover:bg-surface-2 hover:text-fg lg:right-2 lg:size-7"
         >
           <X className="size-4" aria-hidden />
         </button>

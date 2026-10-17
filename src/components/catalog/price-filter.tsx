@@ -16,7 +16,7 @@ export interface PriceFilterProps {
 }
 
 const inputClass =
-  'h-10 w-full rounded-xl border border-line bg-elevated pr-3 pl-9 text-sm text-fg tabular-nums placeholder:text-subtle ' +
+  'h-11 w-full rounded-xl border border-line bg-elevated pr-3 pl-9 text-sm text-fg tabular-nums placeholder:text-subtle lg:h-10 ' +
   'transition-[border-color,box-shadow] duration-200 hover:border-line-strong focus:border-brand-500 focus:ring-4 focus:ring-brand-500/15 focus:outline-none'
 
 /**
@@ -111,7 +111,7 @@ export function PriceFilter({ minPrice, maxPrice, range, onChange }: PriceFilter
       )}
 
       {shortcuts.length > 0 && (
-        <ul className="flex flex-wrap gap-1.5" aria-label="Atalhos de faixa de preço">
+        <ul className="flex flex-wrap gap-2 lg:gap-1.5" aria-label="Atalhos de faixa de preço">
           {shortcuts.map((s) => {
             const active = s.min === minPrice && s.max === maxPrice
             return (
@@ -121,7 +121,7 @@ export function PriceFilter({ minPrice, maxPrice, range, onChange }: PriceFilter
                   aria-pressed={active}
                   onClick={() => (active ? onChange(undefined, undefined) : onChange(s.min, s.max))}
                   className={cn(
-                    'inline-flex h-8 items-center rounded-full border px-3 text-xs font-semibold tabular-nums transition-[background-color,border-color,color,transform] duration-200 ease-out-expo active:scale-[0.96]',
+                    'inline-flex h-10 items-center rounded-full border px-3.5 text-[0.8125rem] font-semibold tabular-nums transition-[background-color,border-color,color,transform] duration-200 ease-out-expo active:scale-[0.96] lg:h-8 lg:px-3 lg:text-xs',
                     active
                       ? 'border-fg bg-fg text-bg'
                       : 'border-line bg-transparent text-muted hover:border-line-strong hover:text-fg',

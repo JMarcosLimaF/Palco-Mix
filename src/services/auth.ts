@@ -26,7 +26,7 @@ const MOCK_USERS: Array<AdminUser & { password: string }> = [
   { username: 'admin', password: '123456', name: 'Administrador', role: 'admin' },
 ]
 
-const SESSION_KEY = 'palcomix:session'
+export const SESSION_KEY = 'palcomix:session'
 const SESSION_HOURS = 8
 const REMEMBER_DAYS = 7
 
@@ -36,13 +36,35 @@ function randomToken(): string {
   return Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join('')
 }
 
-function read(storage: Storage): Session | null {
+/**
+ * Acesso protegido ao storage: com cookies/dados de sites bloqueados, o próprio
+ * getter `window.localStorage` lança SecurityError.
+ */
+function storage(kind: 'local' | 'session'): Storage | null {
   try {
-    const raw = storage.getItem(SESSION_KEY)
+    return kind === 'local' ? window.localStorage : window.sessionStorage
+  } catch {
+    return null
+  }
+}
+
+/** Remove a sessão sem deixar erro de storage escapar. */
+function clear(store: Storage | null) {
+  try {
+    store?.removeItem(SESSION_KEY)
+  } catch {
+    // storage indisponível: não há o que limpar
+  }
+}
+
+function read(store: Storage | null): Session | null {
+  if (!store) return null
+  try {
+    const raw = store.getItem(SESSION_KEY)
     if (!raw) return null
     const session = JSON.parse(raw) as Session
-    if (!session?.user || typeof session.expiresAt !== 'number' || session.expiresAt < Date.now()) {
-      storage.removeItem(SESSION_KEY)
+    if (!session?.user || typeof session.expiresAt !== 'number' || session.expiresAt <= Date.now()) {
+      store.removeItem(SESSION_KEY)
       return null
     }
     return session
@@ -53,7 +75,7 @@ function read(storage: Storage): Session | null {
 
 export const authService = {
   getSession(): Session | null {
-    return read(localStorage) ?? read(sessionStorage)
+    return read(storage('local')) ?? read(storage('session'))
   },
 
   async login(username: string, password: string, remember = false): Promise<Session> {
@@ -66,13 +88,22 @@ export const authService = {
     void _omit
     const ttl = remember ? REMEMBER_DAYS * 24 * 3600_000 : SESSION_HOURS * 3600_000
     const session: Session = { user: publicUser, token: randomToken(), expiresAt: Date.now() + ttl }
-    ;(remember ? localStorage : sessionStorage).setItem(SESSION_KEY, JSON.stringify(session))
-    ;(remember ? sessionStorage : localStorage).removeItem(SESSION_KEY)
+    const target = storage(remember ? 'local' : 'session')
+    try {
+      if (!target) throw new Error('storage indisponível')
+      target.setItem(SESSION_KEY, JSON.stringify(session))
+    } catch {
+      throw new ServiceError(
+        'storage',
+        'Ative o armazenamento do navegador (cookies e dados de sites) para entrar no painel.',
+      )
+    }
+    clear(storage(remember ? 'session' : 'local'))
     return session
   },
 
   logout(): void {
-    localStorage.removeItem(SESSION_KEY)
-    sessionStorage.removeItem(SESSION_KEY)
+    clear(storage('local'))
+    clear(storage('session'))
   },
 }

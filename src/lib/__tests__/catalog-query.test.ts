@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { queryProducts, resolveSort } from '@/lib/catalog-query'
+import { normalizeSearch, queryProducts, resolveSort, tokenize } from '@/lib/catalog-query'
 import type { Category, Distributor, Product } from '@/types/catalog'
 
 const categories: Category[] = [
@@ -103,5 +103,54 @@ describe('queryProducts', () => {
     const elapsed = performance.now() - t0
     expect(r.total).toBe(10_000)
     expect(elapsed).toBeLessThan(1500)
+  })
+})
+
+describe('busca ignora pontuação, hífens e apóstrofos', () => {
+  const brands: Distributor[] = [
+    { id: 'coca-cola', name: 'Coca-Cola Shoes', createdAt: '2026-01-01T00:00:00Z' },
+    { id: 'dcalce', name: "D'Calce", createdAt: '2026-01-01T00:00:00Z' },
+    { id: 'beira-rio', name: 'Beira Rio', createdAt: '2026-01-01T00:00:00Z' },
+  ]
+  const items: Product[] = [
+    product({ id: 'pm-0010', name: 'Tênis Coca-Cola Shoes Preto', distributor: 'coca-cola' }),
+    // sem a tag manual "dcalce": tem que achar só pelo nome da marca
+    product({ id: 'pm-0011', name: "Sandália D'Calce Nude", distributor: 'dcalce', tags: ['sandalia'] }),
+    product({ id: 'pm-0012', name: 'Tênis Beira Rio Slip-On Branco', distributor: 'beira-rio' }),
+  ]
+  const src = { products: items, categories, distributors: brands }
+  const ids = (search: string) => queryProducts(src, { search }).items.map((p) => p.id)
+
+  it('normaliza só para a busca: pontuação vira espaço', () => {
+    expect(normalizeSearch("D’Calce")).toBe('d calce')
+    expect(normalizeSearch('  Coca-Cola, ')).toBe('coca cola')
+    expect(tokenize('coca cola,')).toEqual(['coca', 'cola'])
+    expect(tokenize('tênis, ')).toEqual(['tenis'])
+    expect(tokenize(' , - ')).toEqual([])
+  })
+
+  it('acha a marca digitada sem hífen ou com pontuação solta', () => {
+    expect(ids('cocacola')).toEqual(['pm-0010'])
+    expect(ids('coca cola,')).toEqual(['pm-0010'])
+    expect(ids('Coca-Cola')).toEqual(['pm-0010'])
+  })
+
+  it('acha D’Calce sem apóstrofo, separado ou com apóstrofo tipográfico', () => {
+    expect(ids('dcalce')).toEqual(['pm-0011'])
+    expect(ids('d calce')).toEqual(['pm-0011'])
+    expect(ids('d’calce')).toEqual(['pm-0011'])
+    expect(ids("D'Calce nude")).toEqual(['pm-0011'])
+  })
+
+  it('código sem hífen e marca/termos colados', () => {
+    expect(ids('pm0012')[0]).toBe('pm-0012')
+    expect(ids('PM-0012')[0]).toBe('pm-0012')
+    expect(ids('beirario')).toEqual(['pm-0012'])
+    expect(ids('slipon')).toEqual(['pm-0012'])
+  })
+
+  it('termo só com pontuação não filtra nada', () => {
+    expect(queryProducts(src, { search: ' , ' }).total).toBe(3)
+    expect(resolveSort({ search: ' - ' })).toBe('recent')
   })
 })

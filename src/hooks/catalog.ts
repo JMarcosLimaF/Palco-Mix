@@ -7,7 +7,6 @@
  */
 import { keepPreviousData, useMutation, useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
-import { adminService } from '@/services/admin'
 import { productService } from '@/services/products'
 import { categoryService, distributorService } from '@/services/taxonomy'
 import type {
@@ -103,9 +102,6 @@ export function useDistributorUsage() {
   return useQuery({ queryKey: catalogKeys.distributorUsage, queryFn: () => distributorService.usage() })
 }
 
-export function useDashboardStats() {
-  return useQuery({ queryKey: catalogKeys.stats, queryFn: () => adminService.stats() })
-}
 
 export interface CatalogLookups {
   categories: Category[]

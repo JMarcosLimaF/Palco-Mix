@@ -18,6 +18,28 @@ import type {
 import { CATALOG_PAGE_SIZE } from '@/config/site'
 import { effectivePrice, hasPromo, normalizeText } from './utils'
 
+const NON_ALNUM = /[^a-z0-9]+/g
+/** Palavras unidas por pontuação: "coca-cola", "d'calce", "pm-0012", "slip-on". */
+const PUNCTUATED_WORD = /[a-z0-9]+(?:[^a-z0-9 ]+[a-z0-9]+)+/g
+
+/**
+ * Normalização exclusiva da busca: além de acentos/caixa, a pontuação vira
+ * espaço — "D’Calce" → "d calce", "coca cola," → "coca cola".
+ */
+export function normalizeSearch(value: string): string {
+  return normalizeText(value).replace(NON_ALNUM, ' ').trim()
+}
+
+/**
+ * Texto indexável: forma com espaços + palavras com pontuação coladas, para
+ * achar quem digita sem hífen/apóstrofo ("cocacola", "dcalce", "pm0012").
+ */
+function searchable(value: string): string {
+  const text = normalizeText(value)
+  const joined = (text.match(PUNCTUATED_WORD) ?? []).map((word) => word.replace(NON_ALNUM, ''))
+  return [text.replace(NON_ALNUM, ' ').trim(), ...joined].join(' ')
+}
+
 export interface CatalogSource {
   products: Product[]
   categories: Category[]
@@ -57,16 +79,18 @@ export function getIndex(source: CatalogSource): IndexedProduct[] {
   const distName = new Map(source.distributors.map((d) => [d.id, d.name]))
 
   const index = source.products.map<IndexedProduct>((product) => {
-    const name = normalizeText(product.name)
-    const meta = normalizeText(`${distName.get(product.distributor) ?? ''} ${catName.get(product.category) ?? ''}`)
+    const brand = distName.get(product.distributor) ?? ''
+    // marca toda colada também casa: "beirario", "cocacolashoes"
+    const brandCompact = normalizeText(brand).replace(NON_ALNUM, '')
+    const name = normalizeSearch(product.name)
+    const meta = `${searchable(`${brand} ${catName.get(product.category) ?? ''}`)} ${brandCompact}`
     const code = normalizeText(product.id)
-    const haystack = normalizeText(
+    const haystack = `${searchable(
       [
         product.name,
-        distName.get(product.distributor),
+        brand,
         catName.get(product.category),
         product.id,
-        product.id.replace(/[^a-z0-9]/gi, ''),
         product.sizes,
         product.gender,
         ...(product.colors ?? []),
@@ -75,7 +99,7 @@ export function getIndex(source: CatalogSource): IndexedProduct[] {
       ]
         .filter(Boolean)
         .join(' '),
-    )
+    )} ${brandCompact}`
     const created = new Date(product.createdAt).getTime()
     return {
       product,
@@ -94,7 +118,7 @@ export function getIndex(source: CatalogSource): IndexedProduct[] {
 
 export function tokenize(search: string | undefined): string[] {
   if (!search) return []
-  return normalizeText(search).split(' ').filter(Boolean)
+  return normalizeSearch(search).split(' ').filter(Boolean)
 }
 
 /** Pontua um produto para os tokens; retorna 0 quando algum token não casa. */

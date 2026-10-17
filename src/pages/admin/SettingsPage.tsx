@@ -2,7 +2,7 @@
  * /admin/configuracoes — aparência, dados do catálogo (backup/restauração),
  * teste de desempenho e aviso sobre a autenticação de demonstração.
  */
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import {
   ArrowUpRight,
   Database,
@@ -39,8 +39,16 @@ import { useAuthStore } from '@/store/auth'
 import { useThemeStore, type ThemeMode } from '@/store/theme'
 
 const EASE = [0.16, 1, 0.3, 1] as const
-/** Limite típico do localStorage nos navegadores. */
-const STORAGE_LIMIT_BYTES = 5 * 1024 * 1024
+/** Botões das linhas de configuração: 44px de altura no celular, compactos do sm em diante. */
+const ROW_BUTTON = 'max-sm:h-11 max-sm:px-5'
+/**
+ * O limite do localStorage varia: ~5 M caracteres no Chrome/Firefox (≈ 10 MB em
+ * UTF-16) e ~5 MB no Safari. O medidor usa a escala maior e só fica vermelho
+ * depois de uma gravação recusada de verdade.
+ */
+const STORAGE_SCALE_BYTES = 10 * 1024 * 1024
+/** A partir daqui alguns navegadores (Safari) já podem recusar gravações. */
+const STORAGE_WARN_BYTES = 5 * 1024 * 1024
 /** Arquivos maiores que isso não caberiam no armazenamento local de qualquer forma. */
 const MAX_IMPORT_BYTES = 25 * 1024 * 1024
 
@@ -199,7 +207,7 @@ function ThemeSegmentedControl({ labelledBy }: { labelledBy: string }) {
             onClick={() => setMode(option.value)}
             onKeyDown={(event) => handleKeyDown(event, index)}
             className={cn(
-              'relative inline-flex h-9 items-center justify-center gap-1.5 rounded-full px-2 text-sm font-semibold sm:px-3.5',
+              'relative inline-flex h-11 items-center justify-center gap-1.5 rounded-full px-2 text-sm font-semibold sm:h-9 sm:px-3.5',
               'transition-colors duration-200 ease-out-expo',
               checked ? 'text-fg' : 'text-muted hover:text-fg',
             )}
@@ -223,10 +231,13 @@ function ThemeSegmentedControl({ labelledBy }: { labelledBy: string }) {
 
 // ------------------------------------------------------------------ (b) dados do catálogo
 
-/** Uso do armazenamento — chave sob 'catalog' para ser revalidada a cada escrita no banco. */
+/** Chave sob 'catalog' para ser revalidada a cada escrita no banco. */
+const STORAGE_INFO_KEY = ['catalog', 'admin', 'storage-info'] as const
+
+/** Uso do armazenamento local (estimativa) e se alguma gravação já estourou a cota. */
 function useStorageInfo() {
   return useQuery({
-    queryKey: ['catalog', 'admin', 'storage-info'],
+    queryKey: STORAGE_INFO_KEY,
     queryFn: () => adminService.storageInfo(),
     staleTime: 0,
   })
@@ -270,14 +281,6 @@ interface ImportCandidate {
   counts: { products: number; categories: number; distributors: number }
 }
 
-/** Lê o resumo de um backup sem tocar no banco (a validação completa fica no serviço). */
-function summarizeBackup(value: unknown): ImportCandidate['counts'] | null {
-  if (!value || typeof value !== 'object') return null
-  const v = value as Record<string, unknown>
-  if (!Array.isArray(v.products) || !Array.isArray(v.categories) || !Array.isArray(v.distributors)) return null
-  return { products: v.products.length, categories: v.categories.length, distributors: v.distributors.length }
-}
-
 function CatalogDataSection() {
   const storage = useStorageInfo()
   const products = useProducts({ includeInactive: true })
@@ -291,9 +294,15 @@ function CatalogDataSection() {
   const reduceMotion = useReducedMotion()
   const bytes = storage.data?.bytes ?? 0
   const pristine = storage.data?.pristine ?? true
-  const ratio = Math.min(1, bytes / STORAGE_LIMIT_BYTES)
+  const quotaExceeded = storage.data?.quotaExceeded ?? false
+  const ratio = Math.min(1, bytes / STORAGE_SCALE_BYTES)
   const pct = Math.round(ratio * 1000) / 10
-  const meterTone = ratio >= 0.85 ? 'bg-danger-500' : ratio >= 0.6 ? 'bg-warning-500' : 'bg-brand-gradient'
+  // vermelho só com recusa real; âmbar quando já passaria do limite de alguns navegadores
+  const meterTone = quotaExceeded
+    ? 'bg-danger-500'
+    : bytes >= STORAGE_WARN_BYTES
+      ? 'bg-warning-500'
+      : 'bg-brand-gradient'
 
   async function handleFile(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0]
@@ -304,17 +313,18 @@ function CatalogDataSection() {
       return
     }
     let text: string
-    let parsed: unknown
+    let counts: ImportCandidate['counts']
     try {
       text = await file.text()
-      parsed = JSON.parse(text)
-    } catch {
-      toast.error('O arquivo não é um JSON válido.')
-      return
-    }
-    const counts = summarizeBackup(parsed)
-    if (!counts) {
-      toast.error('Arquivo inválido: estrutura do banco não reconhecida.')
+      // validação completa (versão + item a item) antes de pedir confirmação
+      const data = adminService.parseBackup(text)
+      counts = {
+        products: data.products.length,
+        categories: data.categories.length,
+        distributors: data.distributors.length,
+      }
+    } catch (err) {
+      toast.error(errorMessage(err, 'Não foi possível ler o arquivo.'))
       return
     }
     setCandidate({ fileName: file.name, size: file.size, text, counts })
@@ -343,7 +353,7 @@ function CatalogDataSection() {
   }
 
   const exportBeforeButton = (
-    <Button variant="outline" size="sm" onClick={downloadBackup}>
+    <Button variant="outline" size="sm" className={ROW_BUTTON} onClick={downloadBackup}>
       <Download aria-hidden />
       Exportar backup atual antes
     </Button>
@@ -377,7 +387,8 @@ function CatalogDataSection() {
               <Skeleton className="h-6 w-28 rounded-md" />
             ) : (
               <>
-                <strong className="text-lg font-extrabold tracking-tight text-fg">{formatBytes(bytes)}</strong> de ~5 MB
+                ≈ <strong className="text-lg font-extrabold tracking-tight text-fg">{formatBytes(bytes)}</strong>
+                {' de ~5–10 MB'}
               </>
             )}
           </div>
@@ -389,7 +400,7 @@ function CatalogDataSection() {
           aria-valuemin={0}
           aria-valuemax={100}
           aria-valuenow={pct}
-          aria-valuetext={`${formatBytes(bytes)} de aproximadamente 5 MB (${pct.toLocaleString('pt-BR')}%)`}
+          aria-valuetext={`Aproximadamente ${formatBytes(bytes)} usados, de um limite entre 5 e 10 MB conforme o navegador`}
           className="mt-3 h-2.5 overflow-hidden rounded-full bg-surface-2"
         >
           <m.div
@@ -405,20 +416,32 @@ function CatalogDataSection() {
             <>
               Catálogo atual: {pluralize(products.data.length, 'produto', 'produtos')},{' '}
               {pluralize(categories.data.length, 'categoria', 'categorias')} e{' '}
-              {pluralize(distributors.data.length, 'distribuidor', 'distribuidores')} · {pct.toLocaleString('pt-BR')}%
-              do limite usado
+              {pluralize(distributors.data.length, 'distribuidor', 'distribuidores')} · estimativa: o limite exato
+              depende do navegador
             </>
           ) : (
             'Calculando…'
           )}
         </p>
+        {quotaExceeded ? (
+          <p className="mt-1.5 text-xs font-semibold text-danger-600 dark:text-red-400">
+            Uma gravação não coube no armazenamento deste navegador. Remova produtos de teste ou imagens enviadas
+            antes de cadastrar mais.
+          </p>
+        ) : (
+          bytes >= STORAGE_WARN_BYTES && (
+            <p className="mt-1.5 text-xs font-semibold text-amber-700 dark:text-amber-400">
+              Perto do limite de alguns navegadores (como o Safari). Exporte um backup por segurança.
+            </p>
+          )
+        )}
       </div>
 
       <SettingRow
         title="Exportar backup"
         description="Baixa um arquivo .json com todos os produtos, categorias e distribuidores."
       >
-        <Button variant="outline" size="sm" onClick={downloadBackup}>
+        <Button variant="outline" size="sm" className={ROW_BUTTON} onClick={downloadBackup}>
           <Download aria-hidden />
           Exportar
         </Button>
@@ -437,7 +460,7 @@ function CatalogDataSection() {
           aria-hidden
           onChange={(event) => void handleFile(event)}
         />
-        <Button variant="outline" size="sm" onClick={() => fileInput.current?.click()}>
+        <Button variant="outline" size="sm" className={ROW_BUTTON} onClick={() => fileInput.current?.click()}>
           <Upload aria-hidden />
           Importar…
         </Button>
@@ -456,7 +479,7 @@ function CatalogDataSection() {
           size="sm"
           disabled={pristine}
           onClick={() => setResetOpen(true)}
-          className="text-danger-600 hover:border-danger-500/40 hover:bg-red-500/[0.06] dark:text-red-400"
+          className={cn(ROW_BUTTON, 'text-danger-600 hover:border-danger-500/40 hover:bg-red-500/[0.06] dark:text-red-400')}
         >
           <RotateCcw aria-hidden />
           Restaurar
@@ -507,6 +530,7 @@ function nextPaint(): Promise<void> {
 }
 
 function PerformanceSection() {
+  const queryClient = useQueryClient()
   const products = useProducts({ includeInactive: true })
   const [amount, setAmount] = useState(1000)
   const [generateOpen, setGenerateOpen] = useState(false)
@@ -539,6 +563,8 @@ function PerformanceSection() {
       })
     } catch (err) {
       toast.error(errorMessage(err, 'Não foi possível gerar os produtos de teste.'))
+      // gravação recusada não altera o banco: atualiza o medidor à parte
+      void queryClient.invalidateQueries({ queryKey: STORAGE_INFO_KEY })
     }
   }
 
@@ -559,10 +585,11 @@ function PerformanceSection() {
   const loading = products.isPending
   // sem produtos reais não há de onde copiar imagens/categorias
   const noBase = !loading && realCount === 0
-  const stats: Array<{ label: string; value: number; highlight?: boolean }> = [
-    { label: 'Produtos reais', value: realCount },
-    { label: 'Produtos de teste', value: stressCount, highlight: stressCount > 0 },
-    { label: 'Total no catálogo', value: realCount + stressCount },
+  // rótulo curto no mobile: em 360px os longos seriam cortados ("Produtos r…")
+  const stats: Array<{ label: string; short: string; value: number; highlight?: boolean }> = [
+    { label: 'Produtos reais', short: 'Originais', value: realCount },
+    { label: 'Produtos de teste', short: 'De teste', value: stressCount, highlight: stressCount > 0 },
+    { label: 'Total no catálogo', short: 'Total', value: realCount + stressCount },
   ]
 
   return (
@@ -589,7 +616,10 @@ function PerformanceSection() {
                 stat.highlight ? 'border-brand-500/25 bg-brand-500/[0.06]' : 'border-line bg-surface/60',
               )}
             >
-              <dt className="truncate text-[0.6875rem] font-semibold text-subtle sm:text-xs">{stat.label}</dt>
+              <dt className="text-[0.6875rem] leading-tight font-semibold text-subtle sm:text-xs">
+                <span className="sm:hidden">{stat.short}</span>
+                <span className="max-sm:hidden">{stat.label}</span>
+              </dt>
               <dd className="mt-1 text-xl font-extrabold tracking-tight text-fg tabular-nums sm:text-2xl">
                 {loading ? <Skeleton className="h-7 w-14 rounded-md" /> : formatCount(stat.value)}
               </dd>
@@ -598,12 +628,13 @@ function PerformanceSection() {
         </dl>
       </div>
 
-      <div className="flex flex-wrap items-center gap-2 bg-surface/50 px-5 py-4 sm:px-6">
-        <Button variant="secondary" size="sm" disabled={noBase} onClick={() => askGenerate(1000)}>
+      {/* celular: grade de 2 colunas com alvos de 44px; sm+: linha única como antes */}
+      <div className="grid grid-cols-2 gap-2 bg-surface/50 px-5 py-4 sm:flex sm:flex-wrap sm:items-center sm:px-6">
+        <Button variant="secondary" size="sm" className={ROW_BUTTON} disabled={noBase} onClick={() => askGenerate(1000)}>
           <FlaskConical aria-hidden />
           Gerar 1.000
         </Button>
-        <Button variant="outline" size="sm" disabled={noBase} onClick={() => askGenerate(5000)}>
+        <Button variant="outline" size="sm" className={ROW_BUTTON} disabled={noBase} onClick={() => askGenerate(5000)}>
           Gerar 5.000
         </Button>
         <Button
@@ -611,7 +642,7 @@ function PerformanceSection() {
           size="sm"
           disabled={stressCount === 0}
           onClick={() => setClearOpen(true)}
-          className="text-danger-600 hover:bg-red-500/[0.07] dark:text-red-400"
+          className={cn(ROW_BUTTON, 'col-span-2 text-danger-600 hover:bg-red-500/[0.07] dark:text-red-400')}
         >
           <Trash2 aria-hidden />
           Remover produtos de teste
@@ -620,7 +651,7 @@ function PerformanceSection() {
           href="/catalogo"
           target="_blank"
           rel="noopener noreferrer"
-          className="group/cat ml-auto inline-flex h-9 items-center gap-1 rounded-full px-3 text-sm font-semibold text-muted transition-colors duration-200 hover:bg-surface-2 hover:text-fg max-sm:ml-0"
+          className="group/cat col-span-2 inline-flex h-11 items-center justify-center gap-1 rounded-full px-3 text-sm font-semibold text-muted transition-colors duration-200 hover:bg-surface-2 hover:text-fg sm:ml-auto sm:h-9"
         >
           Abrir catálogo
           <ArrowUpRight

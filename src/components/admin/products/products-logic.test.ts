@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import { nextProductSeq, productIdFromSeq } from '@/services/products'
 import { formatPriceInput, isValidPrice, parsePrice, sanitizePriceTyping } from './parse-price'
 import {
   buildPreviewProduct,
@@ -117,7 +118,7 @@ describe('modelo do formulário', () => {
     expect(base.isFeatured).toBe(false)
   })
 
-  it('valida obrigatórios e promoção', () => {
+  it('valida obrigatórios e preço à vista', () => {
     expect(Object.keys(validateProductForm(base)).sort()).toEqual(['category', 'distributor', 'name', 'price'])
     const filled = { ...base, name: 'Tênis X', price: '100,00', category: 'tenis', distributor: 'pegada' }
     expect(validateProductForm(filled)).toEqual({})
@@ -127,7 +128,7 @@ describe('modelo do formulário', () => {
     expect(validateProductForm({ ...filled, promoPrice: '89,90' })).toEqual({})
   })
 
-  it('sob consulta: salva preço 0, sem promoção, e não valida os campos de preço', () => {
+  it('sob consulta: salva preço 0, sem preço à vista, e não valida os campos de preço', () => {
     const filled = { ...base, name: 'Chinelo', category: 'c', distributor: 'd', priceOnRequest: true, promoPrice: '9' }
     expect(validateProductForm(filled)).toEqual({})
     expect(toProductInput(filled)).toMatchObject({ price: 0, promoPrice: undefined })
@@ -168,7 +169,7 @@ describe('modelo do formulário', () => {
     expect(snapshotValues({ ...base, price: '106' })).not.toBe(snapshotValues({ ...base, price: '107' }))
   })
 
-  it('prévia usa promoção só quando válida', () => {
+  it('prévia usa o preço à vista só quando válido', () => {
     const p = buildPreviewProduct({ ...base, price: '110', promoPrice: '120' }, { id: 'x', createdAt: '2026-01-01' })
     expect(p.price).toBe(110)
     expect(p.promoPrice).toBeUndefined()
@@ -187,5 +188,25 @@ describe('modelo do formulário', () => {
     expect(imagePathError('http://cdn.site.com/a.webp')).toBeTruthy()
     expect(imagePathError('/produtos/x.pdf')).toBeTruthy()
     expect(imagePathError('/produtos/../x.jpg')).toBeTruthy()
+  })
+})
+
+describe('sequência de códigos PM-xxxx', () => {
+  const ids = (...list: string[]) => list.map((id) => ({ id }))
+
+  it('sem contador salvo, parte do maior id existente (ignora outros formatos)', () => {
+    expect(nextProductSeq({ products: ids('pm-0003', 'pm-0092', 'pm-t1', 'outro') })).toBe(93)
+    expect(nextProductSeq({ products: [] })).toBe(1)
+    expect(productIdFromSeq(93)).toBe('pm-0093')
+    expect(productIdFromSeq(12345)).toBe('pm-12345')
+  })
+
+  it('nunca reutiliza o código de um produto excluído', () => {
+    // pm-0092 foi excluído, mas o contador já tinha chegado nele
+    expect(nextProductSeq({ productSeq: 92, products: ids('pm-0091') })).toBe(93)
+  })
+
+  it('contador defasado (backup importado) não gera id repetido', () => {
+    expect(nextProductSeq({ productSeq: 10, products: ids('pm-0050') })).toBe(51)
   })
 })

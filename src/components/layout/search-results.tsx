@@ -2,8 +2,9 @@ import { ArrowRight, ArrowUpRight, SearchX, Tags, TrendingUp, Truck } from 'luci
 import { Fragment, useEffect, useId, type ReactNode } from 'react'
 import { Link } from 'react-router'
 import { ProductImage } from '@/components/catalog/product-image'
-import { cn, effectivePrice, formatBRL, hasPromo, pluralize, productCode } from '@/lib/utils'
-import { highlightParts, isPlainLeftClick, optionDomId } from './search-utils'
+import { cn, pluralize, productCode } from '@/lib/utils'
+import { site } from '@/config/site'
+import { highlightParts, isPlainLeftClick, optionDomId, suggestionPrice } from './search-utils'
 import {
   optionHref,
   type CategoryOption,
@@ -38,13 +39,16 @@ export function SearchResults({ model, listboxId, variant }: SearchResultsProps)
     document.getElementById(optionDomId(listboxId, activeKey))?.scrollIntoView({ block: 'nearest' })
   }, [activeKey, listboxId])
 
-  const total = model.all?.total ?? 0
+  // só anuncia com o termo assentado (sem contagem de um termo anterior)
+  const total = model.all?.total
   const announcement =
-    status === 'results'
-      ? `${pluralize(total, 'produto encontrado', 'produtos encontrados')} para ${term}`
-      : status === 'empty'
-        ? `Nenhum resultado para ${query}`
-        : ''
+    model.isBusy
+      ? ''
+      : status === 'results' && total != null
+        ? `${pluralize(total, 'produto encontrado', 'produtos encontrados')} para ${term}`
+        : status === 'empty'
+          ? `Nenhum resultado para ${query}`
+          : ''
 
   return (
     <>
@@ -98,6 +102,12 @@ export function SearchResults({ model, listboxId, variant }: SearchResultsProps)
                   </OptionLink>
                 ))}
               </div>
+              {sheet && status === 'idle' && (
+                // dica visual (o leitor de tela já recebe a descrição do diálogo)
+                <p aria-hidden className="px-2 pt-3 text-xs leading-relaxed text-muted">
+                  Busque pelo nome, pela marca, pela categoria ou pelo código do produto (ex.: PM-0001).
+                </p>
+              )}
             </Group>
           )}
 
@@ -140,7 +150,7 @@ export function SearchResults({ model, listboxId, variant }: SearchResultsProps)
             )}
           >
             <span className="min-w-0 truncate">
-              {model.all.total > 0 ? (
+              {model.all.total ? (
                 <>
                   Ver {model.all.total === 1 ? 'o' : 'todos os'}{' '}
                   <span className="text-brand-600 tabular-nums dark:text-brand-400">{model.all.total}</span>{' '}
@@ -240,52 +250,123 @@ interface RowProps<T extends SearchOption> {
 
 function ProductRow({ model, listboxId, option, sheet }: RowProps<ProductOption>) {
   const { product, distributorName, categoryName } = option
-  const promo = hasPromo(product)
+  const price = suggestionPrice(product)
+  const meta = (
+    <>
+      {distributorName}
+      <span className="text-subtle"> · </span>
+      {categoryName}
+      <span className="text-subtle"> · </span>
+      <span className="tabular-nums">
+        <Highlight text={productCode(product.id)} query={model.term} />
+      </span>
+    </>
+  )
   return (
     <OptionLink
       model={model}
       listboxId={listboxId}
       option={option}
       className={cn(
-        'group flex items-center gap-3 rounded-xl transition-colors duration-150 aria-selected:bg-surface-2',
-        sheet ? 'px-2 py-2' : 'px-2 py-1.5',
+        'group flex gap-3 rounded-xl transition-colors duration-150 aria-selected:bg-surface-2',
+        sheet ? 'items-center px-2 py-2 active:bg-surface-2' : 'items-center px-2 py-1.5',
       )}
     >
       <span
         className={cn(
           'relative aspect-[5/6] shrink-0 overflow-hidden rounded-lg bg-surface-2 ring-1 ring-black/[0.05] dark:ring-white/[0.08]',
-          sheet ? 'w-12' : 'w-10',
+          sheet ? 'w-14' : 'w-10',
         )}
       >
-        <ProductImage path={product.images[0]} alt="" sizes={sheet ? '48px' : '40px'} />
+        <ProductImage path={product.images[0]} alt="" sizes={sheet ? '56px' : '40px'} />
       </span>
-      <span className="min-w-0 flex-1">
-        <span className="block truncate text-sm font-semibold text-fg">
-          <Highlight text={product.name} query={model.term} />
-        </span>
-        <span className="mt-0.5 block truncate text-xs text-muted">
-          {distributorName}
-          <span className="text-subtle"> · </span>
-          {categoryName}
-          <span className="text-subtle"> · </span>
-          <span className="tabular-nums">
-            <Highlight text={productCode(product.id)} query={model.term} />
+      {sheet ? (
+        // celular: nome em até 2 linhas e o preço embaixo (largura toda para o texto)
+        <span className="min-w-0 flex-1">
+          <span className="line-clamp-2 text-sm leading-snug font-semibold text-fg">
+            <Highlight text={product.name} query={model.term} />
           </span>
+          <span className="mt-0.5 block truncate text-xs text-muted">{meta}</span>
+          {site.showPrices && <SuggestionPrice price={price} inline />}
         </span>
-      </span>
-      <span className="shrink-0 text-right leading-tight">
-        <span className="block text-sm font-bold text-fg tabular-nums">
-          <span className="sr-only">{promo ? 'Preço promocional: ' : 'Preço: '}</span>
-          {formatBRL(effectivePrice(product))}
-        </span>
-        {promo && (
-          <span className="block text-[0.6875rem] text-subtle tabular-nums line-through">
-            <span className="sr-only">Preço original: </span>
-            {formatBRL(product.price)}
+      ) : (
+        <>
+          <span className="min-w-0 flex-1">
+            <span className="block truncate text-sm font-semibold text-fg">
+              <Highlight text={product.name} query={model.term} />
+            </span>
+            <span className="mt-0.5 block truncate text-xs text-muted">{meta}</span>
+          </span>
+          {site.showPrices && <SuggestionPrice price={price} />}
+        </>
+      )}
+    </OptionLink>
+  )
+}
+
+/** Preço da sugestão: coluna à direita (popover) ou linha sob o nome (`inline`, tela cheia). */
+function SuggestionPrice({ price, inline = false }: { price: ReturnType<typeof suggestionPrice>; inline?: boolean }) {
+  if (inline) {
+    return (
+      <span className="mt-1 flex flex-wrap items-baseline gap-x-2 leading-tight">
+        {price.kind === 'on-request' ? (
+          <span className="text-sm font-bold text-fg">
+            <span className="sr-only">Preço: </span>
+            Sob consulta
+          </span>
+        ) : price.kind === 'cash' ? (
+          <>
+            <span className="text-[0.9375rem] font-bold text-fg tabular-nums">
+              <span className="sr-only">Preço à vista: </span>
+              {price.cash}
+              <span aria-hidden className="ml-1 text-xs font-semibold text-muted">
+                à vista
+              </span>
+            </span>
+            <span className="text-xs text-subtle tabular-nums">
+              <span className="sr-only">Preço a prazo: </span>
+              {price.installment}
+              <span aria-hidden> a prazo</span>
+            </span>
+          </>
+        ) : (
+          <span className="text-[0.9375rem] font-bold text-fg tabular-nums">
+            <span className="sr-only">Preço: </span>
+            {price.value}
           </span>
         )}
       </span>
-    </OptionLink>
+    )
+  }
+  return (
+    <span className="shrink-0 text-right leading-tight">
+      {price.kind === 'on-request' ? (
+        <span className="block text-sm font-bold text-fg">
+          <span className="sr-only">Preço: </span>
+          Sob consulta
+        </span>
+      ) : price.kind === 'cash' ? (
+        <>
+          <span className="block text-sm font-bold text-fg tabular-nums">
+            <span className="sr-only">Preço à vista: </span>
+            {price.cash}
+            <span aria-hidden className="ml-1 text-[0.6875rem] font-semibold text-muted">
+              à vista
+            </span>
+          </span>
+          <span className="block text-[0.6875rem] text-subtle tabular-nums">
+            <span className="sr-only">Preço a prazo: </span>
+            {price.installment}
+            <span aria-hidden> a prazo</span>
+          </span>
+        </>
+      ) : (
+        <span className="block text-sm font-bold text-fg tabular-nums">
+          <span className="sr-only">Preço: </span>
+          {price.value}
+        </span>
+      )}
+    </span>
   )
 }
 
@@ -300,14 +381,14 @@ function TaxonomyRow({ model, listboxId, option, sheet }: RowProps<CategoryOptio
       option={option}
       className={cn(
         'group flex items-center gap-3 rounded-xl transition-colors duration-150 aria-selected:bg-surface-2',
-        sheet ? 'px-2 py-2' : 'px-2 py-1.5',
+        sheet ? 'px-2 py-2 active:bg-surface-2' : 'px-2 py-1.5',
       )}
     >
       <span
         className={cn(
           'inline-flex shrink-0 items-center justify-center rounded-lg bg-surface-2 text-muted transition-colors duration-150',
           'group-aria-selected:bg-brand-500 group-aria-selected:text-white',
-          sheet ? 'size-12' : 'size-10',
+          sheet ? 'h-12 w-14' : 'size-10',
         )}
       >
         <Icon className="size-4" aria-hidden />
@@ -333,7 +414,7 @@ function LoadingRows({ sheet }: { sheet: boolean }) {
     <div aria-hidden className="space-y-1 pt-1">
       {[0, 1, 2].map((i) => (
         <div key={i} className="flex items-center gap-3 px-2 py-1.5">
-          <div className={cn('skeleton aspect-[5/6] shrink-0 rounded-lg', sheet ? 'w-12' : 'w-10')} />
+          <div className={cn('skeleton aspect-[5/6] shrink-0 rounded-lg', sheet ? 'w-14' : 'w-10')} />
           <div className="flex-1 space-y-2">
             <div className="skeleton h-3 w-3/4 rounded-full" />
             <div className="skeleton h-2.5 w-1/3 rounded-full" />

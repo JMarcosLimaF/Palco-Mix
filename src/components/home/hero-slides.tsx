@@ -44,6 +44,18 @@ import {
   type HeroSlide,
 } from './hero-shared'
 
+/** Versão curta da descrição da loja para o hero no celular. */
+const BRAND_SHORT_DESCRIPTION = 'As marcas que você ama, com pedido direto pelo WhatsApp.'
+
+/**
+ * Linha de CTAs: lado a lado também no celular (principal largo + secundário compacto).
+ * Em telas < 360px não cabem os dois: o secundário desce e ocupa a linha inteira.
+ */
+const HERO_CTA_ROW = 'mt-4 flex flex-wrap gap-2.5 sm:mt-8 sm:gap-3'
+const HERO_CTA_SECONDARY = 'max-[359px]:flex-1'
+/** Botões um pouco mais baixos no celular; tamanho "lg" normal a partir de sm. */
+const HERO_CTA_MOBILE = 'h-12 px-4 text-sm sm:h-13 sm:flex-none sm:px-7 sm:text-base'
+
 // ------------------------------------------------------------------ moldura
 
 export interface HeroSlideFrameProps {
@@ -244,19 +256,24 @@ export function BrandSlide({ products, loading, dir, ghost = false, onOpen }: Br
       onPointerMove={parallax ? handlePointerMove : undefined}
       onPointerLeave={parallax ? resetParallax : undefined}
       className={cn(
-        'grid h-full items-center gap-x-10 gap-y-7 px-5 pt-6 sm:px-10 sm:pt-10',
+        'grid h-full items-center gap-x-10 gap-y-4 px-5 pt-5 sm:gap-y-7 sm:px-10 sm:pt-10',
         'md:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:grid-rows-[minmax(0,1fr)] lg:gap-x-14 lg:px-14 lg:pt-10',
       )}
     >
       <div className="order-2 min-w-0 md:order-1">
-        <m.p custom={dir} variants={heroItemVariants} className="eyebrow flex items-center gap-3 text-white/70">
+        {/* celulares baixos (ex.: Safari com as barras visíveis, ~660px): o rótulo sai para o hero caber */}
+        <m.p
+          custom={dir}
+          variants={heroItemVariants}
+          className="eyebrow flex items-center gap-3 text-white/70 max-sm:[@media(max-height:720px)]:hidden"
+        >
           <span aria-hidden className="logo-stripe h-[3px] w-10 rounded-full" />
           {site.tagline}
         </m.p>
         <m.h2
           custom={dir}
           variants={heroItemVariants}
-          className="title-display mt-5 text-[2.75rem] leading-[0.95] sm:text-6xl lg:text-7xl"
+          className="title-display mt-3 text-[2.5rem] leading-[0.95] sm:mt-5 sm:text-6xl lg:text-7xl max-sm:[@media(max-height:720px)]:mt-0"
         >
           <span className="block">Seu estilo</span>
           <span className="block">
@@ -266,16 +283,16 @@ export function BrandSlide({ products, loading, dir, ghost = false, onOpen }: Br
         <m.p
           custom={dir}
           variants={heroItemVariants}
-          className="mt-5 max-w-md text-base leading-relaxed text-white/65 sm:text-lg"
+          className="mt-3 max-w-md text-sm leading-relaxed text-white/65 sm:mt-5 sm:text-lg"
         >
-          {site.description}
+          {/* no celular, a versão curta: o hero inteiro cabe em uma tela */}
+          <span className="sm:hidden">{BRAND_SHORT_DESCRIPTION}</span>
+          <span className="hidden sm:inline">{site.description}</span>
         </m.p>
-        <m.div custom={dir} variants={heroItemVariants} className="mt-8 flex flex-wrap gap-3">
-          <Link
-            to="/catalogo"
-            className={buttonVariants({ size: 'lg', className: 'group/cta flex-1 sm:flex-none' })}
-          >
-            Explorar catálogo
+        <m.div custom={dir} variants={heroItemVariants} className={HERO_CTA_ROW}>
+          <Link to="/catalogo" className={buttonVariants({ size: 'lg', className: cn(HERO_CTA_MOBILE, 'group/cta flex-1') })}>
+            <span className="sm:hidden">Ver catálogo</span>
+            <span className="hidden sm:inline">Explorar catálogo</span>
             <ArrowRight
               aria-hidden
               className="transition-transform duration-300 ease-out-expo group-hover/cta:translate-x-0.5"
@@ -285,17 +302,23 @@ export function BrandSlide({ products, loading, dir, ghost = false, onOpen }: Br
             href={whatsappLink(HERO_WHATSAPP_MESSAGE)}
             target="_blank"
             rel="noopener noreferrer"
-            className={buttonVariants({ variant: 'outline', size: 'lg', className: cn(INVERTED_OUTLINE, 'flex-1 sm:flex-none') })}
+            className={buttonVariants({
+              variant: 'outline',
+              size: 'lg',
+              className: cn(INVERTED_OUTLINE, HERO_CTA_MOBILE, HERO_CTA_SECONDARY),
+            })}
           >
             <WhatsAppIcon className="text-[#25D366]" />
-            Pedir pelo WhatsApp
+            <span className="sm:hidden">WhatsApp</span>
+            <span className="hidden sm:inline">Pedir pelo WhatsApp</span>
             <span className="sr-only"> (abre em nova aba)</span>
           </a>
         </m.div>
       </div>
 
       <div className="order-1 flex items-center justify-center md:order-2 lg:h-full lg:[container-type:size]">
-        <div className="relative aspect-[6/5] w-full max-w-[17.5rem] sm:max-w-[24rem] md:max-w-[26rem] lg:w-[min(100cqw,calc(100cqh*1.2))] lg:max-w-[38rem]">
+        {/* no celular a composição limita-se a ~24% da altura da tela (sobra espaço para título e CTAs) */}
+        <div className="relative aspect-[6/5] w-[min(100%,15.5rem,calc(24svh*1.2))] sm:w-full sm:max-w-[24rem] md:max-w-[26rem] lg:w-[min(100cqw,calc(100cqh*1.2))] lg:max-w-[38rem]">
           {!ghost && <HeroStack products={products} loading={loading} sx={sx} sy={sy} onOpen={onOpen} />}
         </div>
       </div>
@@ -320,7 +343,7 @@ export function ProductSlide({ product, distributorName, categoryName, dir, ghos
   return (
     <div
       className={cn(
-        'grid h-full items-center gap-x-10 gap-y-7 px-5 pt-6 sm:px-10 sm:pt-10',
+        'grid h-full items-center gap-x-10 gap-y-4 px-5 pt-5 sm:gap-y-7 sm:px-10 sm:pt-10',
         'md:grid-cols-[minmax(0,1.08fr)_minmax(0,0.92fr)] lg:grid-rows-[minmax(0,1fr)] lg:gap-x-14 lg:px-14 lg:pt-10',
       )}
     >
@@ -334,7 +357,7 @@ export function ProductSlide({ product, distributorName, categoryName, dir, ghos
         <m.h2
           custom={dir}
           variants={heroItemVariants}
-          className="title-display mt-4 line-clamp-3 text-[2.1rem] text-balance sm:mt-5 sm:text-5xl xl:text-[3.5rem]"
+          className="title-display mt-3 line-clamp-3 text-[1.625rem] text-balance sm:mt-5 sm:text-5xl xl:text-[3.5rem] max-sm:[@media(max-height:720px)]:text-2xl"
         >
           {product.name}
         </m.h2>
@@ -342,12 +365,16 @@ export function ProductSlide({ product, distributorName, categoryName, dir, ghos
           <m.p
             custom={dir}
             variants={heroItemVariants}
-            className="mt-4 line-clamp-2 max-w-lg text-sm leading-relaxed text-white/60 sm:line-clamp-1 sm:text-base"
+            className="mt-4 hidden max-w-lg text-sm leading-relaxed text-white/60 sm:line-clamp-1 sm:text-base"
           >
             {product.description}
           </m.p>
         )}
-        <m.div custom={dir} variants={heroItemVariants} className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-3">
+        <m.div
+          custom={dir}
+          variants={heroItemVariants}
+          className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-2 sm:mt-6 sm:gap-x-6 sm:gap-y-3"
+        >
           <Price product={product} size="lg" showDiscount className={HERO_PRICE_CLASS} />
           {product.sizes && (
             <p className="flex items-center gap-2 text-sm text-white/55">
@@ -356,24 +383,25 @@ export function ProductSlide({ product, distributorName, categoryName, dir, ghos
             </p>
           )}
         </m.div>
-        <m.div custom={dir} variants={heroItemVariants} className="mt-7 flex flex-wrap gap-3">
-          <Button size="lg" className="flex-1 sm:flex-none" onClick={() => onOpen(product.id)}>
+        <m.div custom={dir} variants={heroItemVariants} className={HERO_CTA_ROW}>
+          <Button size="lg" className={cn(HERO_CTA_MOBILE, 'flex-1')} onClick={() => onOpen(product.id)}>
             <Eye aria-hidden />
             Ver detalhes
           </Button>
           <Link
             to={catalogHref({ distributors: [product.distributor] })}
-            aria-label={`Ver mais produtos da marca ${distributorName}`}
+            aria-label={`Ver mais da marca ${distributorName}`}
             className={buttonVariants({
               variant: 'outline',
               size: 'lg',
-              className: cn(INVERTED_OUTLINE, 'group/brand flex-1 sm:flex-none'),
+              className: cn(INVERTED_OUTLINE, HERO_CTA_MOBILE, HERO_CTA_SECONDARY, 'group/brand'),
             })}
           >
-            Ver mais da marca
+            <span className="sm:hidden">Mais da marca</span>
+            <span className="hidden sm:inline">Ver mais da marca</span>
             <ArrowRight
               aria-hidden
-              className="transition-transform duration-300 ease-out-expo group-hover/brand:translate-x-0.5"
+              className="hidden transition-transform duration-300 ease-out-expo group-hover/brand:translate-x-0.5 sm:block"
             />
           </Link>
         </m.div>
@@ -383,7 +411,7 @@ export function ProductSlide({ product, distributorName, categoryName, dir, ghos
         <m.div
           custom={dir}
           variants={heroArtVariants}
-          className="relative w-[62%] max-w-[17rem] md:w-full md:max-w-[21rem] lg:w-[min(100cqw,calc(100cqh*5/6))] lg:max-w-[29rem]"
+          className="relative w-[min(52%,11.5rem,calc(22svh*5/6))] sm:w-[62%] sm:max-w-[17rem] md:w-full md:max-w-[21rem] lg:w-[min(100cqw,calc(100cqh*5/6))] lg:max-w-[29rem] max-sm:[@media(max-height:720px)]:w-[calc(18svh*5/6)]"
         >
           <div aria-hidden className="absolute inset-x-[12%] -bottom-6 h-10 rounded-[50%] bg-brand-500/35 blur-2xl" />
           <m.div animate={ghost ? undefined : FLOAT_ANIMATION} transition={FLOAT_TRANSITION} className="relative">
@@ -393,7 +421,7 @@ export function ProductSlide({ product, distributorName, categoryName, dir, ghos
               tabIndex={-1}
               aria-hidden
               onClick={() => onOpen(product.id)}
-              className="group/art relative block aspect-[5/6] w-full cursor-pointer overflow-hidden rounded-[1.75rem] bg-ink-900 shadow-[0_50px_100px_-30px_rgb(0_0_0/0.95),0_30px_70px_-45px_rgb(0_102_255/0.7)] ring-1 ring-white/10"
+              className="group/art relative block aspect-[5/6] w-full cursor-pointer overflow-hidden rounded-[1.25rem] bg-ink-900 shadow-[0_50px_100px_-30px_rgb(0_0_0/0.95),0_30px_70px_-45px_rgb(0_102_255/0.7)] ring-1 ring-white/10 sm:rounded-[1.75rem]"
             >
               {!ghost && (
                 <ProductImage

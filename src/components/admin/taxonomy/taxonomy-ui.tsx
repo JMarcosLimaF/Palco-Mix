@@ -32,7 +32,7 @@ export const IconInput = forwardRef<HTMLInputElement, IconInputProps>(function I
         className="pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-subtle transition-colors duration-200 peer-focus:text-brand-500"
         aria-hidden
       />
-      {trailing && <div className="absolute inset-y-0 right-1.5 flex items-center">{trailing}</div>}
+      {trailing && <div className="absolute inset-y-0 right-0.5 flex items-center sm:right-1.5">{trailing}</div>}
     </div>
   )
 })
@@ -99,8 +99,10 @@ export function UsageBadge({
       to={to}
       title="Ver produtos no painel"
       aria-label={`Ver ${label}${itemName ? ` de ${itemName}` : ''} no painel`}
+      // celular: 40px de área de toque (padding vertical compensado pela margem negativa)
       className={cn(
         'group/usage pointer-events-auto inline-flex rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500',
+        'max-sm:-my-2 max-sm:py-2',
         className,
       )}
     >

@@ -11,8 +11,9 @@ export interface ProductFormValues {
   description: string
   /** preço "sob consulta" (salvo como price = 0) */
   priceOnRequest: boolean
-  /** texto digitado (ex.: "1.299,90") — ignorado quando sob consulta */
+  /** preço a prazo (normal), texto digitado (ex.: "1.299,90") — ignorado quando sob consulta */
   price: string
+  /** preço à vista (com desconto), opcional */
   promoPrice: string
   category: string
   distributor: string
@@ -92,8 +93,9 @@ export function validateProductForm(values: ProductFormValues): ProductFormError
 
     if (!isBlankPrice(values.promoPrice)) {
       const promo = parsePrice(values.promoPrice)
-      if (!isValidPrice(promo)) errors.promoPrice = 'Preço promocional inválido. Use o formato 99,90.'
-      else if (isValidPrice(price) && promo >= price) errors.promoPrice = 'Deve ser menor que o preço normal.'
+      // promoPrice = preço à vista (com desconto); price = preço a prazo (normal)
+      if (!isValidPrice(promo)) errors.promoPrice = 'Preço à vista inválido. Use o formato 99,90.'
+      else if (isValidPrice(price) && promo >= price) errors.promoPrice = 'Deve ser menor que o preço a prazo.'
     }
   }
 

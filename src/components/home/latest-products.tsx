@@ -22,19 +22,19 @@ export function LatestProducts() {
   if (!loading && items.length === 0) return null
 
   return (
-    <section aria-labelledby="home-lancamentos" className="container-page pt-16 sm:pt-24">
+    <section aria-labelledby="home-lancamentos" className="container-page pt-10 sm:pt-24">
       <Reveal>
         <SectionHeader
           id="home-lancamentos"
           eyebrow="Lançamentos"
-          title="Acabou de chegar"
+          title="Novidades no catálogo"
           description="Os produtos adicionados mais recentemente ao catálogo."
         />
       </Reveal>
 
       <ul
         aria-busy={loading || undefined}
-        className="mt-8 grid grid-cols-2 gap-x-3 gap-y-8 sm:mt-10 sm:gap-x-5 sm:gap-y-10 md:grid-cols-3 lg:grid-cols-4"
+        className="mt-5 grid grid-cols-2 gap-x-3 gap-y-6 sm:mt-10 sm:gap-x-5 sm:gap-y-10 md:grid-cols-3 lg:grid-cols-4"
       >
         {loading
           ? Array.from({ length: 8 }, (_, i) => (
@@ -57,10 +57,10 @@ export function LatestProducts() {
             ))}
       </ul>
 
-      <div className="mt-10 flex justify-center sm:mt-12">
+      <div className="mt-7 flex justify-center sm:mt-12">
         <Link
           to={catalogHref({ sort: 'recent' })}
-          className={buttonVariants({ variant: 'outline', size: 'lg', className: 'group/more' })}
+          className={buttonVariants({ variant: 'outline', size: 'lg', className: 'group/more w-full sm:w-auto' })}
         >
           Ver todos os lançamentos
           <ArrowRight

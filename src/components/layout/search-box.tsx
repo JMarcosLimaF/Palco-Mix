@@ -63,7 +63,8 @@ export function SearchBox({ inputRef, className }: SearchBoxProps) {
     fieldRef.current?.focus()
   }
 
-  const activeDescendant = open && model.activeKey ? optionDomId(listboxId, model.activeKey) : undefined
+  // só aponta para opções que existem na lista atual
+  const activeDescendant = open && model.activeOption ? optionDomId(listboxId, model.activeOption.key) : undefined
 
   return (
     <form

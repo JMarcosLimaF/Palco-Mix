@@ -15,11 +15,18 @@ import { ProductGallery, ProductGallerySkeleton } from './product-gallery'
 /**
  * A imagem principal cabe na altura do modal (máx. min(90dvh, 56rem)) sem
  * distorcer a proporção 5:6: largura = min(100%, altura-alvo × 5/6).
+ * Celular (bottom sheet): no máx. ~42% da altura da tela, para nome, preço e o
+ * CTA fixo aparecerem já na primeira tela.
  */
-const FRAME_CLASS =
-  'mx-auto w-[min(100%,calc(min(52dvh,27rem)*5/6))] sm:w-[min(100%,calc(min(58dvh,34rem)*5/6))] md:w-[min(100%,calc(min(64dvh,40rem)*5/6))]'
+const FRAME_SM_UP = 'sm:w-[min(100%,calc(min(58dvh,34rem)*5/6))] md:w-[min(100%,calc(min(64dvh,40rem)*5/6))]'
+const FRAME_CLASS = `mx-auto w-[min(100%,calc(min(42dvh,24rem)*5/6))] ${FRAME_SM_UP}`
+/**
+ * Com miniaturas em coluna ao lado (celular, 2+ imagens): largura relativa à
+ * tela (e não ao pai, que encolhe para caber a coluna) — 6rem = respiro + coluna.
+ */
+const FRAME_WITH_THUMBS_CLASS = `mx-auto w-[min(calc(100vw-6rem),calc(min(42dvh,24rem)*5/6))] ${FRAME_SM_UP}`
 /** largura real da imagem principal (a galeria limita o srcset a 800w) */
-const MAIN_IMAGE_SIZES = '(min-width: 768px) 480px, 90vw'
+const MAIN_IMAGE_SIZES = '(min-width: 768px) 480px, (min-width: 640px) 90vw, 75vw'
 
 /**
  * Visualização Rápida (?p=<id>). Montada uma vez no PublicLayout: qualquer
@@ -106,18 +113,18 @@ function QuickViewContent({ product, size, onSizeChange, showActions }: QuickVie
   return (
     <div className="md:grid md:grid-cols-[minmax(0,1.08fr)_minmax(0,1fr)]">
       <div className="bg-surface md:border-r md:border-line">
-        <div className="p-4 sm:p-6 md:sticky md:top-0">
+        <div className="px-4 pt-3 pb-4 sm:p-6 md:sticky md:top-0">
           <ProductGallery
             images={product.images}
             name={product.name}
             variant="modal"
             sizes={MAIN_IMAGE_SIZES}
             priority
-            frameClassName={FRAME_CLASS}
+            frameClassName={product.images.length > 1 ? FRAME_WITH_THUMBS_CLASS : FRAME_CLASS}
           />
         </div>
       </div>
-      <div className="px-5 pt-5 pb-8 sm:px-6 md:px-8 md:pt-10 md:pb-8 lg:px-10">
+      <div className="px-5 pt-4 pb-6 sm:px-6 sm:pt-5 sm:pb-8 md:px-8 md:pt-10 md:pb-8 lg:px-10">
         <ProductDetails
           product={product}
           variant="modal"
@@ -133,10 +140,10 @@ function QuickViewContent({ product, size, onSizeChange, showActions }: QuickVie
 function QuickViewSkeleton() {
   return (
     <div className="md:grid md:grid-cols-[minmax(0,1.08fr)_minmax(0,1fr)]" role="status" aria-label="Carregando produto">
-      <div className="bg-surface p-4 sm:p-6 md:border-r md:border-line">
+      <div className="bg-surface px-4 pt-3 pb-4 sm:p-6 md:border-r md:border-line">
         <ProductGallerySkeleton variant="modal" frameClassName={FRAME_CLASS} />
       </div>
-      <div className="px-5 pt-5 pb-8 sm:px-6 md:px-8 md:pt-10 lg:px-10">
+      <div className="px-5 pt-4 pb-6 sm:px-6 sm:pt-5 sm:pb-8 md:px-8 md:pt-10 lg:px-10">
         <ProductDetailsSkeleton />
       </div>
     </div>

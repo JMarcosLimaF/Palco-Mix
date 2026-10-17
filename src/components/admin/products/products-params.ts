@@ -18,7 +18,7 @@ export interface AdminProductFilters {
   /** id do distribuidor ('' = todos) */
   distributor: string
   featured: boolean
-  /** somente com preço promocional */
+  /** somente com desconto à vista (promoPrice) — na URL continua `promo=1` */
   onSale: boolean
   /** ausente = padrão do motor (relevância com busca, recentes sem) */
   sort?: AdminSort

@@ -32,6 +32,8 @@ export interface ImageManagerProps {
   onChange: ImagesUpdater
   /** usado no texto alternativo das miniaturas */
   productName: string
+  /** quantas imagens ainda estão na fila/processando (o formulário não salva antes de terminar) */
+  onPendingChange?: (pending: number) => void
 }
 
 type UploadStatus = 'queued' | 'uploading' | 'error'
@@ -52,9 +54,9 @@ const ACCEPTED = ACCEPTED_IMAGE_TYPES.split(',')
 const MAX_FILE_BYTES = 25 * 1024 * 1024
 const EASE = [0.16, 1, 0.3, 1] as const
 
-/** Botão circular sobre a miniatura (vidro claro). */
+/** Botão circular sobre a miniatura (vidro claro). Em tela de toque fica com 40px. */
 const tileBtn =
-  'inline-flex size-9 items-center justify-center rounded-full bg-white/90 text-ink-950 shadow-sm backdrop-blur ' +
+  'inline-flex size-9 items-center justify-center rounded-full bg-white/90 text-ink-950 shadow-sm backdrop-blur pointer-coarse:size-10 ' +
   'transition-[background-color,color,opacity,transform] duration-200 ease-out-expo hover:bg-white active:scale-90 ' +
   'focus-visible:opacity-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500 ' +
   'disabled:pointer-events-none disabled:opacity-35'
@@ -76,7 +78,7 @@ function moveItem<T>(list: T[], from: number, to: number): T[] {
  * upload local com fila e progresso, biblioteca /produtos/ e caminho manual.
  * A 1ª imagem é a capa ("Principal") em toda a loja.
  */
-export function ImageManager({ images, onChange, productName }: ImageManagerProps) {
+export function ImageManager({ images, onChange, productName, onPendingChange }: ImageManagerProps) {
   const [uploads, setUploads] = useState<UploadItem[]>([])
   const [libraryOpen, setLibraryOpen] = useState(false)
   const [pathOpen, setPathOpen] = useState(false)
@@ -86,6 +88,7 @@ export function ImageManager({ images, onChange, productName }: ImageManagerProp
 
   const fileInputRef = useRef<HTMLInputElement>(null)
   const uploadButtonRef = useRef<HTMLButtonElement>(null)
+  const pathButtonRef = useRef<HTMLButtonElement>(null)
   const tileRefs = useRef(new Map<string, HTMLDivElement>())
   const onChangeRef = useRef(onChange)
   const queueRef = useRef<Promise<void>>(Promise.resolve())
@@ -93,10 +96,18 @@ export function ImageManager({ images, onChange, productName }: ImageManagerProp
   const cancelledRef = useRef(new Set<string>())
   const previewsRef = useRef(new Set<string>())
   const dropDepthRef = useRef(0)
+  const abortRef = useRef<AbortController | null>(null)
 
   useEffect(() => {
     onChangeRef.current = onChange
   })
+
+  // ao sair da tela, a fila para: nada é gravado depois que o formulário fechou
+  useEffect(() => {
+    const controller = new AbortController()
+    abortRef.current = controller
+    return () => controller.abort()
+  }, [])
 
   // libera as prévias locais ao sair da tela
   useEffect(() => {
@@ -175,15 +186,17 @@ export function ImageManager({ images, onChange, productName }: ImageManagerProp
   }
 
   async function processUpload(item: UploadItem) {
-    if (cancelledRef.current.has(item.id)) return
+    const signal = abortRef.current?.signal
+    if (cancelledRef.current.has(item.id) || signal?.aborted) return
     patchUpload(item.id, { status: 'uploading', error: undefined })
     try {
-      const path = await uploadProductImage(item.file)
-      if (cancelledRef.current.has(item.id)) return
+      const path = await uploadProductImage(item.file, signal)
+      if (cancelledRef.current.has(item.id) || signal?.aborted) return
       onChangeRef.current((prev) => (prev.includes(path) ? prev : [...prev, path]))
       discardUpload(item)
       setAnnouncement(`${item.name} enviada.`)
     } catch (err) {
+      if (signal?.aborted) return
       patchUpload(item.id, { status: 'error', error: errorMessage(err, 'Falha ao processar a imagem.') })
       toast.error(`Não foi possível enviar ${item.name}`, { description: errorMessage(err) })
     }
@@ -252,11 +265,21 @@ export function ImageManager({ images, onChange, productName }: ImageManagerProp
 
   const busyUploads = uploads.filter((u) => u.status !== 'error').length
 
+  useEffect(() => {
+    onPendingChange?.(busyUploads)
+  }, [busyUploads, onPendingChange])
+
+  function closePathAdder() {
+    setPathOpen(false)
+    // o painel some com o foco dentro: devolve ao botão que o abriu
+    requestAnimationFrame(() => pathButtonRef.current?.focus())
+  }
+
   return (
     // soltar arquivos em qualquer ponto do gerenciador também envia (e evita o navegador abrir o arquivo)
     <div className="flex flex-col gap-4" {...dropHandlers}>
       {(images.length > 0 || uploads.length > 0) && (
-        <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-4" aria-label="Imagens do produto">
+        <ul className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-3 xl:grid-cols-4" aria-label="Imagens do produto">
           {images.map((path, index) => {
             const isFirst = index === 0
             const isLast = index === images.length - 1
@@ -316,7 +339,7 @@ export function ImageManager({ images, onChange, productName }: ImageManagerProp
                   </div>
 
                   <span
-                    className="pointer-events-none absolute top-2 left-1/2 hidden -translate-x-1/2 rounded-full bg-black/45 p-0.5 text-white opacity-0 transition-opacity group-hover/tile:opacity-100 md:block"
+                    className="pointer-events-none absolute top-2 left-1/2 hidden -translate-x-1/2 rounded-full bg-black/45 p-0.5 text-white opacity-0 transition-opacity group-hover/tile:opacity-100 pointer-fine:block"
                     aria-hidden
                   >
                     <GripVertical className="size-3.5 rotate-90" />
@@ -328,10 +351,11 @@ export function ImageManager({ images, onChange, productName }: ImageManagerProp
                     onClick={() => removeAt(index)}
                     aria-label={`Remover imagem ${index + 1}`}
                     title="Remover"
+                    // com mouse as ações aparecem no hover/foco; no toque ficam sempre visíveis
                     className={cn(
                       tileBtn,
-                      'absolute top-2 right-2 hover:bg-danger-600 hover:text-white',
-                      'md:opacity-0 md:group-focus-within/tile:opacity-100 md:group-hover/tile:opacity-100',
+                      'absolute top-2 right-2 hover:bg-danger-600 hover:text-white pointer-coarse:top-1.5 pointer-coarse:right-1.5',
+                      'pointer-fine:opacity-0 pointer-fine:group-focus-within/tile:opacity-100 pointer-fine:group-hover/tile:opacity-100',
                     )}
                   >
                     <X className="size-4" aria-hidden />
@@ -340,7 +364,9 @@ export function ImageManager({ images, onChange, productName }: ImageManagerProp
                   <div
                     className={cn(
                       'absolute inset-x-0 bottom-0 flex items-center justify-center gap-1.5 bg-gradient-to-t from-black/55 to-transparent p-2 pt-6',
-                      'transition-opacity duration-200 md:opacity-0 md:group-focus-within/tile:opacity-100 md:group-hover/tile:opacity-100',
+                      // toque: botões espalhados pela largura (mais espaço entre os alvos)
+                      'pointer-coarse:justify-between pointer-coarse:gap-1 pointer-coarse:p-1.5 pointer-coarse:pt-7',
+                      'transition-opacity duration-200 pointer-fine:opacity-0 pointer-fine:group-focus-within/tile:opacity-100 pointer-fine:group-hover/tile:opacity-100',
                     )}
                   >
                     <button
@@ -472,20 +498,42 @@ export function ImageManager({ images, onChange, productName }: ImageManagerProp
         </span>
         <div>
           <p className="text-sm font-semibold text-fg">
-            {dropActive ? 'Solte para enviar' : 'Arraste e solte imagens aqui'}
+            {dropActive ? (
+              'Solte para enviar'
+            ) : (
+              <>
+                {/* no celular não existe arrastar arquivos */}
+                <span className="pointer-coarse:hidden">Arraste e solte imagens aqui</span>
+                <span className="hidden pointer-coarse:inline">Adicione as fotos do produto</span>
+              </>
+            )}
           </p>
           <p className="mt-0.5 text-xs text-muted">JPG, PNG, WebP ou AVIF · otimizadas automaticamente</p>
         </div>
-        <div className="flex flex-wrap justify-center gap-2">
-          <Button ref={uploadButtonRef} size="sm" variant="secondary" onClick={() => fileInputRef.current?.click()}>
+        {/* celular: botões na largura toda, um embaixo do outro (alvos de 44px) */}
+        <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:flex-wrap sm:justify-center">
+          <Button
+            ref={uploadButtonRef}
+            size="sm"
+            variant="secondary"
+            className="max-sm:h-11"
+            onClick={() => fileInputRef.current?.click()}
+          >
             <Upload aria-hidden />
             Enviar imagens
           </Button>
-          <Button size="sm" variant="outline" onClick={() => setLibraryOpen(true)}>
+          <Button size="sm" variant="outline" className="max-sm:h-11" onClick={() => setLibraryOpen(true)}>
             <LibraryBig aria-hidden />
             Escolher da biblioteca
           </Button>
-          <Button size="sm" variant="ghost" onClick={() => setPathOpen((o) => !o)} aria-expanded={pathOpen}>
+          <Button
+            ref={pathButtonRef}
+            size="sm"
+            variant="ghost"
+            className="max-sm:h-11"
+            onClick={() => setPathOpen((o) => !o)}
+            aria-expanded={pathOpen}
+          >
             <Link2 aria-hidden />
             Informar caminho
           </Button>
@@ -514,7 +562,7 @@ export function ImageManager({ images, onChange, productName }: ImageManagerProp
         <ImagePathAdder
           existing={images}
           onAdd={(path) => addPaths([path])}
-          onClose={() => setPathOpen(false)}
+          onClose={closePathAdder}
         />
       )}
 

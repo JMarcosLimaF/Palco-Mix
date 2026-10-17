@@ -8,7 +8,7 @@ import { buttonVariants } from '@/components/ui/button-variants'
 import { site, whatsappLink } from '@/config/site'
 import { useCatalogLookups } from '@/hooks/catalog'
 import { catalogHref } from '@/lib/catalog-params'
-import { cn, isNewProduct, productCode } from '@/lib/utils'
+import { cn, isNewProduct, isPriceOnRequest, productCode } from '@/lib/utils'
 import type { Product } from '@/types/catalog'
 import { colorSwatches, GENDER_LABEL, productWhatsappMessage } from './catalog-helpers'
 import { Price } from './price'
@@ -24,6 +24,9 @@ export interface ProductDetailsProps {
   actions?: ReactNode
   className?: string
 }
+
+/** Links de marca/categoria do eyebrow: alvo de 40px sem aumentar a linha (margem negativa). */
+const CRUMB_LINK = '-mx-1 -my-3 inline-flex min-h-10 items-center rounded-md px-1 transition-colors'
 
 /** Bloco de detalhes do produto, compartilhado entre a Visualização Rápida e a página do produto. */
 export function ProductDetails({ product, variant, size, onSizeChange, actions, className }: ProductDetailsProps) {
@@ -58,7 +61,7 @@ export function ProductDetails({ product, variant, size, onSizeChange, actions, 
             <Link
               to={catalogHref({ distributors: [product.distributor] })}
               replace={replace}
-              className="rounded-sm transition-colors hover:text-brand-700 dark:hover:text-brand-300"
+              className={cn(CRUMB_LINK, 'hover:text-brand-700 dark:hover:text-brand-300')}
             >
               {brand}
             </Link>
@@ -72,7 +75,7 @@ export function ProductDetails({ product, variant, size, onSizeChange, actions, 
             <Link
               to={catalogHref({ categories: [product.category] })}
               replace={replace}
-              className="rounded-sm text-muted transition-colors hover:text-fg"
+              className={cn(CRUMB_LINK, 'text-muted hover:text-fg')}
             >
               {category}
             </Link>
@@ -83,22 +86,24 @@ export function ProductDetails({ product, variant, size, onSizeChange, actions, 
       <Heading
         className={cn(
           'mt-2.5 text-balance break-words text-fg',
-          variant === 'page' ? 'title-display text-3xl sm:text-4xl xl:text-[2.75rem]' : 'title-display text-2xl sm:text-3xl',
+          variant === 'page'
+            ? 'title-display text-[1.75rem] sm:text-4xl xl:text-[2.75rem]'
+            : 'title-display text-[1.5rem] sm:text-3xl',
         )}
       >
         {product.name}
       </Heading>
 
-      <div className="mt-3 flex flex-wrap items-center gap-2">
+      <div className="mt-2.5 flex flex-wrap items-center gap-2 sm:mt-3">
         <CopyCode id={product.id} />
         {isNew && <Badge tone="brand">Novo</Badge>}
         {product.isFeatured && <Badge tone="dark">Destaque</Badge>}
       </div>
 
-      <Price product={product} size="lg" showDiscount className="mt-5" />
+      <Price product={product} size="lg" showDiscount className="mt-4 sm:mt-5" />
 
       {(product.sizes || colors.length > 0) && (
-        <div className="mt-6 space-y-5 border-t border-line pt-6">
+        <div className="mt-5 space-y-5 border-t border-line pt-5 sm:mt-6 sm:pt-6">
           <SizePicker sizes={product.sizes} value={size} onChange={onSizeChange} />
           {colors.length > 0 && (
             <div>
@@ -132,7 +137,7 @@ export function ProductDetails({ product, variant, size, onSizeChange, actions, 
         </div>
       )}
 
-      {actions && <div className="mt-7">{actions}</div>}
+      {actions && <div className="mt-6 sm:mt-7">{actions}</div>}
 
       {product.description && (
         <div className="mt-8 border-t border-line pt-6">
@@ -175,18 +180,22 @@ function CopyCode({ id }: { id: string }) {
   }
 
   return (
+    // alvo de toque de 40px; a pílula visível continua pequena (a margem negativa
+    // mantém a linha com a altura dela)
     <button
       type="button"
       onClick={copy}
       aria-label={`Código do produto ${code}. Copiar`}
-      className="group inline-flex h-6 items-center gap-1.5 rounded-full border border-line px-2.5 text-[0.6875rem] font-semibold text-muted tabular-nums transition-colors duration-200 hover:border-line-strong hover:text-fg"
+      className="group -my-2 inline-flex h-10 items-center rounded-full"
     >
-      Cód. {code}
-      {copied ? (
-        <Check className="size-3 text-success-500" aria-hidden />
-      ) : (
-        <Copy className="size-3 opacity-60 transition-opacity group-hover:opacity-100" aria-hidden />
-      )}
+      <span className="inline-flex h-6 items-center gap-1.5 rounded-full border border-line px-2.5 text-xs font-semibold text-muted tabular-nums transition-colors duration-200 group-hover:border-line-strong group-hover:text-fg group-active:bg-surface-2">
+        Cód. {code}
+        {copied ? (
+          <Check className="size-3 text-success-500" aria-hidden />
+        ) : (
+          <Copy className="size-3 opacity-60 transition-opacity group-hover:opacity-100" aria-hidden />
+        )}
+      </span>
     </button>
   )
 }
@@ -205,16 +214,30 @@ export interface ProductActionsProps {
 export function ProductActions({ product, size, variant, layout = 'stack', className }: ProductActionsProps) {
   const href = whatsappLink(productWhatsappMessage(product, size))
   const productPath = `/produto/${product.id}`
+  // "sob consulta": o CTA (e a mensagem) pergunta o preço; no rodapé compacto
+  // o "no WhatsApp" fica só para o leitor de tela
+  const ctaLabel = isPriceOnRequest(product) && site.showPrices ? (
+    <span>
+      Consultar preço<span className={layout === 'bar' ? 'sr-only' : undefined}> no WhatsApp</span>
+    </span>
+  ) : (
+    'Pedir pelo WhatsApp'
+  )
 
   const whatsapp = (
     <a
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className={buttonVariants({ variant: 'whatsapp', size: 'lg', className: 'w-full' })}
+      className={buttonVariants({
+        variant: 'whatsapp',
+        size: 'lg',
+        // página do produto no celular: o CTA fica na barra fixa (ProductBuyBar), na zona do polegar
+        className: cn('w-full', variant === 'page' && layout === 'stack' && 'max-md:hidden'),
+      })}
     >
       <WhatsAppIcon className="size-5" />
-      Pedir pelo WhatsApp
+      {ctaLabel}
     </a>
   )
 

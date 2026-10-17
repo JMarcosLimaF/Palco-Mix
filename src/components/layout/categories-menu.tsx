@@ -74,7 +74,7 @@ export function CategoriesMenu({ active }: { active: boolean }) {
     if (returnFocus) triggerRef.current?.focus()
   }
 
-  // clique fora fecha
+  // clique fora fecha; Esc fecha mesmo com o foco fora do menu (painel aberto pelo hover)
   useEffect(() => {
     if (!open) return
     function onPointerDown(event: globalThis.PointerEvent) {
@@ -83,8 +83,19 @@ export function CategoriesMenu({ active }: { active: boolean }) {
       hoverModeRef.current = false
       setOpen(false)
     }
+    function onKeyDown(event: globalThis.KeyboardEvent) {
+      // com o foco no botão ou no painel, os handlers deles já tratam o Esc
+      if (event.key !== 'Escape' || wrapperRef.current?.contains(event.target as Node)) return
+      clearTimeout(timerRef.current)
+      hoverModeRef.current = false
+      setOpen(false)
+    }
     document.addEventListener('pointerdown', onPointerDown, { passive: true })
-    return () => document.removeEventListener('pointerdown', onPointerDown)
+    document.addEventListener('keydown', onKeyDown)
+    return () => {
+      document.removeEventListener('pointerdown', onPointerDown)
+      document.removeEventListener('keydown', onKeyDown)
+    }
   }, [open])
 
   // foco pedido pelo teclado ao abrir (↓ / ↑ no botão)
@@ -164,6 +175,13 @@ export function CategoriesMenu({ active }: { active: boolean }) {
     next?.focus()
   }
 
+  // foco (teclado) entrou no painel aberto pelo hover: fixa-o, senão a saída do mouse o fecharia com o foco dentro
+  function onPanelFocus() {
+    if (!hoverModeRef.current) return
+    hoverModeRef.current = false
+    clearTimer()
+  }
+
   function onBlur(event: FocusEvent<HTMLDivElement>) {
     const next = event.relatedTarget
     if (open && next instanceof Node && !event.currentTarget.contains(next)) hide()
@@ -199,6 +217,7 @@ export function CategoriesMenu({ active }: { active: boolean }) {
             exit={{ opacity: 0, y: -4, scale: 0.985, transition: { duration: 0.14 } }}
             style={{ transformOrigin: '6rem 0' }}
             onKeyDown={onPanelKeyDown}
+            onFocus={onPanelFocus}
             // pt-3 = "ponte" invisível entre o botão e o painel (o hover não se perde)
             className="absolute top-full -left-4 z-50 pt-3"
           >

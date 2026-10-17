@@ -1,6 +1,7 @@
 /**
  * Lógica compartilhada da Busca Inteligente (campo do cabeçalho e tela cheia mobile):
- * valor do campo sincronizado com ?q= no catálogo, debounce, sugestões de produtos,
+ * busca global (não espelha ?q= nem herda os filtros do catálogo — refinar é com
+ * o campo dos filtros da vitrine), debounce, sugestões de produtos,
  * categorias e distribuidores que casam com o termo, buscas populares,
  * lista linear de opções para o teclado (↑ ↓ Enter) e as ações de cada opção.
  */
@@ -9,7 +10,7 @@ import { useLocation, useNavigate } from 'react-router'
 import { useCatalogLookups, useSearchSuggestions } from '@/hooks/catalog'
 import { useDebouncedValue } from '@/hooks/use-debounced-value'
 import { useQuickView } from '@/hooks/use-quick-view'
-import { catalogHref } from '@/lib/catalog-params'
+import { catalogHref, QUICK_VIEW_PARAM } from '@/lib/catalog-params'
 import type { Category, Distributor, Product } from '@/types/catalog'
 import { nameMatches, nameScore } from './search-utils'
 import { useNavTaxonomy, type TaxonomyEntry } from './use-nav-taxonomy'
@@ -44,7 +45,8 @@ export interface AllResultsOption {
   kind: 'all'
   key: string
   term: string
-  total: number
+  /** null enquanto o termo novo é consultado (os itens exibidos ainda são do anterior) */
+  total: number | null
 }
 export type PopularOption = CategoryOption | DistributorOption
 export type SearchOption = ProductOption | CategoryOption | DistributorOption | AllResultsOption
@@ -126,15 +128,16 @@ export function useSearchSuggestionsModel(): SearchSuggestionsModel {
   const lookups = useCatalogLookups()
   const taxonomy = useNavTaxonomy()
 
-  // No /catalogo o campo espelha ?q=; ao trocar de página (ou de termo na URL) re-sincroniza.
-  const urlTerm = location.pathname === '/catalogo' ? (new URLSearchParams(location.search).get('q') ?? '') : ''
-  const syncKey = `${location.pathname}\u0000${urlTerm}`
-  const [value, setValueState] = useState(urlTerm)
+  // Busca global: limpa o campo a cada navegação real (abrir/fechar a Visualização Rápida não conta).
+  const urlParams = new URLSearchParams(location.search)
+  urlParams.delete(QUICK_VIEW_PARAM)
+  const syncKey = `${location.pathname}?${urlParams.toString()}`
+  const [value, setValueState] = useState('')
   const [activeKey, setActiveKey] = useState<string | null>(null)
   const [syncedKey, setSyncedKey] = useState(syncKey)
   if (syncedKey !== syncKey) {
     setSyncedKey(syncKey)
-    setValueState(urlTerm)
+    setValueState('')
     setActiveKey(null)
   }
 
@@ -144,6 +147,15 @@ export function useSearchSuggestionsModel(): SearchSuggestionsModel {
   const suggestions = useSearchSuggestions(term, PRODUCT_LIMIT)
   // com o termo curto a consulta fica desabilitada; ignora o "placeholder" anterior
   const data = term ? suggestions.data : undefined
+  // keepPreviousData: enquanto o termo novo é consultado, `data` ainda é do termo anterior
+  const stale = Boolean(data) && suggestions.isPlaceholderData
+
+  // as opções mudam com o termo: a opção ativa antiga deixa de existir
+  const [activeTerm, setActiveTerm] = useState(term)
+  if (activeTerm !== term) {
+    setActiveTerm(term)
+    setActiveKey(null)
+  }
 
   const { categoryName, distributorName } = lookups
   const products = useMemo<ProductOption[]>(
@@ -183,7 +195,7 @@ export function useSearchSuggestionsModel(): SearchSuggestionsModel {
   else status = settled ? 'empty' : 'loading'
 
   const isBusy = query.length >= MIN_SEARCH_LENGTH && !settled
-  const total = data?.total ?? 0
+  const total = stale ? null : (data?.total ?? 0)
   const all: AllResultsOption | null = status === 'results' ? { kind: 'all', key: 'all', term, total } : null
 
   const options: SearchOption[] =

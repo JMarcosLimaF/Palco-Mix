@@ -1,4 +1,4 @@
-import { ArrowUp, LockKeyhole } from 'lucide-react'
+import { ArrowRight, ArrowUp, ArrowUpRight, LockKeyhole } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { Link } from 'react-router'
 import { LogoBadge, LogoMark } from '@/components/brand/logo'
@@ -11,14 +11,27 @@ import { CONTACT_MESSAGE, NAV_ITEMS, PRIMARY_NAV, UNDERLINE_LINK } from './nav-c
 import { useNavTaxonomy } from './use-nav-taxonomy'
 
 const FOOTER_CATEGORY_LIMIT = 6
-const LINK = cn('text-sm text-white/65 hover:text-white', UNDERLINE_LINK)
+/** Texto curto do celular (no desktop vai a descrição completa). */
+const SHORT_DESCRIPTION = 'Calçados e acessórios das marcas que você ama.'
+// no celular: linha inteira tocável (44px) e sem o sublinhado animado de hover
+const LINK = cn(
+  'text-sm text-white/65 hover:text-white',
+  UNDERLINE_LINK,
+  'max-md:flex max-md:min-h-11 max-md:items-center max-md:bg-none max-md:text-[0.9375rem] max-md:text-white/75',
+)
 
 function scrollToTop() {
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
   window.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' })
+  // o foco acompanha a rolagem: o próximo Tab segue do topo, não do rodapé
+  document.getElementById('conteudo')?.focus({ preventScroll: true })
 }
 
-/** Rodapé escuro (igual nos dois temas) com navegação, categorias e atendimento. */
+/**
+ * Rodapé escuro (igual nos dois temas) com navegação, categorias e atendimento.
+ * No celular é compacto: marca em uma linha, atendimento logo no começo,
+ * navegação em duas colunas e categorias numa faixa com rolagem lateral.
+ */
 export function SiteFooter() {
   const { topCategories, isLoading } = useNavTaxonomy()
   const categories = topCategories.slice(0, FOOTER_CATEGORY_LIMIT)
@@ -33,27 +46,39 @@ export function SiteFooter() {
       />
       <LogoMark className="pointer-events-none absolute -right-20 -bottom-16 -z-10 h-[22rem] text-white opacity-[0.035] sm:h-[28rem]" />
 
-      <div className="container-page pt-16 pb-8 sm:pt-20">
-        <div className="grid gap-12 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,2fr)] lg:gap-16">
-          <div className="max-w-sm">
-            <Link to="/" className="inline-block rounded-full transition-transform duration-500 ease-out-expo hover:scale-[1.03]">
-              <LogoBadge size={88} className="size-[5.5rem]" />
-            </Link>
-            <p className="mt-6 text-sm leading-relaxed text-white/65">{site.description}</p>
+      <div className="container-page pt-10 pb-6 md:pt-20 md:pb-8">
+        <div className="grid grid-cols-1 gap-8 md:gap-12 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,2fr)] lg:gap-16">
+          <div className="md:max-w-sm">
+            <div className="flex items-center gap-4 md:block">
+              <Link
+                to="/"
+                className="inline-block shrink-0 rounded-full transition-transform duration-500 ease-out-expo hover:scale-[1.03]"
+              >
+                <LogoBadge size={88} className="size-14 md:size-[5.5rem]" />
+              </Link>
+              <p className="text-sm leading-relaxed text-white/65 md:mt-6">
+                <span className="md:hidden">{SHORT_DESCRIPTION}</span>
+                <span className="max-md:hidden">{site.description}</span>
+              </p>
+            </div>
             <a
               href={whatsappLink(CONTACT_MESSAGE)}
               target="_blank"
               rel="noopener noreferrer"
-              className={buttonVariants({ variant: 'whatsapp', size: 'md', className: 'mt-6' })}
+              className={buttonVariants({ variant: 'whatsapp', size: 'md', className: 'mt-6 hidden md:inline-flex' })}
             >
               <WhatsAppIcon aria-hidden />
               Peça pelo WhatsApp
               <span className="sr-only">(abre em nova aba)</span>
             </a>
+            <MobileContact />
           </div>
 
-          <div className="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3">
-            <FooterColumn title="Navegação">
+          <div className="grid grid-cols-1 gap-y-8 md:grid-cols-3 md:gap-x-6 md:gap-y-10">
+            <FooterColumn
+              title="Navegação"
+              listClassName="max-md:mt-2 max-md:grid max-md:grid-cols-2 max-md:gap-x-6 max-md:gap-y-0"
+            >
               {PRIMARY_NAV.map((key) => (
                 <li key={key}>
                   <Link to={NAV_ITEMS[key].href} className={LINK}>
@@ -63,7 +88,9 @@ export function SiteFooter() {
               ))}
             </FooterColumn>
 
-            <FooterColumn title="Categorias">
+            <MobileCategories categories={topCategories.map(({ item }) => item)} isLoading={isLoading} />
+
+            <FooterColumn title="Categorias" className="max-md:hidden">
               {isLoading
                 ? [0, 1, 2, 3].map((i) => (
                     <li key={i} aria-hidden>
@@ -87,7 +114,8 @@ export function SiteFooter() {
               </li>
             </FooterColumn>
 
-            <FooterColumn title="Atendimento" className="col-span-2 sm:col-span-1">
+            {/* no celular o atendimento já aparece logo abaixo da marca */}
+            <FooterColumn title="Atendimento" className="max-md:hidden">
               <li>
                 <a
                   href={whatsappLink(CONTACT_MESSAGE)}
@@ -131,19 +159,26 @@ export function SiteFooter() {
           </div>
         </div>
 
-        <div className="mt-14 sm:mt-16">
+        <div className="mt-8 md:mt-16">
           <div aria-hidden className="logo-stripe h-[2px] w-full rounded-full opacity-80" />
-          <div className="flex flex-col-reverse gap-4 pt-6 sm:flex-row sm:items-center sm:justify-between">
-            <p className="text-xs leading-relaxed text-white/50">
+          <div className="flex flex-col-reverse gap-3 pt-6 md:flex-row md:items-center md:justify-between md:gap-4">
+            <Link
+              to="/admin"
+              className="inline-flex h-10 items-center gap-1.5 self-center text-xs text-white/50 transition-colors hover:text-white md:hidden"
+            >
+              <LockKeyhole className="size-3.5" aria-hidden />
+              Área administrativa
+            </Link>
+            <p className="text-xs leading-relaxed text-white/50 max-md:text-center">
               © {year} {site.fullName}. Todos os direitos reservados.
             </p>
             <button
               type="button"
               onClick={scrollToTop}
-              className="group inline-flex h-10 items-center gap-2 self-start rounded-full bg-white/[0.06] px-4 text-xs font-semibold text-white/80 ring-1 ring-white/10 transition-colors hover:bg-white hover:text-ink-950 sm:self-auto"
+              className="group inline-flex h-12 w-full items-center justify-center gap-2 rounded-full bg-white/[0.06] px-4 text-sm font-semibold text-white/85 ring-1 ring-white/10 transition-colors hover:bg-white hover:text-ink-950 active:bg-white/15 md:h-10 md:w-auto md:self-auto md:text-xs md:text-white/80"
             >
               Voltar ao topo
-              <ArrowUp className="size-3.5 transition-transform duration-300 ease-out-expo group-hover:-translate-y-0.5" aria-hidden />
+              <ArrowUp className="size-4 transition-transform duration-300 ease-out-expo group-hover:-translate-y-0.5 md:size-3.5" aria-hidden />
             </button>
           </div>
         </div>
@@ -152,11 +187,101 @@ export function SiteFooter() {
   )
 }
 
-function FooterColumn({ title, className, children }: { title: string; className?: string; children: ReactNode }) {
+function FooterColumn({
+  title,
+  className,
+  listClassName,
+  children,
+}: {
+  title: string
+  className?: string
+  listClassName?: string
+  children: ReactNode
+}) {
   return (
     <div className={className}>
       <h2 className="eyebrow text-white/55">{title}</h2>
-      <ul className="mt-5 flex flex-col items-start gap-3">{children}</ul>
+      <ul className={cn('mt-5 flex flex-col items-start gap-3', listClassName)}>{children}</ul>
     </div>
+  )
+}
+
+/** Celular: atendimento claro e tocável (WhatsApp em destaque + Instagram). */
+function MobileContact() {
+  return (
+    <ul className="mt-6 grid gap-2.5 md:hidden">
+      <li>
+        <a
+          href={whatsappLink(CONTACT_MESSAGE)}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex min-h-15 items-center gap-3.5 rounded-2xl bg-[#25D366] px-4 py-2.5 text-[#0b3d1f] shadow-[0_10px_30px_-14px_rgb(37_211_102/0.8)] transition-[background-color,transform] duration-200 ease-out-expo active:scale-[0.98] active:bg-[#1fc15c]"
+        >
+          <WhatsAppIcon className="size-7 shrink-0" aria-hidden />
+          <span className="min-w-0 flex-1 leading-tight">
+            <span className="block text-[0.9375rem] font-bold">Peça pelo WhatsApp</span>
+            <span className="mt-0.5 block text-[0.8125rem] font-semibold tabular-nums opacity-75">{site.whatsapp.display}</span>
+          </span>
+          <ArrowUpRight className="size-5 shrink-0 opacity-70" aria-hidden />
+          <span className="sr-only">(abre em nova aba)</span>
+        </a>
+      </li>
+      <li>
+        <a
+          href={site.instagram.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex min-h-12 items-center gap-3.5 rounded-2xl bg-white/[0.06] px-4 py-2 ring-1 ring-white/10 transition-colors ring-inset active:bg-white/10"
+        >
+          <InstagramIcon className="size-[1.35rem] shrink-0 text-white/85" aria-hidden />
+          <span className="min-w-0 flex-1 truncate text-sm">
+            <span className="text-white/55">Instagram </span>
+            <span className="font-semibold text-white">@{site.instagram.handle}</span>
+          </span>
+          <ArrowUpRight className="size-4.5 shrink-0 text-white/50" aria-hidden />
+          <span className="sr-only">(abre em nova aba)</span>
+        </a>
+      </li>
+    </ul>
+  )
+}
+
+/** Celular: categorias em faixa com rolagem lateral (a última aparece cortada na borda). */
+function MobileCategories({ categories, isLoading }: { categories: { id: string; name: string }[]; isLoading: boolean }) {
+  return (
+    <section aria-labelledby="footer-categorias-mobile" className="md:hidden">
+      <div className="flex items-center justify-between">
+        <h2 id="footer-categorias-mobile" className="eyebrow text-white/55">
+          Categorias
+        </h2>
+        <Link
+          to="/categorias"
+          className="-mr-2 inline-flex h-10 items-center gap-1 rounded-full px-2 text-sm font-semibold text-brand-300 active:text-brand-200"
+        >
+          Ver todas
+          <ArrowRight className="size-3.5" aria-hidden />
+        </Link>
+      </div>
+      {isLoading ? (
+        <div aria-hidden className="mt-2 flex gap-2 overflow-hidden">
+          {[0, 1, 2, 3].map((i) => (
+            <span key={i} className="h-10 w-24 shrink-0 rounded-full bg-white/10" />
+          ))}
+        </div>
+      ) : (
+        <ul className="scrollbar-none -mx-4 mt-2 flex snap-x scroll-px-4 gap-2 overflow-x-auto overscroll-x-contain px-4 sm:-mx-6 sm:scroll-px-6 sm:px-6">
+          {categories.map((category) => (
+            <li key={category.id} className="shrink-0 snap-start">
+              <Link
+                to={catalogHref({ categories: [category.id] })}
+                className="inline-flex h-10 items-center rounded-full bg-white/[0.06] px-4 text-sm font-semibold whitespace-nowrap text-white/85 ring-1 ring-white/10 transition-colors ring-inset active:bg-white/15"
+              >
+                {category.name}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
   )
 }

@@ -26,11 +26,11 @@ export function RecentProductsPanel({ products, loading = false, categoryName, c
     <Panel className={cn('flex flex-col overflow-hidden', className)}>
       <PanelHeader
         title="Adicionados recentemente"
-        description="Os últimos produtos cadastrados no catálogo"
+        description="Os últimos produtos cadastrados"
         actions={
           <Link
             to="/admin/produtos"
-            className="group/all inline-flex h-8 shrink-0 items-center gap-1 rounded-full px-3 text-xs font-semibold text-muted transition-colors duration-200 hover:bg-surface-2 hover:text-fg"
+            className="group/all -my-1 -mr-2 inline-flex h-10 shrink-0 items-center gap-1 rounded-full px-3 text-xs font-semibold text-muted transition-colors duration-200 hover:bg-surface-2 hover:text-fg sm:my-0 sm:mr-0 sm:h-8"
           >
             Ver todos
             <ArrowRight
@@ -77,7 +77,7 @@ export function RecentProductsPanel({ products, loading = false, categoryName, c
             >
               <Link
                 to={`/admin/produtos/${product.id}`}
-                className="group/row flex items-center gap-3.5 px-5 py-3 transition-colors duration-200 outline-offset-[-2px] hover:bg-surface/80"
+                className="group/row flex items-center gap-3 px-5 py-3 transition-colors duration-200 outline-offset-[-2px] hover:bg-surface/80 active:bg-surface/80 sm:gap-3.5"
               >
                 <div className="relative aspect-[5/6] w-12 shrink-0 overflow-hidden rounded-lg bg-surface-2 ring-1 ring-black/[0.04] dark:ring-white/[0.06]">
                   <ProductImage path={product.images[0]} alt="" sizes="48px" />
@@ -85,7 +85,8 @@ export function RecentProductsPanel({ products, loading = false, categoryName, c
 
                 <div className="min-w-0 flex-1">
                   <span className="sr-only">Editar </span>
-                  <span className="block truncate text-sm font-semibold text-fg transition-colors duration-200 group-hover/row:text-brand-600 dark:group-hover/row:text-brand-300">
+                  {/* celular: nome em até 2 linhas */}
+                  <span className="block text-sm leading-snug font-semibold text-fg transition-colors duration-200 group-hover/row:text-brand-600 max-sm:line-clamp-2 sm:truncate dark:group-hover/row:text-brand-300">
                     {product.name}
                   </span>
                   <span className="mt-0.5 flex min-w-0 items-center gap-1.5 text-xs text-subtle">
@@ -93,14 +94,16 @@ export function RecentProductsPanel({ products, loading = false, categoryName, c
                     <span aria-hidden>·</span>
                     <span className="shrink-0">{formatDate(product.createdAt)}</span>
                   </span>
-                  <Price product={product} size="sm" className="mt-1 sm:hidden" />
+                  {/* celular: preço e status embaixo do nome (a coluna de texto fica com a largura toda) */}
+                  <div className="mt-1 flex items-end justify-between gap-2 sm:hidden">
+                    <Price internal product={product} size="sm" />
+                    <StatusBadge active={product.status === 'active'} />
+                  </div>
                 </div>
 
-                <Price product={product} size="sm" className="hidden shrink-0 flex-col items-end gap-0 sm:flex" />
+                <Price internal product={product} size="sm" className="hidden shrink-0 flex-col items-end gap-0 sm:flex" />
 
-                <Badge tone={product.status === 'active' ? 'success' : 'neutral'} className="shrink-0">
-                  {product.status === 'active' ? 'Ativo' : 'Inativo'}
-                </Badge>
+                <StatusBadge active={product.status === 'active'} className="max-sm:hidden" />
 
                 <Pencil
                   className="hidden size-4 shrink-0 text-subtle transition-[color,transform] duration-200 group-hover/row:text-brand-500 sm:block"
@@ -112,5 +115,13 @@ export function RecentProductsPanel({ products, loading = false, categoryName, c
         </ul>
       )}
     </Panel>
+  )
+}
+
+function StatusBadge({ active, className }: { active: boolean; className?: string }) {
+  return (
+    <Badge tone={active ? 'success' : 'neutral'} className={cn('shrink-0', className)}>
+      {active ? 'Ativo' : 'Inativo'}
+    </Badge>
   )
 }

@@ -3,6 +3,7 @@
  * e a regra que decide qual item está ativo a partir da URL.
  */
 import { House, LayoutGrid, Sparkles, Star, Tags, Truck, type LucideIcon } from 'lucide-react'
+import { matchPath } from 'react-router'
 import { catalogHref, parseCatalogParams } from '@/lib/catalog-params'
 
 /** Mensagem padrão dos botões de WhatsApp da casca pública. */
@@ -64,6 +65,25 @@ export function activeNavKey(pathname: string, search: string): NavKey | null {
   if (query.categories?.length) return 'categorias'
   if (query.distributors?.length) return 'distribuidores'
   return 'catalogo'
+}
+
+/** Abas da barra inferior do celular (além de Buscar e WhatsApp). */
+export type TabKey = 'inicio' | 'catalogo' | 'categorias'
+export const TAB_ITEMS: TabKey[] = ['inicio', 'catalogo', 'categorias']
+
+/**
+ * Aba ativa da barra inferior — concorda com o menu lateral (activeNavKey):
+ * vitrine filtrada por categoria fica em "Categorias"; os demais filtros, em "Catálogo".
+ */
+export function activeTabKey(pathname: string, search = ''): TabKey | null {
+  const key = activeNavKey(pathname, search)
+  if (key === 'inicio' || key === 'categorias') return key
+  return pathname === '/catalogo' ? 'catalogo' : null
+}
+
+/** id do produto quando a URL é a página de um produto (/produto/:id). */
+export function productIdFromPath(pathname: string): string | undefined {
+  return matchPath('/produto/:id', pathname)?.params.id
 }
 
 /** Classes base de um item da navegação desktop (link ou botão). */

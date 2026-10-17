@@ -4,7 +4,8 @@
  */
 import { countActiveFilters } from '@/lib/catalog-params'
 import { getImageSources, type ImageSources } from '@/lib/images'
-import { formatBRL, normalizeText, productCode } from '@/lib/utils'
+import { site } from '@/config/site'
+import { discountPercent, formatBRL, isPriceOnRequest, normalizeText, productCode } from '@/lib/utils'
 import type { Gender, Product, ProductQuery, ProductSort } from '@/types/catalog'
 
 /** `sizes` da grade: 2 col (mobile) · 3 col (sm) · 4 col (xl). */
@@ -81,6 +82,18 @@ export function priceRangeLabel(min: number | undefined, max: number | undefined
   return 'Qualquer preço'
 }
 
+/** Desconto à vista mínimo (%) para exibir o selo "-X% à vista". */
+export const MIN_DISCOUNT_BADGE = 10
+
+/**
+ * Selo de desconto à vista ("-12% à vista") ou null. `promoPrice` é o preço à
+ * vista — diferenças pequenas (2–5%) aparecem só no bloco de preço.
+ */
+export function discountBadgeLabel(product: Pick<Product, 'price' | 'promoPrice'>): string | null {
+  const off = discountPercent(product)
+  return off >= MIN_DISCOUNT_BADGE ? `-${off}% à vista` : null
+}
+
 export interface PriceShortcut {
   key: string
   label: string
@@ -111,7 +124,7 @@ function nearestLadder(target: number): number {
  * Atalhos de faixa de preço a partir da faixa real dos resultados.
  * Cortes em progressão geométrica (preços de calçados são assimétricos:
  * muitos chinelos baratos, poucos tênis caros) arredondados para valores redondos.
- * Ex.: R$ 12–250 → Até R$ 30 · R$ 30–60 · R$ 60–120 · Acima de R$ 120
+ * Ex.: R$ 12–250 → Até R$ 29,99 · R$ 30 – 59,99 · R$ 60 – 119,99 · A partir de R$ 120
  */
 export function buildPriceShortcuts(range: { min: number; max: number } | undefined): PriceShortcut[] {
   if (!range) return []
@@ -129,17 +142,22 @@ export function buildPriceShortcuts(range: { min: number; max: number } | undefi
   }
   if (cuts.length === 0) return []
 
-  const shortcuts: PriceShortcut[] = [{ key: `ate-${cuts[0]}`, label: `Até ${formatPriceCompact(cuts[0])}`, max: cuts[0] }]
+  // faixas semiabertas [corte anterior, corte): o motor filtra com limites
+  // inclusivos, então o máximo fica 1 centavo abaixo do próximo corte e
+  // nenhum produto aparece em dois atalhos
+  const below = (cut: number) => Math.round(cut * 100 - 1) / 100
+  const shortcut = (key: string, min: number | undefined, max: number | undefined): PriceShortcut => ({
+    key,
+    label: priceRangeLabel(min, max),
+    min,
+    max,
+  })
+  const shortcuts: PriceShortcut[] = [shortcut(`ate-${cuts[0]}`, undefined, below(cuts[0]))]
   for (let i = 1; i < cuts.length; i++) {
-    shortcuts.push({
-      key: `${cuts[i - 1]}-${cuts[i]}`,
-      label: `${formatPriceCompact(cuts[i - 1])} – ${plainNumber.format(cuts[i])}`,
-      min: cuts[i - 1],
-      max: cuts[i],
-    })
+    shortcuts.push(shortcut(`${cuts[i - 1]}-${cuts[i]}`, cuts[i - 1], below(cuts[i])))
   }
   const top = cuts[cuts.length - 1]
-  shortcuts.push({ key: `acima-${top}`, label: `Acima de ${formatPriceCompact(top)}`, min: top })
+  shortcuts.push(shortcut(`acima-${top}`, top, undefined))
   return shortcuts
 }
 
@@ -177,7 +195,7 @@ export function catalogTitle(query: ProductQuery, lookups: NameLookups): string 
     if (name) return name
   }
   if (query.featured) return 'Em destaque'
-  if (query.onSale) return 'Em promoção'
+  if (query.onSale) return 'Desconto à vista'
   if (query.sort === 'recent' && countActiveFilters(query) === 0) return 'Lançamentos'
   return 'Catálogo'
 }
@@ -216,61 +234,21 @@ export function buildActiveFilterChips(query: ProductQuery, lookups: NameLookups
     })
   }
   if (query.featured) chips.push({ key: 'featured', label: 'Destaques', patch: { featured: undefined } })
-  if (query.onSale) chips.push({ key: 'promo', label: 'Em promoção', patch: { onSale: undefined } })
+  if (query.onSale) chips.push({ key: 'promo', label: 'Desconto à vista', patch: { onSale: undefined } })
   return chips
 }
 
 // ------------------------------------------------------------------ produto
 
-export type SizeOptions = { kind: 'list'; options: string[]; text: string } | { kind: 'text'; text: string }
-
-const PAIR_RANGE = /(\d{1,2})\s*\/\s*(\d{1,2})\s*(?:ao|a|até|-|–)\s*(\d{1,2})\s*\/\s*(\d{1,2})/i
-const SIMPLE_RANGE = /(\d+)\s*(ao|a|\/|-|–)\s*(\d+)/i
-const SIZE_LIST = /^\s*\d{1,2}(?:\s*[,;]\s*\d{1,2})+\s*$/
-
 /**
- * Numeração → opções selecionáveis.
- * "34 ao 39" → 34…39 · "33/34 ao 39/40" → 33/34, 35/36, 37/38, 39/40 · "35, 36, 37" → lista.
- * Qualquer outro formato é exibido como texto.
+ * Mensagem pré-preenchida do WhatsApp para um produto (com a numeração escolhida).
+ * Produto "sob consulta" (preço 0) já pergunta o preço.
  */
-export function parseSizeOptions(sizes: string | undefined): SizeOptions | null {
-  const text = sizes?.trim()
-  if (!text) return null
-
-  const pair = PAIR_RANGE.exec(text)
-  if (pair) {
-    const [a, b, c, d] = pair.slice(1, 5).map(Number)
-    if (b === a + 1 && d === c + 1 && c > a && (c - a) % 2 === 0 && c - a <= 24) {
-      const options: string[] = []
-      for (let n = a; n <= c; n += 2) options.push(`${n}/${n + 1}`)
-      return { kind: 'list', options, text }
-    }
-  }
-
-  if (SIZE_LIST.test(text)) {
-    const options = Array.from(new Set(text.split(/[,;]/).map((s) => s.trim()))).sort((x, y) => Number(x) - Number(y))
-    return { kind: 'list', options, text }
-  }
-
-  const range = SIMPLE_RANGE.exec(text)
-  if (range) {
-    const from = Number(range[1])
-    const to = Number(range[3])
-    if (from > 0 && to > from && to - from <= 20 && to <= 50) {
-      const options: string[] = []
-      for (let n = from; n <= to; n++) options.push(String(n))
-      return { kind: 'list', options, text }
-    }
-  }
-
-  return { kind: 'text', text }
-}
-
-/** Mensagem pré-preenchida do WhatsApp para um produto (com a numeração escolhida). */
-export function productWhatsappMessage(product: Pick<Product, 'id' | 'name'>, size?: string | null): string {
-  return `Olá! Tenho interesse no produto *${product.name}* (código ${productCode(product.id)})${
-    size ? `, numeração ${size}` : ''
-  }. Ainda tem disponível?`
+export function productWhatsappMessage(product: Pick<Product, 'id' | 'name' | 'price'>, size?: string | null): string {
+  const item = `*${product.name}* (código ${productCode(product.id)})${size ? `, numeração ${size}` : ''}`
+  return isPriceOnRequest(product) && site.showPrices
+    ? `Olá! Gostaria de saber o preço do produto ${item}. Ainda tem disponível?`
+    : `Olá! Tenho interesse no produto ${item}. Ainda tem disponível?`
 }
 
 export const GENDER_LABEL: Record<Gender, string> = {

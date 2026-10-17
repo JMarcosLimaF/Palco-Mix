@@ -14,10 +14,10 @@ export const AUTOPLAY_MS = 6500
 export const SWIPE_OFFSET = 72
 export const SWIPE_VELOCITY = 450
 
-/** Largura real da arte do produto em cada layout (srcset). */
-export const HERO_ART_SIZES = '(min-width: 1024px) 460px, (min-width: 768px) 340px, 62vw'
-/** Cartões da composição do slide de marca. */
-export const HERO_STACK_SIZES = '(min-width: 1024px) 280px, (min-width: 768px) 200px, 40vw'
+/** Largura real da arte do produto em cada layout (srcset). No celular a arte ocupa ~42% da largura. */
+export const HERO_ART_SIZES = '(min-width: 1024px) 460px, (min-width: 768px) 340px, 44vw'
+/** Cartões da composição do slide de marca (o maior tem ~30% da largura no celular). */
+export const HERO_STACK_SIZES = '(min-width: 1024px) 280px, (min-width: 768px) 200px, 32vw'
 
 export const HERO_WHATSAPP_MESSAGE = 'Olá, Palco Mix! Vim pelo site e quero fazer um pedido.'
 
@@ -30,10 +30,12 @@ export const GLASS_BUTTON =
   'transition-[background-color,transform,box-shadow] duration-300 ease-out-expo hover:bg-white/20 hover:ring-white/30 active:scale-95 ' +
   'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white [&_svg]:size-[1.15rem]'
 
-/** Preço grande em branco sobre o painel escuro (sobrescreve as cores do <Price>). */
-export const HERO_PRICE_CLASS =
-  '[&>span:first-child]:text-white [&>span:first-child]:text-[2rem] sm:[&>span:first-child]:text-[2.5rem] ' +
-  '[&>span:nth-child(2)]:text-white/45 [&>span:nth-child(3)]:bg-brand-500/20 [&>span:nth-child(3)]:text-brand-200'
+/**
+ * Preço grande sobre o painel escuro. A classe `dark` põe o <Price> no tema escuro nos dois
+ * temas (tokens fg/muted/subtle e variantes dark:), sem depender da ordem dos spans internos
+ * (preço à vista, "a prazo", selo); só o tamanho do preço principal é ajustado aqui.
+ */
+export const HERO_PRICE_CLASS = 'dark [&>span:first-child]:text-[1.75rem] sm:[&>span:first-child]:text-[2.5rem]'
 
 /** Flutuação suave da arte (desligada pelo MotionConfig em "reduzir movimento"). */
 export const FLOAT_ANIMATION = { y: [0, -10, 0] }

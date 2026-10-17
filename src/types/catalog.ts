@@ -103,6 +103,11 @@ export type DistributorInput = Omit<Distributor, 'id' | 'createdAt' | 'updatedAt
 
 export interface CatalogData {
   schemaVersion: number
+  /**
+   * Último número usado nos códigos PM-xxxx. Só cresce: códigos de produtos
+   * excluídos nunca são reutilizados. Ausente = maior número entre os ids.
+   */
+  productSeq?: number
   categories: Category[]
   distributors: Distributor[]
   products: Product[]

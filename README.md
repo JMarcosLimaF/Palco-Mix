@@ -57,9 +57,11 @@ DESIGN.md                   contrato de design (tokens, componentes, regras)
 - **Imagens enviadas pelo painel**: em `npm run dev` são gravadas em `public/produtos/uploads/`; no site publicado (estático) viram data URL comprimida dentro do banco local.
 - Para trocar o armazenamento por um backend (ex.: Supabase), reimplemente `src/services/*` — as telas só conhecem os hooks de `src/hooks/catalog.ts`. O motor `lib/catalog-query.ts` documenta a semântica que a API deve oferecer (busca, filtros, facetas, paginação).
 
-### Preço sob consulta
+### Preços
 
-`price = 0` significa **preço sob consulta**: o site mostra "Sob consulta" e direciona para o WhatsApp. É o caso dos chinelos Coca-Cola, cujas artes não trazem preço.
+A vitrine **não exibe preços**: o cliente vê o produto e pede pelo WhatsApp. Os preços continuam no cadastro do painel como informação interna. Para voltar a mostrar preços na loja, troque `showPrices` para `true` em `src/config/site.ts` (filtro e ordenação por preço voltam junto).
+
+> As artes em `public/produtos/` têm o preço impresso na própria imagem. Para não aparecer valor nenhum, substitua-as por versões sem preço (mesmo nome de arquivo) e rode `npm run images`.
 
 ### Adicionando produtos com imagens novas
 

@@ -11,17 +11,23 @@ export interface PaginationProps {
 
 export function Pagination({ page, pageCount, onPageChange, className }: PaginationProps) {
   if (pageCount <= 1) return null
+  // aria-disabled em vez de disabled: o botão acionado continua focável ao
+  // chegar na primeira/última página (com disabled o foco cairia no <body>)
+  const atStart = page <= 1
+  const atEnd = page >= pageCount
   const item =
     'inline-flex h-10 min-w-10 items-center justify-center rounded-full px-3 text-sm font-semibold tabular-nums transition-colors duration-200 ' +
-    'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500 disabled:pointer-events-none disabled:opacity-40'
+    'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500 aria-disabled:cursor-default aria-disabled:opacity-40'
 
   return (
     <nav aria-label="Paginação" className={cn('flex items-center justify-center gap-1', className)}>
       <button
         type="button"
-        className={cn(item, 'gap-1 text-fg hover:bg-surface-2')}
-        onClick={() => onPageChange(page - 1)}
-        disabled={page <= 1}
+        className={cn(item, 'gap-1 text-fg', !atStart && 'hover:bg-surface-2')}
+        onClick={() => {
+          if (!atStart) onPageChange(page - 1)
+        }}
+        aria-disabled={atStart || undefined}
         aria-label="Página anterior"
       >
         <ChevronLeft className="size-4" aria-hidden />
@@ -56,9 +62,11 @@ export function Pagination({ page, pageCount, onPageChange, className }: Paginat
 
       <button
         type="button"
-        className={cn(item, 'gap-1 text-fg hover:bg-surface-2')}
-        onClick={() => onPageChange(page + 1)}
-        disabled={page >= pageCount}
+        className={cn(item, 'gap-1 text-fg', !atEnd && 'hover:bg-surface-2')}
+        onClick={() => {
+          if (!atEnd) onPageChange(page + 1)
+        }}
+        aria-disabled={atEnd || undefined}
         aria-label="Próxima página"
       >
         <span className="hidden sm:inline">Próxima</span>

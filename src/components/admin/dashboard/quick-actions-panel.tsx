@@ -88,3 +88,65 @@ export function QuickActionsPanel({ className }: { className?: string }) {
     </Panel>
   )
 }
+
+/**
+ * Celular: os mesmos atalhos numa faixa com rolagem lateral logo abaixo da saudação
+ * (o painel completo fica no fim da página). O cartão cortado na borda indica que há mais.
+ */
+export function QuickActionsRail({ className }: { className?: string }) {
+  return (
+    <nav aria-label="Ações rápidas" className={className}>
+      <ul className="scrollbar-none relative -mx-4 flex snap-x snap-mandatory scroll-px-4 gap-2.5 overflow-x-auto px-4 py-1">
+        {ACTIONS.map((action) => {
+          const Icon = action.icon
+          const classes = cn(
+            'group/action relative flex h-full min-h-[6.25rem] w-[8.75rem] flex-col justify-between gap-2.5 rounded-2xl border p-3 outline-offset-2',
+            'transition-[transform,background-color,border-color] duration-200 ease-out-expo active:scale-[0.97]',
+            action.primary
+              ? 'border-transparent bg-brand-gradient text-white shadow-[0_10px_24px_-14px_rgb(0_102_255/0.85)]'
+              : 'border-line bg-elevated shadow-card',
+          )
+          const content = (
+            <>
+              <span className="flex items-start justify-between gap-2">
+                <span
+                  className={cn(
+                    'inline-flex size-9 items-center justify-center rounded-xl',
+                    action.primary ? 'bg-white/15 text-white' : 'bg-brand-500/10 text-brand-600 dark:text-brand-300',
+                  )}
+                >
+                  <Icon className="size-[1.1rem]" aria-hidden />
+                </span>
+                {action.external && <ArrowUpRight className="size-4 text-subtle" aria-hidden />}
+              </span>
+              <span className="block min-w-0">
+                <span className={cn('block text-[0.8125rem] leading-tight font-bold', action.primary ? 'text-white' : 'text-fg')}>
+                  {action.label}
+                </span>
+                <span
+                  className={cn('mt-0.5 line-clamp-2 block text-xs leading-snug', action.primary ? 'text-white/75' : 'text-muted')}
+                >
+                  {action.hint}
+                  {action.external && <span className="sr-only"> (nova aba)</span>}
+                </span>
+              </span>
+            </>
+          )
+          return (
+            <li key={action.label} className="shrink-0 snap-start">
+              {action.external ? (
+                <a href={action.to} target="_blank" rel="noopener noreferrer" className={classes}>
+                  {content}
+                </a>
+              ) : (
+                <Link to={action.to} className={classes}>
+                  {content}
+                </Link>
+              )}
+            </li>
+          )
+        })}
+      </ul>
+    </nav>
+  )
+}

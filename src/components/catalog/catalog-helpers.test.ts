@@ -1,12 +1,13 @@
+import { site } from '@/config/site'
 import { describe, expect, it } from 'vitest'
 import {
   buildActiveFilterChips,
   buildPriceShortcuts,
   catalogTitle,
   colorSwatches,
+  discountBadgeLabel,
   effectiveSort,
   parsePriceInput,
-  parseSizeOptions,
   priceRangeLabel,
   productWhatsappMessage,
 } from './catalog-helpers'
@@ -18,29 +19,6 @@ const lookups = {
   categoryById: new Map([['tenis', { name: 'Tênis' }]]),
   distributorById: new Map([['pegada', { name: 'Pegada' }]]),
 }
-
-describe('parseSizeOptions', () => {
-  it('gera cada número de uma faixa simples', () => {
-    expect(parseSizeOptions('34 ao 39')).toEqual({ kind: 'list', options: ['34', '35', '36', '37', '38', '39'], text: '34 ao 39' })
-    expect(parseSizeOptions('Numeração do 37 ao 43')?.kind).toBe('list')
-    expect(parseSizeOptions('17-27')).toMatchObject({ kind: 'list', options: expect.arrayContaining(['17', '27']) })
-  })
-
-  it('entende numeração dupla (33/34 ao 39/40)', () => {
-    expect(parseSizeOptions('33/34 ao 39/40')).toMatchObject({ options: ['33/34', '35/36', '37/38', '39/40'] })
-  })
-
-  it('aceita listas separadas por vírgula', () => {
-    expect(parseSizeOptions('38, 36,37')).toMatchObject({ options: ['36', '37', '38'] })
-  })
-
-  it('cai para texto em formatos desconhecidos', () => {
-    expect(parseSizeOptions('Tamanho único')).toEqual({ kind: 'text', text: 'Tamanho único' })
-    expect(parseSizeOptions('P, M e G')).toEqual({ kind: 'text', text: 'P, M e G' })
-    expect(parseSizeOptions('')).toBeNull()
-    expect(parseSizeOptions(undefined)).toBeNull()
-  })
-})
 
 describe('preço', () => {
   it('lê valores digitados com vírgula, R$ e milhar', () => {
@@ -64,6 +42,23 @@ describe('preço', () => {
     }
   })
 
+  it('atalhos não compartilham limites (faixas semiabertas)', () => {
+    const shortcuts = buildPriceShortcuts({ min: 12, max: 118 })
+    expect(shortcuts.map((s) => plain(s.label))).toEqual(['Até R$ 19,99', 'R$ 20 – 39,99', 'R$ 40 – 69,99', 'A partir de R$ 70'])
+    for (let i = 1; i < shortcuts.length; i++) {
+      expect(shortcuts[i].min).toBeGreaterThan(shortcuts[i - 1].max as number)
+    }
+    // o rótulo do atalho é o mesmo do chip ativo
+    for (const s of shortcuts) expect(s.label).toBe(priceRangeLabel(s.min, s.max))
+  })
+
+  it('selo de desconto à vista só a partir de 10%', () => {
+    expect(discountBadgeLabel({ price: 30, promoPrice: 29 })).toBeNull()
+    expect(discountBadgeLabel({ price: 100, promoPrice: 88 })).toBe('-12% à vista')
+    expect(discountBadgeLabel({ price: 0, promoPrice: 10 })).toBeNull()
+    expect(discountBadgeLabel({ price: 50 })).toBeNull()
+  })
+
   it('não gera atalhos para faixas estreitas', () => {
     expect(buildPriceShortcuts({ min: 50, max: 55 })).toEqual([])
     expect(buildPriceShortcuts({ min: 0, max: 0 })).toEqual([])
@@ -83,7 +78,7 @@ describe('vitrine', () => {
     expect(catalogTitle({ categories: ['tenis'] }, lookups)).toBe('Tênis')
     expect(catalogTitle({ featured: true }, lookups)).toBe('Em destaque')
     expect(catalogTitle({ sort: 'recent' }, lookups)).toBe('Lançamentos')
-    expect(catalogTitle({ sort: 'recent', onSale: true }, lookups)).toBe('Em promoção')
+    expect(catalogTitle({ sort: 'recent', onSale: true }, lookups)).toBe('Desconto à vista')
   })
 
   it('ordenação efetiva', () => {
@@ -98,18 +93,27 @@ describe('vitrine', () => {
       { search: 'azul', categories: ['tenis', 'x'], distributors: ['pegada'], maxPrice: 60, onSale: true },
       lookups,
     )
-    expect(chips.map((c) => plain(c.label))).toEqual(['“azul”', 'Tênis', 'x', 'Pegada', 'Até R$ 60', 'Em promoção'])
+    expect(chips.map((c) => plain(c.label))).toEqual(['“azul”', 'Tênis', 'x', 'Pegada', 'Até R$ 60', 'Desconto à vista'])
     expect(chips[1].patch).toEqual({ categories: ['x'] })
   })
 })
 
 describe('produto', () => {
   it('mensagem do WhatsApp com e sem numeração', () => {
-    expect(productWhatsappMessage({ id: 'pm-0001', name: 'Sandália X' })).toBe(
+    expect(productWhatsappMessage({ id: 'pm-0001', name: 'Sandália X', price: 60 })).toBe(
       'Olá! Tenho interesse no produto *Sandália X* (código PM-0001). Ainda tem disponível?',
     )
-    expect(productWhatsappMessage({ id: 'pm-0001', name: 'Sandália X' }, '38')).toBe(
+    expect(productWhatsappMessage({ id: 'pm-0001', name: 'Sandália X', price: 60 }, '38')).toBe(
       'Olá! Tenho interesse no produto *Sandália X* (código PM-0001), numeração 38. Ainda tem disponível?',
+    )
+  })
+
+  it('produto sob consulta: só pergunta o preço quando a loja exibe preços', () => {
+    const msg = productWhatsappMessage({ id: 'pm-0002', name: 'Chinelo Y', price: 0 }, '33/34')
+    expect(msg).toBe(
+      site.showPrices
+        ? 'Olá! Gostaria de saber o preço do produto *Chinelo Y* (código PM-0002), numeração 33/34. Ainda tem disponível?'
+        : 'Olá! Tenho interesse no produto *Chinelo Y* (código PM-0002), numeração 33/34. Ainda tem disponível?',
     )
   })
 

@@ -21,8 +21,9 @@ function useFooterInView() {
 }
 
 /**
- * Botão flutuante de WhatsApp: surge após rolar 300px e some sobre o rodapé
+ * Botão flutuante de WhatsApp (md+): surge após rolar 300px e some sobre o rodapé
  * (que tem CTA próprio e o "Voltar ao topo"); fica abaixo de modais (z-30).
+ * No celular não aparece: a barra inferior já tem o WhatsApp.
  */
 export function WhatsAppFab() {
   const scrolled = useScrolledPast(300)
@@ -41,7 +42,7 @@ export function WhatsAppFab() {
           initial={{ opacity: 0, scale: 0.6, y: 16 }}
           animate={{ opacity: 1, scale: 1, y: 0, transition: { duration: 0.4, ease: EASE } }}
           exit={{ opacity: 0, scale: 0.7, y: 12, transition: { duration: 0.2 } }}
-          className="group fixed right-4 bottom-[calc(1rem+env(safe-area-inset-bottom))] z-30 inline-flex size-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-[0_14px_34px_-10px_rgb(37_211_102/0.75)] transition-[box-shadow,background-color] duration-300 hover:bg-[#1fc15c] hover:shadow-[0_18px_40px_-10px_rgb(37_211_102/0.9)] sm:right-6 sm:bottom-[calc(1.5rem+env(safe-area-inset-bottom))]"
+          className="group fixed right-4 bottom-[calc(1rem+env(safe-area-inset-bottom))] z-30 hidden size-14 md:inline-flex items-center justify-center rounded-full bg-[#25D366] text-white shadow-[0_14px_34px_-10px_rgb(37_211_102/0.75)] transition-[box-shadow,background-color] duration-300 hover:bg-[#1fc15c] hover:shadow-[0_18px_40px_-10px_rgb(37_211_102/0.9)] sm:right-6 sm:bottom-[calc(1.5rem+env(safe-area-inset-bottom))]"
         >
           {/* anel pulsante (CSS); some com "reduzir movimento" */}
           <span

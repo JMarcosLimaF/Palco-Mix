@@ -44,7 +44,11 @@ export async function compressImage(file: Blob, maxEdge: number, quality = 0.82)
 
   const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/webp', quality))
   if (blob && blob.type === 'image/webp') return blob
-  // Safari antigo não exporta WebP
+  // Safari/iOS não exporta WebP: cai para JPEG, que não tem alfa. Compõe sobre
+  // branco, senão as áreas transparentes de um PNG recortado ficam pretas.
+  ctx.globalCompositeOperation = 'destination-over'
+  ctx.fillStyle = '#fff'
+  ctx.fillRect(0, 0, canvas.width, canvas.height)
   const jpeg = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/jpeg', quality))
   if (!jpeg) throw new Error('Não foi possível processar a imagem.')
   return jpeg
@@ -61,23 +65,36 @@ function blobToDataUrl(blob: Blob): Promise<string> {
 
 export const ACCEPTED_IMAGE_TYPES = 'image/jpeg,image/png,image/webp,image/avif'
 
-/** Processa e armazena a imagem; devolve o valor a salvar em `product.images`. */
-export async function uploadProductImage(file: File): Promise<string> {
+/**
+ * Processa e armazena a imagem; devolve o valor a salvar em `product.images`.
+ * `signal` cancela o envio (ex.: o formulário foi fechado) antes de gravar em disco.
+ */
+export async function uploadProductImage(file: File, signal?: AbortSignal): Promise<string> {
   if (!file.type.startsWith('image/')) throw new Error('Selecione um arquivo de imagem.')
 
   if (import.meta.env.DEV) {
     try {
       const blob = await compressImage(file, DISK_MAX_EDGE)
-      const res = await fetch('/__dev/upload', { method: 'POST', headers: { 'content-type': blob.type }, body: blob })
+      signal?.throwIfAborted()
+      // sem resposta em 30s (servidor travado) → cai para o data URL em vez de prender o formulário
+      const timeout = AbortSignal.timeout(30_000)
+      const res = await fetch('/__dev/upload', {
+        method: 'POST',
+        headers: { 'content-type': blob.type },
+        body: blob,
+        signal: signal ? AbortSignal.any([signal, timeout]) : timeout,
+      })
       if (res.ok) {
         const { path } = (await res.json()) as { path: string }
         return path
       }
-    } catch {
+    } catch (err) {
+      if (signal?.aborted) throw err
       /* segue para data URL */
     }
   }
 
   const inline = await compressImage(file, INLINE_MAX_EDGE, 0.78)
+  signal?.throwIfAborted()
   return blobToDataUrl(inline)
 }

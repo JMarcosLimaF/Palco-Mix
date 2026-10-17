@@ -5,10 +5,11 @@
  */
 import { ArrowLeft, ArrowRight, CircleAlert, Eye, EyeOff, KeyRound, LockKeyhole } from 'lucide-react'
 import { AnimatePresence, m, useAnimationControls, useReducedMotion } from 'motion/react'
-import { useId, useMemo, useRef, useState, type FormEvent } from 'react'
+import { useId, useLayoutEffect, useMemo, useRef, useState, type FormEvent } from 'react'
 import { Link, Navigate, useLocation, useNavigate } from 'react-router'
 import { toast } from 'sonner'
 import { firstName } from '@/components/admin/layout/admin-nav-items'
+import { isLoggedOutState } from '@/components/admin/layout/use-admin-logout'
 import { LogoBadge } from '@/components/brand/logo'
 import { ProductImage } from '@/components/catalog/product-image'
 import { Button } from '@/components/ui/button'
@@ -20,7 +21,7 @@ import { useDocumentTitle } from '@/hooks/use-document-title'
 import { listLibraryImages } from '@/lib/images'
 import { cn } from '@/lib/utils'
 import { errorMessage } from '@/services/errors'
-import { useAuthStore } from '@/store/auth'
+import { isSessionActive, useAuthStore } from '@/store/auth'
 
 const EASE = [0.16, 1, 0.3, 1] as const
 
@@ -32,14 +33,25 @@ function safeRedirect(from: unknown): string {
 export default function LoginPage() {
   useDocumentTitle('Entrar · Admin')
   const user = useAuthStore((s) => s.user)
+  const expiresAt = useAuthStore((s) => s.expiresAt)
   const location = useLocation()
   const navigate = useNavigate()
   const destination = safeRedirect((location.state as { from?: unknown } | null)?.from)
   // durante o login a tela continua visível (botão "Entrando…") até o painel carregar
   const [entering, setEntering] = useState(false)
+  // "Sair" chega aqui pela navegação (useAdminLogout): só desloga depois de passar pelos bloqueios de saída
+  const loggedOut = isLoggedOutState(location.state)
 
-  // já autenticado ao abrir /admin → segue direto para o destino
-  if (user && !entering) return <Navigate to={destination} replace />
+  useLayoutEffect(() => {
+    if (!loggedOut) return
+    useAuthStore.getState().logout()
+    // id fixo: o StrictMode roda o efeito duas vezes, mas o toast aparece uma só
+    toast.success('Você saiu do painel.', { id: 'admin-logout', description: 'Até a próxima!' })
+    void navigate(location.pathname, { replace: true, state: null })
+  }, [loggedOut, navigate, location.pathname])
+
+  // já autenticado (sessão ainda válida) ao abrir /admin → segue direto para o destino
+  if (user && isSessionActive(expiresAt) && !entering && !loggedOut) return <Navigate to={destination} replace />
 
   return (
     <div className="grid min-h-dvh bg-bg text-fg lg:grid-cols-[minmax(0,1.08fr)_minmax(0,1fr)]">
@@ -66,13 +78,13 @@ export default function LoginPage() {
           <ThemeToggle />
         </div>
 
-        <main className="relative flex flex-1 items-center justify-center px-4 pt-2 pb-12 sm:px-6">
+        <main className="relative flex flex-1 items-center justify-center px-4 pt-2 pb-[max(2rem,env(safe-area-inset-bottom))] sm:px-6 sm:pb-12">
           <div className="w-full max-w-[25rem]">
             <m.div
               initial={{ opacity: 0, y: 12, scale: 0.96 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               transition={{ duration: 0.5, ease: EASE }}
-              className="mb-7 flex justify-center lg:hidden"
+              className="mb-6 flex justify-center sm:mb-7 lg:hidden"
             >
               <LogoBadge size={88} />
             </m.div>
@@ -288,10 +300,18 @@ function LoginCard({ onStart, onDone }: LoginCardProps) {
                 required
                 readOnly={submitting}
                 placeholder="seu.usuario"
+                enterKeyHint="next"
                 value={username}
                 onChange={(e) => {
                   setUsername(e.target.value)
                   clearError()
+                }}
+                onKeyDown={(e) => {
+                  // "Seguinte" do teclado do celular (ou Enter): vai para a senha em vez de acusar erro
+                  if (e.key === 'Enter' && username.trim() && !password) {
+                    e.preventDefault()
+                    passwordRef.current?.focus()
+                  }
                 }}
                 aria-invalid={invalid}
                 aria-describedby={error ? errorId : undefined}
@@ -312,6 +332,7 @@ function LoginCard({ onStart, onDone }: LoginCardProps) {
                   required
                   readOnly={submitting}
                   placeholder="••••••"
+                  enterKeyHint="go"
                   value={password}
                   onChange={(e) => {
                     setPassword(e.target.value)
@@ -328,7 +349,7 @@ function LoginCard({ onStart, onDone }: LoginCardProps) {
                   aria-label="Mostrar senha"
                   aria-controls={`${id}-pass`}
                   title={showPassword ? 'Ocultar senha' : 'Mostrar senha'}
-                  className="absolute top-1/2 right-1 inline-flex size-9 -translate-y-1/2 items-center justify-center rounded-lg text-subtle transition-colors duration-200 hover:bg-surface-2 hover:text-fg"
+                  className="absolute top-1/2 right-0 inline-flex size-11 -translate-y-1/2 items-center justify-center rounded-xl text-subtle transition-colors duration-200 hover:bg-surface-2 hover:text-fg sm:right-1 sm:size-9 sm:rounded-lg"
                 >
                   {showPassword ? (
                     <EyeOff className="size-[1.1rem]" aria-hidden />
@@ -343,7 +364,8 @@ function LoginCard({ onStart, onDone }: LoginCardProps) {
               checked={remember}
               onChange={(e) => setRemember(e.target.checked)}
               label="Manter conectado por 7 dias"
-              className="-my-0.5"
+              // celular: a linha inteira (44px) marca a opção
+              className="-my-2.5 min-h-11 sm:-my-0.5 sm:min-h-0"
             />
 
             <Button ref={submitRef} type="submit" size="lg" loading={submitting} className="mt-1 w-full">
@@ -378,7 +400,12 @@ function DemoCredentialsHint({ onFill }: { onFill: (username: string, password: 
         <code className="rounded bg-surface-2 px-1 py-0.5 font-mono text-[0.7rem] text-fg">{DEMO_USERNAME}</code> ·
         senha <code className="rounded bg-surface-2 px-1 py-0.5 font-mono text-[0.7rem] text-fg">{DEMO_PASSWORD}</code>
       </p>
-      <Button variant="subtle" size="xs" onClick={() => onFill(DEMO_USERNAME, DEMO_PASSWORD)}>
+      <Button
+        variant="subtle"
+        size="xs"
+        className="max-sm:h-10 max-sm:px-4"
+        onClick={() => onFill(DEMO_USERNAME, DEMO_PASSWORD)}
+      >
         Preencher
       </Button>
     </m.div>

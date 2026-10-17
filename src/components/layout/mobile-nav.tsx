@@ -60,8 +60,8 @@ function MobileNavBody({ activeKey, onSearch }: Pick<MobileNavProps, 'activeKey'
         aria-haspopup="dialog"
         className="flex h-12 w-full items-center gap-3 rounded-full bg-surface-2 px-4 text-left text-sm text-subtle transition-colors hover:bg-line"
       >
-        <Search className="size-[1.1rem] text-brand-500" aria-hidden />
-        Buscar produtos, marcas ou código
+        <Search className="size-[1.1rem] shrink-0 text-brand-500" aria-hidden />
+        <span className="truncate">Buscar produtos ou marcas</span>
       </button>
 
       <nav aria-label="Menu principal">
@@ -111,22 +111,25 @@ function MobileNavBody({ activeKey, onSearch }: Pick<MobileNavProps, 'activeKey'
       </nav>
 
       <section aria-labelledby="mobile-nav-categorias">
-        <div className="flex items-baseline justify-between px-1">
+        <div className="flex items-center justify-between pl-1">
           <h2 id="mobile-nav-categorias" className="eyebrow text-subtle">
             Categorias
           </h2>
-          <Link to="/categorias" className="text-xs font-semibold text-brand-600 dark:text-brand-400">
+          <Link
+            to="/categorias"
+            className="-mr-1 inline-flex h-10 items-center rounded-full px-3 text-sm font-semibold text-brand-600 transition-colors hover:bg-brand-500/10 dark:text-brand-400"
+          >
             Ver todas
           </Link>
         </div>
         {isLoading ? (
-          <div aria-hidden className="mt-3 flex flex-wrap gap-2">
+          <div aria-hidden className="mt-2 flex flex-wrap gap-2">
             {[0, 1, 2, 3, 4].map((i) => (
               <div key={i} className="skeleton h-10 w-24 rounded-full" />
             ))}
           </div>
         ) : (
-          <ul className="mt-3 flex flex-wrap gap-2">
+          <ul className="mt-2 flex flex-wrap gap-2">
             {categories.map(({ item, count }) => {
               const current = activeCategories.length === 1 && activeCategories[0] === item.id
               return (

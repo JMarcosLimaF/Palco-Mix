@@ -36,9 +36,17 @@ import {
 import { BrandSlide, HeroBackdrop, HeroSlideFrame, ProductSlide } from './hero-slides'
 import { useDocumentVisible } from './use-document-visible'
 
+/** Slide ativo guardado pela chave: se a lista mudar (destaque novo/removido), o mesmo produto continua na tela. */
 interface NavState {
+  key: string
+  /** posição quando foi escolhido — reserva caso o slide saia da lista */
   index: number
   direction: 1 | -1
+}
+
+function resolveIndex(slides: readonly HeroSlide[], nav: NavState): number {
+  const found = slides.findIndex((slide) => slide.key === nav.key)
+  return found >= 0 ? found : Math.min(nav.index, slides.length - 1)
 }
 
 export function HeroCarousel() {
@@ -62,9 +70,8 @@ export function HeroCarousel() {
   const stack = useMemo(() => (products ?? []).slice(0, 3), [products])
   const count = slides.length
 
-  const [nav, setNav] = useState<NavState>({ index: 0, direction: 1 })
-  // se a lista encolher (produto removido em outra aba), o índice continua válido
-  const active = Math.min(nav.index, count - 1)
+  const [nav, setNav] = useState<NavState>({ key: BRAND_SLIDE.key, index: 0, direction: 1 })
+  const active = resolveIndex(slides, nav)
   const current = slides[active]
 
   const [userPaused, setUserPaused] = useState(false)
@@ -79,22 +86,22 @@ export function HeroCarousel() {
   const paginate = useCallback(
     (delta: 1 | -1) => {
       setNav((prev) => {
-        const from = Math.min(prev.index, count - 1)
-        return { index: (from + delta + count) % count, direction: delta }
+        const target = (resolveIndex(slides, prev) + delta + count) % count
+        return { key: slides[target].key, index: target, direction: delta }
       })
     },
-    [count],
+    [slides, count],
   )
 
   const goTo = useCallback(
     (target: number) => {
       setNav((prev) => {
-        const from = Math.min(prev.index, count - 1)
-        if (target === from) return prev
-        return { index: target, direction: target > from ? 1 : -1 }
+        const from = resolveIndex(slides, prev)
+        if (target === from || !slides[target]) return prev
+        return { key: slides[target].key, index: target, direction: target > from ? 1 : -1 }
       })
     },
-    [count],
+    [slides],
   )
 
   const next = useCallback(() => paginate(1), [paginate])
@@ -201,7 +208,7 @@ export function HeroCarousel() {
         onPointerLeave={handlePointerLeave}
         onFocus={handleFocus}
         onBlur={handleBlur}
-        className="relative isolate flex flex-col overflow-hidden rounded-[2rem] bg-ink-950 text-white shadow-[0_40px_100px_-50px_rgb(13_13_13/0.65)] ring-1 ring-black/5 lg:h-[min(78svh,680px)] lg:min-h-[34rem] dark:ring-white/[0.07]"
+        className="relative isolate flex flex-col overflow-hidden rounded-[1.75rem] bg-ink-950 text-white shadow-[0_40px_100px_-50px_rgb(13_13_13/0.65)] ring-1 ring-black/5 sm:rounded-[2rem] lg:h-[min(78svh,680px)] lg:min-h-[34rem] dark:ring-white/[0.07]"
       >
         {/* camadas de fundo */}
         <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
@@ -223,7 +230,7 @@ export function HeroCarousel() {
           onDragStart={handleDragStart}
           onDragEnd={handleDragEnd}
           onClickCapture={handleClickCapture}
-          className="relative grid min-h-0 flex-1 grid-cols-1 rounded-[2rem] outline-none focus-visible:outline-2 focus-visible:-outline-offset-4 focus-visible:outline-white/40 lg:grid-rows-[minmax(0,1fr)]"
+          className="relative grid min-h-0 flex-1 grid-cols-1 rounded-[1.75rem] outline-none focus-visible:outline-2 focus-visible:-outline-offset-4 focus-visible:outline-white/40 sm:rounded-[2rem] lg:grid-rows-[minmax(0,1fr)]"
         >
           {/* reservam a altura do maior slide (somente abaixo de lg, onde a altura é automática) */}
           {slides.map((slide) => (

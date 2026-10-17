@@ -5,7 +5,7 @@ import type { Product } from '@/types/catalog'
 import { GRID_IMAGE_SIZES } from './catalog-helpers'
 import { ProductCard, ProductCardSkeleton } from './product-card'
 
-const GRID_CLASS = 'grid grid-cols-2 gap-x-3 gap-y-8 sm:grid-cols-3 sm:gap-x-5 xl:grid-cols-4'
+const GRID_CLASS = 'grid grid-cols-2 gap-x-3 gap-y-6 sm:grid-cols-3 sm:gap-x-5 sm:gap-y-8 xl:grid-cols-4'
 
 export interface ProductGridProps {
   items: Product[]
@@ -56,7 +56,9 @@ function GridItem({ index, animate, children }: { index: number; animate: boolea
   // decidido na montagem: cards já visíveis não reanimam quando a lista muda
   const [entrance] = useState(() => (animate ? { animationDelay: `${Math.min(index, 11) * 28}ms` } : null))
   return (
-    <li className={entrance ? 'animate-fade-in' : undefined} style={entrance ?? undefined}>
+    // cv-auto recorta a pintura na borda: o padding (compensado pela margem
+    // negativa) dá folga ao anel de foco e à sombra do hover do card
+    <li className={cn('cv-auto -m-2 p-2', entrance && 'animate-fade-in')} style={entrance ?? undefined}>
       {children}
     </li>
   )

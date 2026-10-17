@@ -8,6 +8,7 @@ import { CatalogSearchInput } from './catalog-search-input'
 import { FacetList } from './facet-list'
 import { FilterSection } from './filter-section'
 import { PriceFilter } from './price-filter'
+import { site } from '@/config/site'
 import type { CatalogUpdateOptions } from './use-catalog-url'
 
 export interface CatalogFiltersProps {
@@ -19,6 +20,9 @@ export interface CatalogFiltersProps {
   showHeader?: boolean
   className?: string
 }
+
+/** linha do switch: no drawer o rótulo ocupa a linha toda (alvo de toque >= 44px) */
+const SWITCH_ROW = 'max-lg:min-h-12 max-lg:items-center max-lg:[&>label]:flex-1 max-lg:[&>label]:py-1.5 max-lg:[&>button]:mt-0'
 
 function toggle(list: string[] | undefined, id: string): string[] | undefined {
   const set = new Set(list)
@@ -103,29 +107,38 @@ export const CatalogFilters = memo(function CatalogFilters({
         />
       </FilterSection>
 
-      <FilterSection title="Preço" count={priceActive ? 1 : 0}>
-        <PriceFilter
-          minPrice={query.minPrice}
-          maxPrice={query.maxPrice}
-          range={facets?.priceRange}
-          onChange={handlePrice}
-        />
-      </FilterSection>
+      {site.showPrices && (
+        <FilterSection title="Preço" count={priceActive ? 1 : 0}>
+          <PriceFilter
+            minPrice={query.minPrice}
+            maxPrice={query.maxPrice}
+            range={facets?.priceRange}
+            onChange={handlePrice}
+          />
+        </FilterSection>
+      )}
 
-      <FilterSection title="Ofertas e destaques" count={(query.featured ? 1 : 0) + (query.onSale ? 1 : 0)}>
-        <div className="space-y-4 py-1">
+      <FilterSection
+        title={site.showPrices ? 'Destaques e desconto à vista' : 'Destaques'}
+        count={(query.featured ? 1 : 0) + (query.onSale ? 1 : 0)}
+      >
+        <div className="space-y-1 lg:space-y-4 lg:py-1">
           <Switch
             checked={Boolean(query.featured)}
             onCheckedChange={(checked) => onChange({ featured: checked || undefined })}
             label="Somente destaques"
             description="Seleção em destaque da loja"
+            className={SWITCH_ROW}
           />
-          <Switch
-            checked={Boolean(query.onSale)}
-            onCheckedChange={(checked) => onChange({ onSale: checked || undefined })}
-            label="Em promoção"
-            description="Produtos com preço promocional"
-          />
+          {site.showPrices && (
+            <Switch
+              checked={Boolean(query.onSale)}
+              onCheckedChange={(checked) => onChange({ onSale: checked || undefined })}
+              label="Desconto à vista"
+              description="Produtos mais baratos no pagamento à vista"
+              className={SWITCH_ROW}
+            />
+          )}
         </div>
       </FilterSection>
     </div>

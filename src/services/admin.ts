@@ -2,9 +2,11 @@
  * Métricas do painel e ferramentas do banco local (backup, restauração,
  * massa de dados para teste de desempenho).
  */
-import { localDb } from '@/lib/db/local-db'
+import { localDb, StorageQuotaError } from '@/lib/db/local-db'
+import { validateCatalogData } from '@/lib/db/validate'
 import { hasPromo } from '@/lib/utils'
 import type { CatalogData, DashboardStats, Product } from '@/types/catalog'
+import { ServiceError } from './errors'
 
 /** Prefixo dos produtos sintéticos de teste de carga. */
 export const STRESS_ID_PREFIX = 'pm-t'
@@ -19,7 +21,8 @@ export const adminService = {
     let onSale = 0
     for (const p of products) {
       if (p.status === 'active') active++
-      if (p.isFeatured) featured++
+      // só destaques ativos aparecem no carrossel/vitrine da loja
+      if (p.isFeatured && p.status === 'active') featured++
       if (hasPromo(p)) onSale++
       byCat.set(p.category, (byCat.get(p.category) ?? 0) + 1)
       byDist.set(p.distributor, (byDist.get(p.distributor) ?? 0) + 1)
@@ -42,8 +45,8 @@ export const adminService = {
     }
   },
 
-  storageInfo(): { bytes: number; pristine: boolean } {
-    return { bytes: localDb.usageBytes(), pristine: localDb.isPristine() }
+  storageInfo(): { bytes: number; pristine: boolean; quotaExceeded: boolean } {
+    return { bytes: localDb.usageBytes(), pristine: localDb.isPristine(), quotaExceeded: localDb.quotaExceeded() }
   },
 
   /** JSON formatado do banco atual (mesmo formato de src/data/db.json). */
@@ -51,14 +54,21 @@ export const adminService = {
     return JSON.stringify(localDb.get(), null, 2)
   },
 
-  async importJson(json: string): Promise<CatalogData> {
+  /** Lê e valida um backup sem gravar nada (prévia da importação). */
+  parseBackup(json: string): CatalogData {
     let parsed: unknown
     try {
       parsed = JSON.parse(json)
     } catch {
-      throw new Error('O arquivo não é um JSON válido.')
+      throw new ServiceError('validation', 'O arquivo não é um JSON válido.')
     }
-    localDb.replace(parsed)
+    const result = validateCatalogData(parsed)
+    if (!result.ok) throw new ServiceError('validation', `Arquivo inválido. ${result.error}`)
+    return result.data
+  },
+
+  async importJson(json: string): Promise<CatalogData> {
+    localDb.replace(adminService.parseBackup(json))
     return localDb.get()
   },
 
@@ -74,19 +84,23 @@ export const adminService = {
     const data = localDb.get()
     const base = data.products.filter((p) => !p.id.startsWith(STRESS_ID_PREFIX))
     if (base.length === 0) return 0
+    // imagens enviadas viram data URL (~100 KB cada): replicadas em milhares de itens estourariam a cota
+    const isStatic = (path: string) => !path.startsWith('data:')
+    const fallbackImage = base.flatMap((p) => p.images).find(isStatic)
     const now = Date.now()
     const synthetic: Product[] = Array.from({ length: count }, (_, i) => {
       const src = base[i % base.length]
       const factor = 0.85 + ((i * 37) % 40) / 100
       const price = Math.round(src.price * factor * 100) / 100
-      const promo = i % 7 === 0 ? Math.round(price * 0.9 * 100) / 100 : undefined
+      // preço à vista (10% off) em parte dos itens; sob consulta (price 0) nunca tem
+      const promo = price > 0 && i % 7 === 0 ? Math.round(price * 0.9 * 100) / 100 : undefined
       return {
         ...src,
         id: `${STRESS_ID_PREFIX}${String(i + 1).padStart(5, '0')}`,
         name: `${src.name} · Lote ${Math.floor(i / base.length) + 1}`,
         // descrição curta mantém milhares de itens dentro da cota do localStorage
         description: 'Produto sintético gerado para teste de carga.',
-        images: src.images.slice(0, 1),
+        images: [src.images.find(isStatic) ?? fallbackImage].filter((path): path is string => Boolean(path)),
         price,
         promoPrice: promo,
         isFeatured: false,
@@ -96,7 +110,17 @@ export const adminService = {
         tags: [...(src.tags ?? []), 'teste-de-carga'],
       }
     })
-    localDb.commit({ ...data, products: [...base, ...synthetic] })
+    try {
+      localDb.commit({ ...data, products: [...base, ...synthetic] })
+    } catch (error) {
+      if (error instanceof StorageQuotaError) {
+        throw new ServiceError(
+          'storage',
+          'Os produtos de teste não couberam no armazenamento do navegador. Tente uma quantidade menor ou remova os produtos de teste.',
+        )
+      }
+      throw error
+    }
     return synthetic.length
   },
 

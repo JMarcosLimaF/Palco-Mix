@@ -77,7 +77,7 @@ export function HeroControls({
 }: HeroControlsProps) {
   const count = slides.length
   return (
-    <div className="relative z-20 flex items-center justify-between gap-3 px-5 pt-5 pb-5 sm:px-10 sm:pb-7 lg:px-14 lg:pt-4 lg:pb-9">
+    <div className="relative z-20 flex items-center justify-between gap-3 px-4 pt-2 pb-3 sm:px-10 sm:pt-5 sm:pb-7 lg:px-14 lg:pt-4 lg:pb-9">
       <div className="flex min-w-0 items-center gap-2 sm:gap-3">
         {canAutoplay && (
           <button
@@ -100,7 +100,8 @@ export function HeroControls({
                 aria-label={`Destaque ${i + 1} de ${count}: ${slideLabel(slide)}`}
                 aria-current={isActive ? 'true' : undefined}
                 aria-controls={controlsId}
-                className="group/dot flex h-10 cursor-pointer items-center px-[5px] focus-visible:outline-white"
+                // no celular não há setas, só os pontos e o swipe: alvos de 28×44px (≥ 24px, WCAG 2.5.8)
+                className="group/dot flex h-11 min-w-7 cursor-pointer items-center justify-center px-[11px] focus-visible:outline-white sm:h-10 sm:min-w-6 sm:px-[9px]"
               >
                 <span
                   className={cn(

@@ -64,8 +64,9 @@ export function ImagePathAdder({ existing, onAdd, onClose }: ImagePathAdderProps
 
   return (
     <div className="animate-fade-in rounded-2xl border border-line bg-surface p-3 sm:p-4">
-      <div className="flex gap-3 sm:gap-4">
-        <div className="relative aspect-[5/6] w-20 shrink-0 overflow-hidden rounded-xl bg-surface-2 ring-1 ring-line sm:w-24">
+      {/* prévia sem esticar (proporção real); no celular os botões ocupam a largura toda embaixo */}
+      <div className="grid grid-cols-[auto_minmax(0,1fr)] gap-x-3 gap-y-3 sm:gap-x-4">
+        <div className="relative aspect-[5/6] w-16 shrink-0 self-start overflow-hidden rounded-xl bg-surface-2 ring-1 ring-line sm:row-span-2 sm:w-24">
           {showPreview ? (
             <ProductImage
               key={candidate}
@@ -90,7 +91,7 @@ export function ImagePathAdder({ existing, onAdd, onClose }: ImagePathAdderProps
           )}
         </div>
 
-        <div className="flex min-w-0 flex-1 flex-col gap-2">
+        <div className="flex min-w-0 flex-col gap-2">
           <label htmlFor={inputId} className="text-sm font-semibold text-fg">
             Caminho ou URL da imagem
           </label>
@@ -130,14 +131,14 @@ export function ImagePathAdder({ existing, onAdd, onClose }: ImagePathAdderProps
             {(msg.tone === 'danger' || msg.tone === 'warning') && <CircleAlert className="mt-px size-3.5 shrink-0" aria-hidden />}
             {msg.text}
           </p>
-          <div className="mt-auto flex flex-wrap gap-2 pt-1">
-            <Button size="sm" onClick={submit} disabled={status !== 'ok'}>
-              Adicionar imagem
-            </Button>
-            <Button size="sm" variant="ghost" onClick={onClose}>
-              Fechar
-            </Button>
-          </div>
+        </div>
+        <div className="col-span-2 flex flex-wrap gap-2 sm:col-span-1 sm:col-start-2">
+          <Button size="sm" className="max-sm:h-11 max-sm:flex-1" onClick={submit} disabled={status !== 'ok'}>
+            Adicionar imagem
+          </Button>
+          <Button size="sm" variant="ghost" className="max-sm:h-11" onClick={onClose}>
+            Fechar
+          </Button>
         </div>
       </div>
     </div>

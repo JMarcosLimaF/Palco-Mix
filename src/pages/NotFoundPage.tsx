@@ -23,7 +23,7 @@ export default function NotFoundPage() {
       />
       <LogoMark className="pointer-events-none absolute top-1/2 left-1/2 -z-10 h-[min(70vw,34rem)] -translate-x-1/2 -translate-y-1/2 text-fg opacity-[0.035]" />
 
-      <div className="container-page flex min-h-[calc(100dvh-16rem)] flex-col items-center justify-center py-16 text-center sm:py-24">
+      <div className="container-page flex min-h-[calc(100dvh-16rem)] flex-col items-center justify-center py-10 text-center sm:py-24">
         <m.span
           {...rise(0)}
           className="eyebrow inline-flex items-center gap-2 rounded-full bg-brand-500/10 px-3 py-1.5 text-brand-700 dark:text-brand-300"
@@ -43,14 +43,14 @@ export default function NotFoundPage() {
         </m.h1>
 
         <m.p {...rise(0.12)} className="title-display mt-4 text-2xl text-fg sm:text-3xl">
-          Esse produto saiu de cena…
+          Essa página saiu de cena…
         </m.p>
         <m.p {...rise(0.16)} className="mt-3 max-w-md text-sm leading-relaxed text-muted sm:text-base">
           A página que você procurou não existe ou mudou de endereço. Mas o palco continua montado: volte ao início ou
           explore o catálogo.
         </m.p>
 
-        <m.div {...rise(0.22)} className="mt-9 flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
+        <m.div {...rise(0.22)} className="mt-7 flex w-full flex-col gap-3 sm:mt-9 sm:w-auto sm:flex-row">
           <Link to="/" className={buttonVariants({ variant: 'primary', size: 'lg' })}>
             <ArrowLeft aria-hidden />
             Voltar ao início

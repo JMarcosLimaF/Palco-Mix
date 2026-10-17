@@ -72,7 +72,7 @@ export function TaxonomyDeleteDialog<T extends TaxonomyEntityBase>({
               Não há {copy.other} {copy.singular} para receber os produtos. Cadastre {copy.other === 'outra' ? 'uma nova' : 'um novo'}{' '}
               antes de excluir {copy.demonstrative}.
             </p>
-            <Button size="sm" variant="outline" onClick={onCreateInstead}>
+            <Button size="sm" variant="outline" className="max-sm:h-11" onClick={onCreateInstead}>
               <Plus aria-hidden />
               {copy.newLabel}
             </Button>

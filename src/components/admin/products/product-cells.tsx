@@ -34,10 +34,12 @@ export function StatusToggle({
   product,
   pending,
   onToggle,
+  className,
 }: {
   product: Product
   pending: boolean
   onToggle: (product: Product) => void
+  className?: string
 }) {
   const active = product.status === 'active'
   const action = active ? `Inativar ${product.name}` : `Ativar ${product.name}`
@@ -55,6 +57,7 @@ export function StatusToggle({
         active
           ? 'bg-emerald-500/12 text-emerald-700 hover:ring-emerald-500/40 dark:text-emerald-400'
           : 'bg-surface-2 text-muted hover:text-fg hover:ring-line-strong',
+        className,
       )}
     >
       {pending ? (
@@ -116,14 +119,16 @@ export function RowActions({
   product,
   onDelete,
   size = 'icon-sm',
+  className,
 }: {
   product: Product
   onDelete: (product: Product) => void
   size?: 'icon' | 'icon-sm'
+  className?: string
 }) {
   const iconBtn = buttonVariants({ variant: 'ghost', size, className: 'text-muted hover:text-fg' })
   return (
-    <div className="flex items-center justify-end gap-0.5">
+    <div className={cn('flex items-center justify-end gap-0.5', className)}>
       <Link
         to={`/admin/produtos/${product.id}`}
         state={FROM_LIST_STATE}

@@ -29,6 +29,36 @@ describe('expandSizes', () => {
     expect(expandSizes('Único')).toBeNull()
     expect(expandSizes(undefined)).toBeNull()
   })
+
+  it('aceita "do … ao", "até", prefixo e lista', () => {
+    const range = ['34', '35', '36', '37', '38', '39']
+    expect(expandSizes('do 34 ao 39')).toEqual(range)
+    expect(expandSizes('34 até 39')).toEqual(range)
+    expect(expandSizes('34-39')).toEqual(range)
+    expect(expandSizes('Numeração do 37 ao 43')).toHaveLength(7)
+    expect(expandSizes('35, 36, 37')).toEqual(['35', '36', '37'])
+    expect(expandSizes('38, 36,37')).toEqual(['36', '37', '38'])
+    expect(expandSizes('35; 36 e 37')).toEqual(['35', '36', '37'])
+    expect(expandSizes('35/36, 33/34')).toEqual(['33/34', '35/36'])
+    expect(expandSizes('38')).toEqual(['38'])
+  })
+
+  it('par único "33/34" é um tamanho só', () => {
+    expect(expandSizes('33/34')).toEqual(['33/34'])
+    expect(expandSizes('33 / 34')).toEqual(['33/34'])
+  })
+
+  it('texto livre não vira chips (precisa casar por inteiro)', () => {
+    expect(expandSizes('34 ao 39 (sem 36)')).toBeNull()
+    expect(expandSizes('34 ao 37 e 39')).toBeNull()
+    expect(expandSizes('Infantil 20 ao 27 / Adulto 33 ao 38')).toBeNull()
+    expect(expandSizes('2/3 anos')).toBeNull()
+    expect(expandSizes('P, M e G')).toBeNull()
+    expect(expandSizes('Tamanho único')).toBeNull()
+    expect(expandSizes('33/34 ao 40/41')).toBeNull()
+    expect(expandSizes('39 ao 34')).toBeNull()
+    expect(expandSizes('  ')).toBeNull()
+  })
 })
 
 describe('pageWindow', () => {

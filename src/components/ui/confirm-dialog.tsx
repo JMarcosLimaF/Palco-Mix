@@ -50,6 +50,8 @@ export function ConfirmDialog({
       open={open}
       onOpenChange={(next) => !busy && onOpenChange(next)}
       title={title}
+      // a descrição vira o aria-describedby: o leitor anuncia a consequência ao abrir
+      description={description}
       hideHeader
       size="sm"
       footer={
@@ -76,7 +78,11 @@ export function ConfirmDialog({
         <h2 className="text-lg font-bold tracking-tight" aria-hidden>
           {title}
         </h2>
-        {description && <div className="text-sm leading-relaxed text-muted">{description}</div>}
+        {description && (
+          <div className="text-sm leading-relaxed text-muted" aria-hidden>
+            {description}
+          </div>
+        )}
         {children && <div className="w-full pt-1 text-left">{children}</div>}
       </div>
     </Modal>

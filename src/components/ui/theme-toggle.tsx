@@ -1,13 +1,12 @@
 import { Moon, Sun } from 'lucide-react'
 import { AnimatePresence, m } from 'motion/react'
-import { resolveTheme, useThemeStore } from '@/store/theme'
+import { useResolvedTheme, useThemeStore } from '@/store/theme'
 import { cn } from '@/lib/utils'
 
 /** Alterna claro/escuro com transição do ícone. */
 export function ThemeToggle({ className }: { className?: string }) {
-  const mode = useThemeStore((s) => s.mode)
   const toggle = useThemeStore((s) => s.toggle)
-  const isDark = resolveTheme(mode) === 'dark'
+  const isDark = useResolvedTheme() === 'dark'
 
   return (
     <button

@@ -1,6 +1,7 @@
 import { ArrowDownAZ, Clock, Package, Search, X } from 'lucide-react'
 import { m } from 'motion/react'
 import { useId, useRef, type KeyboardEvent } from 'react'
+import { useMediaQuery } from '@/hooks/use-media-query'
 import { cn } from '@/lib/utils'
 import { TAXONOMY_SORT_OPTIONS } from './config'
 import { IconInput } from './taxonomy-ui'
@@ -13,6 +14,8 @@ export interface TaxonomyToolbarProps {
   onSortChange: (value: TaxonomySort) => void
   searchLabel: string
   searchPlaceholder: string
+  /** dica curta usada no celular */
+  searchPlaceholderShort?: string
   /** texto do contador (anunciado a leitores de tela) */
   status: string
   /** exibe o contador visualmente (quando há busca ativa) */
@@ -27,10 +30,13 @@ export function TaxonomyToolbar({
   onSortChange,
   searchLabel,
   searchPlaceholder,
+  searchPlaceholderShort,
   status,
   showStatus,
 }: TaxonomyToolbarProps) {
   const inputRef = useRef<HTMLInputElement>(null)
+  const wide = useMediaQuery('(min-width: 640px)')
+  const placeholder = wide || !searchPlaceholderShort ? searchPlaceholder : searchPlaceholderShort
 
   return (
     <div className="flex flex-col gap-2">
@@ -49,7 +55,7 @@ export function TaxonomyToolbar({
                 onSearchChange('')
               }
             }}
-            placeholder={`${searchPlaceholder}…`}
+            placeholder={`${placeholder}…`}
             aria-label={searchLabel}
             enterKeyHint="search"
             autoComplete="off"
@@ -63,7 +69,7 @@ export function TaxonomyToolbar({
                     inputRef.current?.focus()
                   }}
                   aria-label="Limpar busca"
-                  className="inline-flex size-8 items-center justify-center rounded-full text-subtle transition-colors duration-200 hover:bg-surface-2 hover:text-fg"
+                  className="inline-flex size-10 items-center justify-center rounded-full text-subtle transition-colors duration-200 hover:bg-surface-2 hover:text-fg sm:size-8"
                 >
                   <X className="size-4" aria-hidden />
                 </button>
