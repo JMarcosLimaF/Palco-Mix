@@ -3,6 +3,7 @@
  * Sem React — fáceis de testar e reaproveitar.
  */
 import { countActiveFilters } from '@/lib/catalog-params'
+import { publicAsset } from '@/lib/base-path'
 import { getImageSources, type ImageSources } from '@/lib/images'
 import { site } from '@/config/site'
 import { discountPercent, formatBRL, isPriceOnRequest, normalizeText, productCode } from '@/lib/utils'
@@ -26,7 +27,8 @@ export const THUMB_IMAGE_SIZES = '80px'
 export function cappedImageSources(path: string | undefined): ImageSources {
   const sources = getImageSources(path)
   if (!sources.srcSet || !path) return sources
-  const candidates = sources.srcSet.split(', ').filter((candidate) => !candidate.startsWith(`${path} `))
+  const original = publicAsset(path)
+  const candidates = sources.srcSet.split(', ').filter((candidate) => candidate.slice(0, candidate.lastIndexOf(' ')) !== original)
   return { ...sources, srcSet: candidates.length ? candidates.join(', ') : undefined }
 }
 

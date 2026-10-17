@@ -1,3 +1,4 @@
+import { publicAsset } from '@/lib/base-path'
 import { cn } from '@/lib/utils'
 
 /**
@@ -57,7 +58,7 @@ export function Logo({ className, variant = 'compact', inverted = false }: LogoP
 export function LogoBadge({ className, size = 96 }: { className?: string; size?: number }) {
   return (
     <img
-      src={size <= 320 ? '/brand/logo-palcomix-320.webp' : '/brand/logo-palcomix.webp'}
+      src={publicAsset(size <= 320 ? '/brand/logo-palcomix-320.webp' : '/brand/logo-palcomix.webp')}
       width={size}
       height={size}
       alt="Palco Mix Calçados e Acessórios"

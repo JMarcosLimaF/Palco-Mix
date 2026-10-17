@@ -32,6 +32,7 @@ import { Skeleton } from '@/components/ui/feedback'
 import { useCategories, useDistributors, useProducts } from '@/hooks/catalog'
 import { useDocumentTitle } from '@/hooks/use-document-title'
 import { useMediaQuery } from '@/hooks/use-media-query'
+import { appHref } from '@/lib/base-path'
 import { cn, pluralize } from '@/lib/utils'
 import { adminService, STRESS_ID_PREFIX } from '@/services/admin'
 import { errorMessage } from '@/services/errors'
@@ -648,7 +649,7 @@ function PerformanceSection() {
           Remover produtos de teste
         </Button>
         <a
-          href="/catalogo"
+          href={appHref('/catalogo')}
           target="_blank"
           rel="noopener noreferrer"
           className="group/cat col-span-2 inline-flex h-11 items-center justify-center gap-1 rounded-full px-3 text-sm font-semibold text-muted transition-colors duration-200 hover:bg-surface-2 hover:text-fg sm:ml-auto sm:h-9"

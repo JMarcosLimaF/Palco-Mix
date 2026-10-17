@@ -4,6 +4,7 @@ import { ProductImage } from '@/components/catalog/product-image'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/form'
 import { useDebouncedValue } from '@/hooks/use-debounced-value'
+import { publicAsset } from '@/lib/base-path'
 import { PLACEHOLDER_IMAGE } from '@/lib/images'
 import { cn } from '@/lib/utils'
 import { imagePathError, normalizeImagePath } from './product-form-model'
@@ -75,7 +76,7 @@ export function ImagePathAdder({ existing, onAdd, onClose }: ImagePathAdderProps
               sizes="96px"
               onLoad={(e) => {
                 // o ProductImage troca por placeholder quando falha; ignore esse load
-                if (e.currentTarget.getAttribute('src') !== PLACEHOLDER_IMAGE) setProbe({ path: candidate, ok: true })
+                if (e.currentTarget.getAttribute('src') !== publicAsset(PLACEHOLDER_IMAGE)) setProbe({ path: candidate, ok: true })
               }}
               onError={() => setProbe({ path: candidate, ok: false })}
             />

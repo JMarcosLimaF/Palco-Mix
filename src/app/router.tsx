@@ -18,6 +18,8 @@ const page = (loader: () => Promise<{ default: React.ComponentType }>) => async 
   Component: (await loader()).default,
 })
 
+const basename = import.meta.env.BASE_URL.replace(/\/$/, '') || undefined
+
 export const router = createBrowserRouter([
   {
     Component: RootLayout,
@@ -59,4 +61,4 @@ export const router = createBrowserRouter([
       },
     ],
   },
-])
+], { basename })

@@ -1,5 +1,6 @@
 import { ArrowUpRight, LogOut, Store } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { appHref } from '@/lib/base-path'
 import { cn } from '@/lib/utils'
 import { useAuthStore } from '@/store/auth'
 import { userInitials } from './admin-nav-items'
@@ -9,7 +10,7 @@ import { useAdminLogout } from './use-admin-logout'
 export function ViewStoreLink({ className }: { className?: string }) {
   return (
     <a
-      href="/"
+      href={appHref('/')}
       target="_blank"
       rel="noopener noreferrer"
       className={cn(

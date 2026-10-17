@@ -17,6 +17,7 @@ import {
   useUpdateProduct,
 } from '@/hooks/catalog'
 import { useMediaQuery } from '@/hooks/use-media-query'
+import { appHref } from '@/lib/base-path'
 import { expandSizes } from '@/lib/sizes'
 import { cn, discountPercent, formatBRL, formatDate, normalizeText, productCode } from '@/lib/utils'
 import { errorMessage } from '@/services/errors'
@@ -354,7 +355,7 @@ export function ProductForm({ product, onCreateAnother, onDeleted }: ProductForm
             {product && (
               <div className="-mr-1.5 flex items-center gap-1 sm:hidden">
                 <a
-                  href={`/produto/${product.id}`}
+                  href={appHref(`/produto/${product.id}`)}
                   target="_blank"
                   rel="noreferrer"
                   aria-label="Ver na loja (abre em nova aba)"
@@ -396,7 +397,7 @@ export function ProductForm({ product, onCreateAnother, onDeleted }: ProductForm
           product ? (
             <>
               <a
-                href={`/produto/${product.id}`}
+                href={appHref(`/produto/${product.id}`)}
                 target="_blank"
                 rel="noreferrer"
                 className={buttonVariants({ variant: 'outline', size: 'sm' })}

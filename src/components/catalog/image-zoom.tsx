@@ -1,5 +1,6 @@
 import { useRef, useState, type MouseEvent, type PointerEvent } from 'react'
 import { useMediaQuery } from '@/hooks/use-media-query'
+import { publicAsset } from '@/lib/base-path'
 import { getImageSources, PLACEHOLDER_IMAGE } from '@/lib/images'
 import { clamp, cn } from '@/lib/utils'
 import { cappedImageSources } from './catalog-helpers'
@@ -89,7 +90,7 @@ export function ZoomImage({
   const [hiResWanted, setHiResWanted] = useState(eagerHiRes)
   const [hiResLoaded, setHiResLoaded] = useState(false)
   const finePointer = useMediaQuery('(hover: hover) and (pointer: fine)')
-  const hiResSrc = path && !path.startsWith('data:') ? path : undefined
+  const hiResSrc = path && !path.startsWith('data:') ? publicAsset(path) : undefined
   const zoomable = Boolean(path) && (mode === 'click' || (mode === 'hover' && finePointer))
   // arrasto com o dedo sobre a imagem ampliada (modo click)
   const pannable = zoomable && mode === 'click' && active

@@ -5,6 +5,7 @@ import { ArrowUpRight, LoaderCircle, Pencil, Star, Trash2 } from 'lucide-react'
 import { Link } from 'react-router'
 import { ProductImage } from '@/components/catalog/product-image'
 import { buttonVariants } from '@/components/ui/button-variants'
+import { appHref } from '@/lib/base-path'
 import { cn } from '@/lib/utils'
 import type { Product } from '@/types/catalog'
 import { FROM_LIST_STATE } from './products-params'
@@ -139,7 +140,7 @@ export function RowActions({
         <Pencil aria-hidden />
       </Link>
       <a
-        href={`/produto/${product.id}`}
+        href={appHref(`/produto/${product.id}`)}
         target="_blank"
         rel="noreferrer"
         className={iconBtn}

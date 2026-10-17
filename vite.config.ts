@@ -78,7 +78,16 @@ function devUploadPlugin(): Plugin {
   }
 }
 
+/** `/` no dev; `/Palco-Mix/` quando o workflow do GitHub Pages define VITE_BASE_PATH. */
+function siteBase(): string {
+  const raw = process.env.VITE_BASE_PATH?.trim()
+  if (!raw || raw === '/') return '/'
+  const withLead = raw.startsWith('/') ? raw : `/${raw}`
+  return withLead.endsWith('/') ? withLead : `${withLead}/`
+}
+
 export default defineConfig({
+  base: siteBase(),
   plugins: [react(), tailwindcss(), devUploadPlugin()],
   resolve: {
     alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },

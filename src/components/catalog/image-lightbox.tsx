@@ -2,6 +2,7 @@ import * as Dialog from '@radix-ui/react-dialog'
 import { ChevronLeft, ChevronRight, X } from 'lucide-react'
 import { AnimatePresence, m } from 'motion/react'
 import { useEffect, useRef, useState, type KeyboardEvent, type PointerEvent } from 'react'
+import { publicAsset } from '@/lib/base-path'
 import { cn } from '@/lib/utils'
 import { THUMB_IMAGE_SIZES } from './catalog-helpers'
 import { ZoomImage } from './image-zoom'
@@ -15,7 +16,7 @@ function preloadOriginal(path: string | undefined) {
   if (!path || path.startsWith('data:')) return
   const img = new Image()
   img.decoding = 'async'
-  img.src = path
+  img.src = publicAsset(path)
 }
 
 export interface ImageLightboxProps {

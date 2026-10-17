@@ -6,6 +6,7 @@
  * data URLs, URLs externas) são usados como estão.
  */
 import manifestJson from '@/data/image-manifest.json'
+import { publicAsset } from '@/lib/base-path'
 
 interface ManifestEntry {
   w: number
@@ -30,19 +31,20 @@ export const PLACEHOLDER_IMAGE = '/brand/logo-palcomix-320.webp'
 
 function thumbPath(path: string, width: number): string {
   const file = path.slice('/produtos/'.length).replace(/\.[^.]+$/, '')
-  return `/produtos/_thumbs/${file}-${width}.webp`
+  return publicAsset(`/produtos/_thumbs/${file}-${width}.webp`)
 }
 
 export function getImageSources(path: string | undefined): ImageSources {
-  if (!path) return { src: PLACEHOLDER_IMAGE }
+  if (!path) return { src: publicAsset(PLACEHOLDER_IMAGE) }
   const entry = manifest[path]
-  if (!entry) return { src: path }
+  const srcPath = publicAsset(path)
+  if (!entry) return { src: srcPath }
 
   const candidates = entry.sizes.map((w) => `${thumbPath(path, w)} ${w}w`)
-  candidates.push(`${path} ${entry.w}w`)
+  candidates.push(`${srcPath} ${entry.w}w`)
   const largestThumb = entry.sizes.at(-1)
   return {
-    src: largestThumb ? thumbPath(path, largestThumb) : path,
+    src: largestThumb ? thumbPath(path, largestThumb) : srcPath,
     srcSet: candidates.join(', '),
     color: entry.color,
     width: entry.w,
