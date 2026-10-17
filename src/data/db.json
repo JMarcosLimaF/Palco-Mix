@@ -1,0 +1,2974 @@
+{
+  "schemaVersion": 1,
+  "categories": [
+    {
+      "id": "chinelos",
+      "name": "Chinelos",
+      "description": "Chinelos de dedo para o dia a dia e a praia, das estampas Coca-Cola aos queridinhos Ipanema e Zaxy.",
+      "image": "/produtos/05116b26-908a-4495-a51a-e32343e6b2cb.JPG",
+      "createdAt": "2026-05-30T12:00:00.000Z"
+    },
+    {
+      "id": "slides",
+      "name": "Slides",
+      "description": "Slides de tira larga com fivelas, laços e pedrarias, para elas, para eles e para os pequenos.",
+      "image": "/produtos/9cfc386e-b50e-41a3-9082-ab61fa32b95f.JPG",
+      "createdAt": "2026-05-30T12:00:00.000Z"
+    },
+    {
+      "id": "rasteirinhas",
+      "name": "Rasteirinhas",
+      "description": "Rasteirinhas cheias de brilho, com strass, metalizados e anel no dedo para todo look.",
+      "image": "/produtos/a7178a38-c95a-48bb-a216-75e2ae2f3594.JPG",
+      "createdAt": "2026-05-30T12:00:00.000Z"
+    },
+    {
+      "id": "sandalias",
+      "name": "Sandálias",
+      "description": "Sandálias femininas, masculinas em couro e infantis para cada ocasião.",
+      "image": "/produtos/4747758f-bec4-4b0d-a31c-daadfc1baf2a.JPG",
+      "createdAt": "2026-05-30T12:00:00.000Z"
+    },
+    {
+      "id": "tamancos",
+      "name": "Tamancos",
+      "description": "Tamancos de salto bloco e plataforma com strass, fivelas e apliques que elevam o visual.",
+      "image": "/produtos/65349063-b3c0-4f6e-bd0e-111abb9d39eb.JPG",
+      "createdAt": "2026-05-30T12:00:00.000Z"
+    },
+    {
+      "id": "tenis",
+      "name": "Tênis",
+      "description": "Tênis esportivos leves e confortáveis para o dia a dia.",
+      "image": "/produtos/2ba6b402-ec9a-4432-aae1-15a015121ebe.JPG",
+      "createdAt": "2026-05-30T12:00:00.000Z"
+    },
+    {
+      "id": "sapatenis",
+      "name": "Sapatênis",
+      "description": "Sapatênis masculinos versáteis, do trabalho ao lazer.",
+      "image": "/produtos/69959f51-7ee9-4145-9274-1df7614ff27e.JPG",
+      "createdAt": "2026-05-30T12:00:00.000Z"
+    }
+  ],
+  "distributors": [
+    {
+      "id": "coca-cola-shoes",
+      "name": "Coca-Cola Shoes",
+      "description": "Linha licenciada com chinelos de dedo masculinos e femininos estampados e slides com logo em relevo.",
+      "createdAt": "2026-05-30T12:00:00.000Z"
+    },
+    {
+      "id": "ipanema",
+      "name": "Ipanema",
+      "description": "Chinelos de dedo femininos da linha Day Fem em diversas estampas.",
+      "createdAt": "2026-05-30T12:00:00.000Z"
+    },
+    {
+      "id": "zaxy",
+      "name": "Zaxy",
+      "description": "Chinelos femininos Zen em EVA com apliques e slides infantis Partner com fivelas.",
+      "createdAt": "2026-05-30T12:00:00.000Z"
+    },
+    {
+      "id": "modare",
+      "name": "Modare",
+      "description": "Slides femininos da linha Ultraconforto com fivela, laço ou pedrarias.",
+      "createdAt": "2026-05-30T12:00:00.000Z"
+    },
+    {
+      "id": "dijean",
+      "name": "Dijean",
+      "description": "Tamancos de plataforma, slides flatform e sandália feminina com fivelas e laços metalizados.",
+      "createdAt": "2026-05-30T12:00:00.000Z"
+    },
+    {
+      "id": "akazzo",
+      "name": "Akazzo",
+      "description": "Rasteirinhas e tamancos femininos de salto bloco com strass e apliques metálicos.",
+      "createdAt": "2026-05-30T12:00:00.000Z"
+    },
+    {
+      "id": "dimel",
+      "name": "Dimel",
+      "description": "Rasteirinhas femininas de bico quadrado com detalhes em strass.",
+      "createdAt": "2026-05-30T12:00:00.000Z"
+    },
+    {
+      "id": "dcalce",
+      "name": "D'Calce",
+      "description": "Rasteirinhas, tamancos e sandália femininos de bico quadrado com strass e apliques metálicos.",
+      "createdAt": "2026-05-30T12:00:00.000Z"
+    },
+    {
+      "id": "mississipi",
+      "name": "Mississipi",
+      "description": "Sandálias, tamanco e rasteirinha femininos com tiras trançadas, metalizados e strass.",
+      "createdAt": "2026-05-30T12:00:00.000Z"
+    },
+    {
+      "id": "beira-rio",
+      "name": "Beira Rio",
+      "description": "Tamanco feminino de salto bloco com fivela de corrente dourada.",
+      "createdAt": "2026-05-30T12:00:00.000Z"
+    },
+    {
+      "id": "pegada",
+      "name": "Pegada",
+      "description": "Sandálias e slides masculinos em couro com velcro ou fivelas.",
+      "createdAt": "2026-05-30T12:00:00.000Z"
+    },
+    {
+      "id": "pgd",
+      "name": "PGD Footwear",
+      "description": "Sapatênis masculinos em couro sintético, com cadarço ou elástico lateral.",
+      "createdAt": "2026-05-30T12:00:00.000Z"
+    },
+    {
+      "id": "alpha",
+      "name": "Alpha",
+      "description": "Tênis esportivos da linha A62 em diferentes cores.",
+      "createdAt": "2026-05-30T12:00:00.000Z"
+    },
+    {
+      "id": "rider",
+      "name": "Rider",
+      "description": "Slides masculinos da linha Street Slide.",
+      "createdAt": "2026-05-30T12:00:00.000Z"
+    },
+    {
+      "id": "barbie",
+      "name": "Barbie",
+      "description": "Sandália infantil licenciada Barbie.",
+      "createdAt": "2026-05-30T12:00:00.000Z"
+    }
+  ],
+  "products": [
+    {
+      "id": "pm-0001",
+      "name": "Chinelo Ipanema Day Fem Rosa Corações",
+      "description": "Chinelo de dedo feminino rosa com tiras pink e estampa de corações. Leve, com palmilha macia e solado antiderrapante.",
+      "price": 12.5,
+      "promoPrice": 12,
+      "category": "chinelos",
+      "distributor": "ipanema",
+      "images": [
+        "/produtos/b2bbac22-847f-4619-9ed9-45232be7230a.JPG"
+      ],
+      "isFeatured": false,
+      "status": "active",
+      "createdAt": "2026-06-29T19:05:31.365Z",
+      "sizes": "33/34 ao 39/40",
+      "colors": [
+        "Rosa",
+        "Pink"
+      ],
+      "gender": "feminino",
+      "tags": [
+        "ipanema",
+        "chinelo",
+        "feminino",
+        "praia",
+        "corações",
+        "rosa",
+        "conforto"
+      ]
+    },
+    {
+      "id": "pm-0002",
+      "name": "Chinelo Coca-Cola Masculino Makes Good Things Taste Better",
+      "description": "Chinelo de dedo masculino com textos e logo Coca-Cola dourados na palmilha, incluindo a frase \"Makes Good Things Taste Better\". Tira vazada com logo dourado, nas cores preta, marrom e branca. Numeração 37 ao 43.",
+      "price": 0,
+      "category": "chinelos",
+      "distributor": "coca-cola-shoes",
+      "images": [
+        "/produtos/6e5fb402-e7be-4ca5-b421-75a16e2bc5d9.JPG",
+        "/produtos/94a7131b-042e-417a-80fd-90e08956374f.JPG",
+        "/produtos/9c60aefe-c390-4b88-b103-f689d18a7e32.JPG"
+      ],
+      "isFeatured": false,
+      "status": "active",
+      "createdAt": "2026-07-03T07:52:02.497Z",
+      "sizes": "37 ao 43",
+      "colors": [
+        "Preto",
+        "Marrom",
+        "Branco",
+        "Dourado"
+      ],
+      "gender": "masculino",
+      "tags": [
+        "coca-cola",
+        "chinelo",
+        "masculino",
+        "praia",
+        "estampado",
+        "dourado",
+        "licenciado"
+      ]
+    },
+    {
+      "id": "pm-0003",
+      "name": "Slide Rider Street",
+      "description": "Slide masculino Rider Street Slide de tira larga com logo da marca, nas versões azul com tira branca, azul royal com logo verde-limão e bege com tira preta texturizada. Destaque para leveza, palmilha macia e solado antiderrapante.",
+      "price": 30,
+      "promoPrice": 29,
+      "category": "slides",
+      "distributor": "rider",
+      "images": [
+        "/produtos/a5abf1bb-c4cd-4875-a37b-6a75d75f959d.JPG",
+        "/produtos/b5f682e3-2c27-45af-9868-7e194be3e5c9.JPG",
+        "/produtos/df678520-62d3-47d5-ba3a-b0e6bada0985.JPG"
+      ],
+      "isFeatured": false,
+      "status": "active",
+      "createdAt": "2026-07-05T14:15:39.833Z",
+      "sizes": "37/38 ao 43/44",
+      "colors": [
+        "Azul",
+        "Branco",
+        "Vermelho",
+        "Azul Royal",
+        "Verde Limão",
+        "Bege",
+        "Preto"
+      ],
+      "gender": "masculino",
+      "tags": [
+        "rider",
+        "slide",
+        "masculino",
+        "chinelo",
+        "conforto",
+        "antiderrapante",
+        "dia a dia"
+      ]
+    },
+    {
+      "id": "pm-0004",
+      "name": "Rasteirinha D'Calce Preta Tira Larga e Strass",
+      "description": "Rasteirinha de dedo feminina preta de bico quadrado, com tira larga e tira fina de strass e palmilha nude.",
+      "price": 22,
+      "category": "rasteirinhas",
+      "distributor": "dcalce",
+      "images": [
+        "/produtos/237a30d4-4a3b-4047-abba-06a76fb00a5e.JPG"
+      ],
+      "isFeatured": false,
+      "status": "active",
+      "createdAt": "2026-07-05T17:16:46.510Z",
+      "sizes": "34 ao 39",
+      "colors": [
+        "Preto",
+        "Nude",
+        "Grafite"
+      ],
+      "gender": "feminino",
+      "tags": [
+        "dcalce",
+        "rasteirinha",
+        "feminino",
+        "strass",
+        "bico quadrado"
+      ]
+    },
+    {
+      "id": "pm-0005",
+      "name": "Tamanco Dijean Comforty Plataforma Laço",
+      "description": "Tamanco feminino de plataforma alta com tira cruzada metalizada em grande laço com nó e palmilha texturizada com logo Dijean Comforty. Versões bronze, nude com rosê e bege com dourado.",
+      "price": 100,
+      "promoPrice": 97,
+      "category": "tamancos",
+      "distributor": "dijean",
+      "images": [
+        "/produtos/7647c3d3-432c-446d-b902-beec9dcfb0e7.JPG",
+        "/produtos/824d848a-f666-4b6a-873d-18c7c88f1c41.JPG",
+        "/produtos/e3b58f21-97c0-452e-8072-b84f42d021f2.JPG"
+      ],
+      "isFeatured": false,
+      "status": "active",
+      "createdAt": "2026-07-06T20:58:49.119Z",
+      "sizes": "34 ao 39",
+      "colors": [
+        "Bronze",
+        "Cobre",
+        "Nude",
+        "Rosê",
+        "Bege",
+        "Dourado"
+      ],
+      "gender": "feminino",
+      "tags": [
+        "dijean",
+        "tamanco",
+        "feminino",
+        "plataforma",
+        "laço",
+        "metalizado"
+      ]
+    },
+    {
+      "id": "pm-0006",
+      "name": "Chinelo Ipanema Day Fem Rosê Folhagens",
+      "description": "Chinelo de dedo feminino rosê com estampa de folhagens em nude na palmilha. Leve, com palmilha macia e solado antiderrapante.",
+      "price": 12.5,
+      "promoPrice": 12,
+      "category": "chinelos",
+      "distributor": "ipanema",
+      "images": [
+        "/produtos/24ded498-83b8-4aca-ac09-70d21a7fac0e.JPG"
+      ],
+      "isFeatured": false,
+      "status": "active",
+      "createdAt": "2026-07-08T10:25:06.366Z",
+      "sizes": "33/34 ao 39/40",
+      "colors": [
+        "Rosê",
+        "Nude"
+      ],
+      "gender": "feminino",
+      "tags": [
+        "ipanema",
+        "chinelo",
+        "feminino",
+        "praia",
+        "folhagens",
+        "conforto"
+      ]
+    },
+    {
+      "id": "pm-0007",
+      "name": "Tamanco Akazzo Dourado Strass e Argolas",
+      "description": "Tamanco feminino dourado metalizado de salto bloco e bico quadrado, com tiras cravejadas de strass e argolas douradas.",
+      "price": 53,
+      "promoPrice": 51,
+      "category": "tamancos",
+      "distributor": "akazzo",
+      "images": [
+        "/produtos/9c3ce60b-3557-4325-b823-7086e0eb425e.JPG"
+      ],
+      "isFeatured": false,
+      "status": "active",
+      "createdAt": "2026-07-08T20:39:56.335Z",
+      "sizes": "34 ao 39",
+      "colors": [
+        "Dourado"
+      ],
+      "gender": "feminino",
+      "tags": [
+        "akazzo",
+        "tamanco",
+        "feminino",
+        "salto",
+        "salto bloco",
+        "strass",
+        "metalizado",
+        "dourado"
+      ]
+    },
+    {
+      "id": "pm-0008",
+      "name": "Chinelo Coca-Cola Masculino Since 1886 Azul Marinho",
+      "description": "Chinelo de dedo masculino azul marinho com faixa dourada e logo Coca-Cola Since 1886 na palmilha. Tira vazada com logo dourado. Numeração 37 ao 43.",
+      "price": 0,
+      "category": "chinelos",
+      "distributor": "coca-cola-shoes",
+      "images": [
+        "/produtos/621daa44-79ba-4476-ad12-a28752150450.JPG"
+      ],
+      "isFeatured": false,
+      "status": "active",
+      "createdAt": "2026-07-12T10:10:28.527Z",
+      "sizes": "37 ao 43",
+      "colors": [
+        "Azul Marinho",
+        "Dourado"
+      ],
+      "gender": "masculino",
+      "tags": [
+        "coca-cola",
+        "chinelo",
+        "masculino",
+        "praia",
+        "dourado",
+        "licenciado"
+      ]
+    },
+    {
+      "id": "pm-0009",
+      "name": "Chinelo Coca-Cola Feminino Preto Letreiro Bege",
+      "description": "Chinelo de dedo feminino preto com letreiro Coca-Cola grande em bege e logos na palmilha. Tira fina com aplique de garrafinha cobre. Numeração 34 ao 39.",
+      "price": 0,
+      "category": "chinelos",
+      "distributor": "coca-cola-shoes",
+      "images": [
+        "/produtos/44bfc00b-9640-41fe-a564-bb47882386f9.JPG"
+      ],
+      "isFeatured": false,
+      "status": "active",
+      "createdAt": "2026-07-15T01:11:17.090Z",
+      "sizes": "34 ao 39",
+      "colors": [
+        "Preto",
+        "Bege",
+        "Cobre"
+      ],
+      "gender": "feminino",
+      "tags": [
+        "coca-cola",
+        "chinelo",
+        "feminino",
+        "praia",
+        "letreiro",
+        "pingente",
+        "licenciado"
+      ]
+    },
+    {
+      "id": "pm-0010",
+      "name": "Sandália Pegada Couro Marrom Tiras Largas",
+      "description": "Sandália masculina em couro legítimo marrom com tiras largas, tira traseira e palmilha anatômica e macia. Destaque para resistência, durabilidade e solado antiderrapante.",
+      "price": 110,
+      "promoPrice": 106,
+      "category": "sandalias",
+      "distributor": "pegada",
+      "images": [
+        "/produtos/4747758f-bec4-4b0d-a31c-daadfc1baf2a.JPG"
+      ],
+      "isFeatured": false,
+      "status": "active",
+      "createdAt": "2026-07-15T06:47:46.535Z",
+      "sizes": "37 ao 43",
+      "colors": [
+        "Marrom",
+        "Preto"
+      ],
+      "gender": "masculino",
+      "tags": [
+        "pegada",
+        "couro",
+        "sandália",
+        "masculino",
+        "conforto",
+        "antiderrapante"
+      ]
+    },
+    {
+      "id": "pm-0011",
+      "name": "Chinelo Coca-Cola Masculino Drink Coca-Cola Listrado Bege",
+      "description": "Chinelo de dedo masculino com palmilha listrada em bege e marrom e estampa Drink Coca-Cola. Tira marrom vazada com logo dourado. Numeração 37 ao 43.",
+      "price": 0,
+      "category": "chinelos",
+      "distributor": "coca-cola-shoes",
+      "images": [
+        "/produtos/90e38fb8-50e5-4e9b-934f-4e9eb8785b87.JPG"
+      ],
+      "isFeatured": false,
+      "status": "active",
+      "createdAt": "2026-07-18T14:43:33.159Z",
+      "sizes": "37 ao 43",
+      "colors": [
+        "Bege",
+        "Marrom",
+        "Dourado"
+      ],
+      "gender": "masculino",
+      "tags": [
+        "coca-cola",
+        "chinelo",
+        "masculino",
+        "praia",
+        "listrado",
+        "licenciado"
+      ]
+    },
+    {
+      "id": "pm-0012",
+      "name": "Chinelo Ipanema Day Fem Bege Cachorrinhos",
+      "description": "Chinelo de dedo feminino bege com tiras douradas e estampa de cachorrinhos marrons na palmilha. Leve, com palmilha macia e solado antiderrapante.",
+      "price": 12.5,
+      "promoPrice": 12,
+      "category": "chinelos",
+      "distributor": "ipanema",
+      "images": [
+        "/produtos/e7421228-b811-4ab3-915f-87c7ce7857ef.JPG"
+      ],
+      "isFeatured": false,
+      "status": "active",
+      "createdAt": "2026-07-20T01:03:02.910Z",
+      "sizes": "33/34 ao 39/40",
+      "colors": [
+        "Bege",
+        "Dourado",
+        "Marrom"
+      ],
+      "gender": "feminino",
+      "tags": [
+        "ipanema",
+        "chinelo",
+        "feminino",
+        "praia",
+        "cachorrinhos",
+        "pet",
+        "conforto"
+      ]
+    },
+    {
+      "id": "pm-0013",
+      "name": "Rasteirinha Akazzo Off White Bico Quadrado com Strass",
+      "description": "Rasteirinha feminina de bico quadrado com base off white e tiras finas cravejadas de strass prateado, mostrada também calçada.",
+      "price": 48,
+      "promoPrice": 46,
+      "category": "rasteirinhas",
+      "distributor": "akazzo",
+      "images": [
+        "/produtos/75a5d407-b429-4178-af65-990287d01777.JPG"
+      ],
+      "isFeatured": false,
+      "status": "active",
+      "createdAt": "2026-07-20T22:09:07.973Z",
+      "sizes": "34 ao 39",
+      "colors": [
+        "Off White",
+        "Prata"
+      ],
+      "gender": "feminino",
+      "tags": [
+        "akazzo",
+        "rasteirinha",
+        "feminino",
+        "strass",
+        "brilho",
+        "bico quadrado"
+      ]
+    },
+    {
+      "id": "pm-0014",
+      "name": "Chinelo Coca-Cola Feminino Preto Garrafa Dourada",
+      "description": "Chinelo de dedo feminino preto com estampa dourada de garrafa Coca-Cola na palmilha. Tira fina com pingente metálico dourado em formato de garrafa. Numeração 34 ao 39.",
+      "price": 0,
+      "category": "chinelos",
+      "distributor": "coca-cola-shoes",
+      "images": [
+        "/produtos/94b02ed6-2d72-4672-ae03-08f4518c8aaa.JPG"
+      ],
+      "isFeatured": false,
+      "status": "active",
+      "createdAt": "2026-07-21T05:47:32.337Z",
+      "sizes": "34 ao 39",
+      "colors": [
+        "Preto",
+        "Dourado"
+      ],
+      "gender": "feminino",
+      "tags": [
+        "coca-cola",
+        "chinelo",
+        "feminino",
+        "praia",
+        "dourado",
+        "pingente",
+        "licenciado"
+      ]
+    },
+    {
+      "id": "pm-0015",
+      "name": "Slide Coca-Cola Logo em Relevo",
+      "description": "Slide masculino de tira larga com logo Coca-Cola em alto-relevo e logo branco na palmilha. Disponível em marrom e preto.",
+      "price": 68,
+      "promoPrice": 66,
+      "category": "slides",
+      "distributor": "coca-cola-shoes",
+      "images": [
+        "/produtos/756f3b18-ffee-4693-90d6-da01408ce5d9.JPG",
+        "/produtos/45003737-c7bc-4aab-8492-f5fda0e6b58b.JPG"
+      ],
+      "isFeatured": false,
+      "status": "active",
+      "createdAt": "2026-07-22T17:38:33.861Z",
+      "sizes": "38 ao 43",
+      "colors": [
+        "Marrom",
+        "Preto",
+        "Branco"
+      ],
+      "gender": "masculino",
+      "tags": [
+        "coca-cola",
+        "slide",
+        "masculino",
+        "logo",
+        "relevo",
+        "licenciado"
+      ]
+    },
+    {
+      "id": "pm-0016",
+      "name": "Rasteirinha Akazzo Dourada Strass e Tira no Calcanhar",
+      "description": "Rasteirinha feminina dourada metalizada de bico quadrado com tiras cruzadas cravejadas de strass e tira traseira no calcanhar.",
+      "price": 48,
+      "promoPrice": 46,
+      "category": "rasteirinhas",
+      "distributor": "akazzo",
+      "images": [
+        "/produtos/e938d69c-1df1-46eb-ac9b-f8f274a4a68a.JPG"
+      ],
+      "isFeatured": false,
+      "status": "active",
+      "createdAt": "2026-07-23T18:25:56.415Z",
+      "sizes": "34 ao 39",
+      "colors": [
+        "Dourado"
+      ],
+      "gender": "feminino",
+      "tags": [
+        "akazzo",
+        "rasteirinha",
+        "feminino",
+        "strass",
+        "dourado",
+        "metalizado",
+        "bico quadrado"
+      ]
+    },
+    {
+      "id": "pm-0017",
+      "name": "Rasteirinha D'Calce Verniz Preto Tira no Tornozelo",
+      "description": "Sandália rasteira feminina em verniz preto com tiras largas cruzadas, tira no tornozelo com fivela dourada e solado caramelo.",
+      "price": 22,
+      "category": "rasteirinhas",
+      "distributor": "dcalce",
+      "images": [
+        "/produtos/3d3e25a6-b94e-4da6-9992-f27573093fe9.JPG"
+      ],
+      "isFeatured": false,
+      "status": "active",
+      "createdAt": "2026-07-24T23:57:49.439Z",
+      "sizes": "34 ao 39",
+      "colors": [
+        "Preto",
+        "Caramelo",
+        "Dourado"
+      ],
+      "gender": "feminino",
+      "tags": [
+        "dcalce",
+        "rasteirinha",
+        "feminino",
+        "verniz",
+        "fivela",
+        "tornozelo"
+      ]
+    },
+    {
+      "id": "pm-0018",
+      "name": "Chinelo Coca-Cola Masculino Beach Surf Club",
+      "description": "Chinelo de dedo masculino com palmilha listrada em branco e azul claro e estampa Coca-Cola Beach Surf Club. Tira branca vazada com logo dourado. Numeração 37 ao 43.",
+      "price": 0,
+      "category": "chinelos",
+      "distributor": "coca-cola-shoes",
+      "images": [
+        "/produtos/611b4afc-3ae7-4d8e-ab9e-300bbce6e548.JPG"
+      ],
+      "isFeatured": false,
+      "status": "active",
+      "createdAt": "2026-07-26T17:48:08.005Z",
+      "sizes": "37 ao 43",
+      "colors": [
+        "Branco",
+        "Azul Claro",
+        "Azul Marinho",
+        "Dourado"
+      ],
+      "gender": "masculino",
+      "tags": [
+        "coca-cola",
+        "chinelo",
+        "masculino",
+        "praia",
+        "surf",
+        "listrado",
+        "licenciado"
+      ]
+    },
+    {
+      "id": "pm-0019",
+      "name": "Slide Zaxy Partner Infantil Duas Fivelas",
+      "description": "Slide infantil com duas tiras e fivelas metálicas com strass sobre solado texturizado. Cores off white, rosa, preta e nude rosê.",
+      "price": 60,
+      "promoPrice": 58,
+      "category": "slides",
+      "distributor": "zaxy",
+      "images": [
+        "/produtos/8510dcd5-053a-4f52-91f4-7b5406b6dcfb.JPG",
+        "/produtos/be6f70f7-142a-4f6f-8c8b-70b317c772da.JPG",
+        "/produtos/ffa8aba0-7fa1-4843-ba37-e0fe6a021b97.JPG",
+        "/produtos/2e7c2946-4a45-4821-8443-e3cc7dd99296.JPG"
+      ],
+      "isFeatured": false,
+      "status": "active",
+      "createdAt": "2026-07-27T00:39:30.727Z",
+      "sizes": "28 ao 32",
+      "colors": [
+        "Off White",
+        "Rosa",
+        "Preto",
+        "Nude",
+        "Dourado",
+        "Rosê Gold"
+      ],
+      "gender": "infantil",
+      "tags": [
+        "zaxy",
+        "slide",
+        "infantil",
+        "kids",
+        "fivela",
+        "strass"
+      ]
+    },
+    {
+      "id": "pm-0020",
+      "name": "Sapatênis PGD Slip-On Preto Solado Branco",
+      "description": "Sapatênis masculino slip-on em couro sintético preto com elástico lateral e solado branco. Leve, durável e com solado antiderrapante.",
+      "price": 122,
+      "promoPrice": 118,
+      "category": "sapatenis",
+      "distributor": "pgd",
+      "images": [
+        "/produtos/9f8580a3-3af3-44a5-957d-94ee4fef9e01.JPG"
+      ],
+      "isFeatured": false,
+      "status": "active",
+      "createdAt": "2026-07-27T07:54:56.681Z",
+      "sizes": "37 ao 43",
+      "colors": [
+        "Preto",
+        "Branco"
+      ],
+      "gender": "masculino",
+      "tags": [
+        "pgd",
+        "sapatênis",
+        "masculino",
+        "slip-on",
+        "elástico",
+        "casual",
+        "antiderrapante"
+      ]
+    },
+    {
+      "id": "pm-0021",
+      "name": "Chinelo Coca-Cola Feminino Marrom Logo 1886",
+      "description": "Chinelo de dedo feminino marrom com grande logo Coca-Cola e \"1886\" em bege e dourado na palmilha. Pingente metálico de garrafa rosê na tira. Numeração 34 ao 39.",
+      "price": 0,
+      "category": "chinelos",
+      "distributor": "coca-cola-shoes",
+      "images": [
+        "/produtos/fcd8ec90-00da-4d57-92a9-3e049efbd6bc.JPG"
+      ],
+      "isFeatured": false,
+      "status": "active",
+      "createdAt": "2026-07-28T00:21:52.740Z",
+      "sizes": "34 ao 39",
+      "colors": [
+        "Marrom",
+        "Bege",
+        "Rosê"
+      ],
+      "gender": "feminino",
+      "tags": [
+        "coca-cola",
+        "chinelo",
+        "feminino",
+        "praia",
+        "logo",
+        "pingente",
+        "licenciado"
+      ]
+    },
+    {
+      "id": "pm-0022",
+      "name": "Chinelo Coca-Cola Masculino Refreshing",
+      "description": "Chinelo de dedo masculino com a palavra \"Refreshing\" em vermelho e estampa de tampinha Coca-Cola na palmilha. Tira vazada com logo dourado, nas cores preta e azul marinho. Numeração 37 ao 43.",
+      "price": 0,
+      "category": "chinelos",
+      "distributor": "coca-cola-shoes",
+      "images": [
+        "/produtos/71400ae2-a3d5-4b3a-866e-7216804eecfd.JPG",
+        "/produtos/83ac7b81-3578-450b-a588-3c9109e65fd4.JPG"
+      ],
+      "isFeatured": false,
+      "status": "active",
+      "createdAt": "2026-07-29T02:40:36.623Z",
+      "sizes": "37 ao 43",
+      "colors": [
+        "Preto",
+        "Azul Marinho",
+        "Vermelho",
+        "Branco",
+        "Dourado"
+      ],
+      "gender": "masculino",
+      "tags": [
+        "coca-cola",
+        "chinelo",
+        "masculino",
+        "praia",
+        "estampado",
+        "tampinha",
+        "licenciado"
+      ]
+    },
+    {
+      "id": "pm-0023",
+      "name": "Tamanco Akazzo Prata Salto Baixo com Strass",
+      "description": "Tamanco feminino prata metalizado de salto bloco baixo e bico quadrado, com tiras finas de strass na frente e no peito do pé.",
+      "price": 53,
+      "promoPrice": 51,
+      "category": "tamancos",
+      "distributor": "akazzo",
+      "images": [
+        "/produtos/6d5c6500-9d81-4aa7-bee8-6a0834fb0d85.JPG"
+      ],
+      "isFeatured": false,
+      "status": "active",
+      "createdAt": "2026-07-30T00:42:48.937Z",
+      "sizes": "34 ao 39",
+      "colors": [
+        "Prata"
+      ],
+      "gender": "feminino",
+      "tags": [
+        "akazzo",
+        "tamanco",
+        "feminino",
+        "salto baixo",
+        "salto bloco",
+        "strass",
+        "metalizado",
+        "prata"
+      ]
+    },
+    {
+      "id": "pm-0024",
+      "name": "Tamanco Akazzo Prata Strass e Presilhas",
+      "description": "Tamanco feminino prata metalizado de salto bloco com tiras finas cravejadas de strass e presilhas metálicas.",
+      "price": 53,
+      "promoPrice": 51,
+      "category": "tamancos",
+      "distributor": "akazzo",
+      "images": [
+        "/produtos/e8f5982a-64b2-4ca0-8572-c0c837924592.JPG"
+      ],
+      "isFeatured": false,
+      "status": "active",
+      "createdAt": "2026-07-30T19:38:17.980Z",
+      "sizes": "34 ao 39",
+      "colors": [
+        "Prata"
+      ],
+      "gender": "feminino",
+      "tags": [
+        "akazzo",
+        "tamanco",
+        "feminino",
+        "salto",
+        "salto bloco",
+        "strass",
+        "metalizado",
+        "prata"
+      ]
+    },
+    {
+      "id": "pm-0025",
+      "name": "Rasteirinha D'Calce Preta Strass e Tira com Nó",
+      "description": "Rasteirinha feminina preta de bico quadrado com tiras finas cravejadas de strass prata e grafite e tira de dedo com nó.",
+      "price": 22,
+      "category": "rasteirinhas",
+      "distributor": "dcalce",
+      "images": [
+        "/produtos/d52f8177-8e36-4a08-bb85-88dd5ccf05eb.JPG"
+      ],
+      "isFeatured": false,
+      "status": "active",
+      "createdAt": "2026-08-01T22:21:49.903Z",
+      "sizes": "34 ao 39",
+      "colors": [
+        "Preto",
+        "Prata"
+      ],
+      "gender": "feminino",
+      "tags": [
+        "dcalce",
+        "rasteirinha",
+        "feminino",
+        "strass",
+        "nó",
+        "bico quadrado"
+      ]
+    },
+    {
+      "id": "pm-0026",
+      "name": "Chinelo Coca-Cola Feminino Off White Garrafa e Logo",
+      "description": "Chinelo de dedo feminino off white com estampa da garrafa e do logotipo Coca-Cola em preto e vermelho na palmilha. Aplique de garrafinha bronze na tira. Numeração 34 ao 39.",
+      "price": 0,
+      "category": "chinelos",
+      "distributor": "coca-cola-shoes",
+      "images": [
+        "/produtos/c7d44d8c-a61e-4d3e-9b2f-d65ce3d200d8.JPG"
+      ],
+      "isFeatured": false,
+      "status": "active",
+      "createdAt": "2026-08-03T08:45:33.648Z",
+      "sizes": "34 ao 39",
+      "colors": [
+        "Off White",
+        "Preto",
+        "Vermelho",
+        "Bronze"
+      ],
+      "gender": "feminino",
+      "tags": [
+        "coca-cola",
+        "chinelo",
+        "feminino",
+        "praia",
+        "garrafa",
+        "pingente",
+        "licenciado"
+      ]
+    },
+    {
+      "id": "pm-0027",
+      "name": "Chinelo Ipanema Day Fem Bege Animal Print",
+      "description": "Chinelo de dedo feminino bege com tiras rosa e estampa animal print rosa e marrom na palmilha. Leve, com palmilha macia e solado antiderrapante.",
+      "price": 12.5,
+      "promoPrice": 12,
+      "category": "chinelos",
+      "distributor": "ipanema",
+      "images": [
+        "/produtos/08e28087-7014-4d8e-87c0-467414e1caba.JPG"
+      ],
+      "isFeatured": false,
+      "status": "active",
+      "createdAt": "2026-08-06T11:31:14.964Z",
+      "sizes": "33/34 ao 39/40",
+      "colors": [
+        "Bege",
+        "Rosa",
+        "Marrom"
+      ],
+      "gender": "feminino",
+      "tags": [
+        "ipanema",
+        "chinelo",
+        "feminino",
+        "praia",
+        "animal print",
+        "conforto"
+      ]
+    },
+    {
+      "id": "pm-0028",
+      "name": "Rasteirinha Akazzo Preta Tiras Finas e Anel Dourado",
+      "description": "Rasteirinha feminina preta com tiras finas cruzadas e anel no dedão com enfeite metálico dourado.",
+      "price": 39,
+      "promoPrice": 37,
+      "category": "rasteirinhas",
+      "distributor": "akazzo",
+      "images": [
+        "/produtos/8c15772d-7188-4e96-bb5a-f0674a76140b.JPG"
+      ],
+      "isFeatured": false,
+      "status": "active",
+      "createdAt": "2026-08-09T02:59:49.878Z",
+      "sizes": "34 ao 39",
+      "colors": [
+        "Preto",
+        "Dourado"
+      ],
+      "gender": "feminino",
+      "tags": [
+        "akazzo",
+        "rasteirinha",
+        "feminino",
+        "anel no dedo",
+        "preta",
+        "básica"
+      ]
+    },
+    {
+      "id": "pm-0029",
+      "name": "Slide Modare Ultraconforto Fivela Coração",
+      "description": "Slide feminino com cabedal acolchoado transpassado, grande fivela dourada em formato de coração e solado flatform. Destaque para: super confortável, leve e com palmilha macia, nas cores preta, caramelo, nude, off white e verde oliva.",
+      "price": 89,
+      "promoPrice": 87,
+      "category": "slides",
+      "distributor": "modare",
+      "images": [
+        "/produtos/4d88b62e-5416-4734-86e5-7cd4f00209ee.JPG",
+        "/produtos/0db42ef5-4cc4-4705-874b-8ce2215175fa.JPG",
+        "/produtos/654ab2db-91f2-4bb1-8ced-7cae99e8399e.JPG",
+        "/produtos/6ab8f704-92bd-4068-8596-5ab7bcfc209e.JPG",
+        "/produtos/095375e1-64c8-42bc-bfd4-541b58a4cc5e.JPG"
+      ],
+      "isFeatured": false,
+      "status": "active",
+      "createdAt": "2026-08-09T06:00:08.594Z",
+      "sizes": "34 ao 39",
+      "colors": [
+        "Preto",
+        "Caramelo",
+        "Nude",
+        "Off White",
+        "Verde Oliva",
+        "Dourado"
+      ],
+      "gender": "feminino",
+      "tags": [
+        "modare",
+        "slide",
+        "feminino",
+        "fivela",
+        "coração",
+        "acolchoado",
+        "flatform",
+        "conforto"
+      ]
+    },
+    {
+      "id": "pm-0030",
+      "name": "Chinelo Coca-Cola Feminino Letreiro e Garrafa",
+      "description": "Chinelo de dedo feminino com letreiro Coca-Cola branco e garrafa preta com rótulo vermelho na palmilha. Aplique metálico de garrafinha na tira, nas versões caramelo e marrom. Numeração 34 ao 39.",
+      "price": 0,
+      "category": "chinelos",
+      "distributor": "coca-cola-shoes",
+      "images": [
+        "/produtos/b9bdd139-0696-4faa-b795-405a45c2d351.JPG",
+        "/produtos/2f8be8ff-27e0-4925-bcd8-877ad13f4ea1.JPG"
+      ],
+      "isFeatured": false,
+      "status": "active",
+      "createdAt": "2026-08-09T21:00:44.288Z",
+      "sizes": "34 ao 39",
+      "colors": [
+        "Caramelo",
+        "Marrom",
+        "Branco",
+        "Preto",
+        "Vermelho",
+        "Bronze"
+      ],
+      "gender": "feminino",
+      "tags": [
+        "coca-cola",
+        "chinelo",
+        "feminino",
+        "praia",
+        "garrafa",
+        "pingente",
+        "licenciado"
+      ]
+    },
+    {
+      "id": "pm-0031",
+      "name": "Tamanco Mississipi Salto Bloco Tiras Trançadas com Strass",
+      "description": "Tamanco feminino preto de salto bloco médio com tiras trançadas, uma tira de strass prateado e palmilha caramelo. Destaque para salto bloco estável, leveza e conforto para o dia a dia.",
+      "price": 60,
+      "category": "tamancos",
+      "distributor": "mississipi",
+      "images": [
+        "/produtos/ab5ca952-77de-4e26-91d4-b56ca68af4a8.JPG"
+      ],
+      "isFeatured": false,
+      "status": "active",
+      "createdAt": "2026-08-12T18:37:19.651Z",
+      "colors": [
+        "Preto",
+        "Prata",
+        "Caramelo"
+      ],
+      "gender": "feminino",
+      "tags": [
+        "mississipi",
+        "tamanco",
+        "feminino",
+        "salto bloco",
+        "trançado",
+        "strass",
+        "conforto"
+      ]
+    },
+    {
+      "id": "pm-0032",
+      "name": "Chinelo Coca-Cola Masculino Azul Marinho Faixas Vermelhas",
+      "description": "Chinelo de dedo masculino azul marinho com faixas vermelhas e brancas e logo Coca-Cola branco na palmilha. Tira vazada azul com logo Coca-Cola dourado em relevo. Numeração 37 ao 43.",
+      "price": 0,
+      "category": "chinelos",
+      "distributor": "coca-cola-shoes",
+      "images": [
+        "/produtos/ec45ee48-3223-4f45-ad18-5f277f09a75d.JPG"
+      ],
+      "isFeatured": false,
+      "status": "active",
+      "createdAt": "2026-08-12T22:23:44.100Z",
+      "sizes": "37 ao 43",
+      "colors": [
+        "Azul Marinho",
+        "Vermelho",
+        "Branco",
+        "Dourado"
+      ],
+      "gender": "masculino",
+      "tags": [
+        "coca-cola",
+        "chinelo",
+        "masculino",
+        "praia",
+        "listrado",
+        "licenciado"
+      ]
+    },
+    {
+      "id": "pm-0033",
+      "name": "Chinelo Ipanema Day Fem Preto Onça",
+      "description": "Chinelo de dedo feminino preto com estampa de onça em bege e caramelo na borda da palmilha e faixa rosê com logo. Leve, com palmilha macia e solado antiderrapante.",
+      "price": 12.5,
+      "promoPrice": 12,
+      "category": "chinelos",
+      "distributor": "ipanema",
+      "images": [
+        "/produtos/dfcec31a-355c-4b64-8292-8585e354ca26.JPG"
+      ],
+      "isFeatured": false,
+      "status": "active",
+      "createdAt": "2026-08-13T08:28:16.590Z",
+      "sizes": "33/34 ao 39/40",
+      "colors": [
+        "Preto",
+        "Bege",
+        "Caramelo"
+      ],
+      "gender": "feminino",
+      "tags": [
+        "ipanema",
+        "chinelo",
+        "feminino",
+        "praia",
+        "onça",
+        "animal print",
+        "conforto"
+      ]
+    },
+    {
+      "id": "pm-0034",
+      "name": "Slide Dijean Comforty Flatform Laço Metalizado",
+      "description": "Slide feminino de solado flatform com tira cruzada metalizada em grande laço com nó e palmilha texturizada com inscrição Dijean Comforty. Versões dourada com base bege e bronze.",
+      "price": 94,
+      "promoPrice": 92,
+      "category": "slides",
+      "distributor": "dijean",
+      "images": [
+        "/produtos/cb3e3568-115d-4407-bb01-d6627e4a311f.JPG",
+        "/produtos/77350428-a20b-4c84-8861-216e9978afe0.JPG"
+      ],
+      "isFeatured": false,
+      "status": "active",
+      "createdAt": "2026-08-13T08:44:32.018Z",
+      "sizes": "34 ao 39",
+      "colors": [
+        "Dourado",
+        "Bege",
+        "Bronze",
+        "Cobre"
+      ],
+      "gender": "feminino",
+      "tags": [
+        "dijean",
+        "slide",
+        "feminino",
+        "laço",
+        "metalizado",
+        "flatform"
+      ]
+    },
+    {
+      "id": "pm-0035",
+      "name": "Rasteirinha Dimel Preta Palmilha Acolchoada",
+      "description": "Rasteirinha de dedo feminina preta de bico quadrado, com palmilha acolchoada com logo Dimel dourado e tira com aplique cravejado de strass.",
+      "price": 22,
+      "category": "rasteirinhas",
+      "distributor": "dimel",
+      "images": [
+        "/produtos/f58342b8-34cc-4ed7-893e-4ee03104a58f.JPG"
+      ],
+      "isFeatured": false,
+      "status": "active",
+      "createdAt": "2026-08-13T09:07:33.648Z",
+      "sizes": "34 ao 39",
+      "colors": [
+        "Preto",
+        "Prata",
+        "Caramelo"
+      ],
+      "gender": "feminino",
+      "tags": [
+        "dimel",
+        "rasteirinha",
+        "feminino",
+        "strass",
+        "acolchoada",
+        "bico quadrado"
+      ]
+    },
+    {
+      "id": "pm-0036",
+      "name": "Sandália D'Calce Salto Bloco Aplique Dourado",
+      "description": "Sandália feminina preta de salto bloco e bico quadrado, com tira de dedo, tira traseira com fivela dourada e grande aplique dourado no peito do pé.",
+      "price": 69,
+      "promoPrice": 67,
+      "category": "sandalias",
+      "distributor": "dcalce",
+      "images": [
+        "/produtos/c5c3fcec-df15-4400-9e64-f89be2191890.JPG"
+      ],
+      "isFeatured": false,
+      "status": "active",
+      "createdAt": "2026-08-15T14:27:00.705Z",
+      "sizes": "34 ao 39",
+      "colors": [
+        "Preto",
+        "Dourado"
+      ],
+      "gender": "feminino",
+      "tags": [
+        "dcalce",
+        "sandália",
+        "feminino",
+        "salto",
+        "salto bloco",
+        "aplique",
+        "fivela"
+      ]
+    },
+    {
+      "id": "pm-0037",
+      "name": "Chinelo Zaxy Zen Corrente com Coração",
+      "description": "Chinelo de dedo feminino em EVA macio com tira larga e aplique de corrente dourada com coração e pedra, nas versões branca e preta. Destaque para palmilha anatômica e solado leve antiderrapante.",
+      "price": 40,
+      "promoPrice": 38,
+      "category": "chinelos",
+      "distributor": "zaxy",
+      "images": [
+        "/produtos/05b04b7d-aca7-474a-95fa-30bb94a039bd.JPG",
+        "/produtos/ca1af268-14d3-4179-81e2-a79e25079142.JPG"
+      ],
+      "isFeatured": false,
+      "status": "active",
+      "createdAt": "2026-08-16T15:12:25.854Z",
+      "sizes": "33/34 ao 39/40",
+      "colors": [
+        "Branco",
+        "Preto",
+        "Dourado",
+        "Prata"
+      ],
+      "gender": "feminino",
+      "tags": [
+        "zaxy",
+        "chinelo",
+        "feminino",
+        "eva",
+        "aplique",
+        "corrente",
+        "coração",
+        "conforto"
+      ]
+    },
+    {
+      "id": "pm-0038",
+      "name": "Sapatênis PGD Caramelo Recorte Marrom",
+      "description": "Sapatênis masculino caramelo em couro sintético texturizado com recorte lateral marrom escuro, cadarço marrom e solado off white. Leve e com solado antiderrapante.",
+      "price": 122,
+      "promoPrice": 118,
+      "category": "sapatenis",
+      "distributor": "pgd",
+      "images": [
+        "/produtos/e0f9525a-af02-404f-bc88-0be5abb1cc89.JPG"
+      ],
+      "isFeatured": false,
+      "status": "active",
+      "createdAt": "2026-08-16T16:19:29.246Z",
+      "sizes": "37 ao 43",
+      "colors": [
+        "Caramelo",
+        "Marrom Escuro",
+        "Off White"
+      ],
+      "gender": "masculino",
+      "tags": [
+        "pgd",
+        "sapatênis",
+        "masculino",
+        "cadarço",
+        "casual",
+        "caramelo"
+      ]
+    },
+    {
+      "id": "pm-0039",
+      "name": "Rasteirinha Dimel Off White Tira Cruzada com Strass",
+      "description": "Rasteirinha de dedo feminina off white de bico quadrado com tira cruzada cravejada de strass. Leve, com detalhe de brilho e solado antiderrapante.",
+      "price": 22,
+      "category": "rasteirinhas",
+      "distributor": "dimel",
+      "images": [
+        "/produtos/a7178a38-c95a-48bb-a216-75e2ae2f3594.JPG"
+      ],
+      "isFeatured": false,
+      "status": "active",
+      "createdAt": "2026-08-17T05:03:23.724Z",
+      "sizes": "34 ao 39",
+      "colors": [
+        "Off White",
+        "Prata"
+      ],
+      "gender": "feminino",
+      "tags": [
+        "dimel",
+        "rasteirinha",
+        "feminino",
+        "strass",
+        "brilho",
+        "off white",
+        "bico quadrado"
+      ]
+    },
+    {
+      "id": "pm-0040",
+      "name": "Chinelo Coca-Cola Masculino Listrado Preto e Marrom",
+      "description": "Chinelo de dedo masculino com palmilha listrada em preto e marrom e logo Coca-Cola. Tira preta vazada com logo dourado. Numeração 37 ao 43.",
+      "price": 0,
+      "category": "chinelos",
+      "distributor": "coca-cola-shoes",
+      "images": [
+        "/produtos/7c51a0d8-725f-4829-a466-ec0868c3a804.JPG"
+      ],
+      "isFeatured": false,
+      "status": "active",
+      "createdAt": "2026-08-17T13:32:55.597Z",
+      "sizes": "37 ao 43",
+      "colors": [
+        "Preto",
+        "Marrom",
+        "Dourado"
+      ],
+      "gender": "masculino",
+      "tags": [
+        "coca-cola",
+        "chinelo",
+        "masculino",
+        "praia",
+        "listrado",
+        "licenciado"
+      ]
+    },
+    {
+      "id": "pm-0041",
+      "name": "Sandália Mississipi Salto Bloco Flores Douradas",
+      "description": "Sandália feminina preta de salto bloco baixo com tiras, apliques metálicos dourados em formato de flor, tira trançada dourada e pérola. Palmilha caramelo.",
+      "price": 70,
+      "category": "sandalias",
+      "distributor": "mississipi",
+      "images": [
+        "/produtos/277359c0-1de1-4de5-bfa9-92db683c3d09.JPG"
+      ],
+      "isFeatured": false,
+      "status": "active",
+      "createdAt": "2026-08-17T19:52:11.339Z",
+      "sizes": "34 ao 39",
+      "colors": [
+        "Preto",
+        "Dourado",
+        "Caramelo",
+        "Branco"
+      ],
+      "gender": "feminino",
+      "tags": [
+        "mississipi",
+        "sandália",
+        "feminino",
+        "salto",
+        "salto bloco",
+        "flores",
+        "pérola"
+      ]
+    },
+    {
+      "id": "pm-0042",
+      "name": "Chinelo Coca-Cola Feminino Branco Garrafa Dourada",
+      "description": "Chinelo de dedo feminino branco com palmilha estampada com garrafa Coca-Cola dourada e fogos. Aplique de garrafinha dourada na tira. Numeração 34 ao 39.",
+      "price": 0,
+      "category": "chinelos",
+      "distributor": "coca-cola-shoes",
+      "images": [
+        "/produtos/05116b26-908a-4495-a51a-e32343e6b2cb.JPG"
+      ],
+      "isFeatured": false,
+      "status": "active",
+      "createdAt": "2026-08-17T20:31:33.958Z",
+      "sizes": "34 ao 39",
+      "colors": [
+        "Branco",
+        "Dourado"
+      ],
+      "gender": "feminino",
+      "tags": [
+        "coca-cola",
+        "chinelo",
+        "feminino",
+        "praia",
+        "dourado",
+        "pingente",
+        "licenciado"
+      ]
+    },
+    {
+      "id": "pm-0043",
+      "name": "Rasteirinha Dimel Preta Strass e Laço",
+      "description": "Rasteirinha de dedo feminina preta de bico quadrado, com tiras finas preta e branca com strass e laço com ponteiras douradas. Leve e com solado antiderrapante.",
+      "price": 22,
+      "category": "rasteirinhas",
+      "distributor": "dimel",
+      "images": [
+        "/produtos/13502681-f86a-4129-875f-5ca7db98e15d.JPG"
+      ],
+      "isFeatured": false,
+      "status": "active",
+      "createdAt": "2026-08-17T23:20:55.156Z",
+      "sizes": "34 ao 39",
+      "colors": [
+        "Preto",
+        "Branco",
+        "Prata",
+        "Dourado"
+      ],
+      "gender": "feminino",
+      "tags": [
+        "dimel",
+        "rasteirinha",
+        "feminino",
+        "strass",
+        "laço",
+        "bico quadrado"
+      ]
+    },
+    {
+      "id": "pm-0044",
+      "name": "Tênis Alpha A62 Preto e Vermelho",
+      "description": "Tênis esportivo preto com grafismo Alpha em vermelho, faixa vermelha no solado e cadarço preto. Leve, confortável e com solado antiderrapante.",
+      "price": 37,
+      "category": "tenis",
+      "distributor": "alpha",
+      "images": [
+        "/produtos/7555e465-1f18-43a2-84b7-073d9da2fba8.JPG"
+      ],
+      "isFeatured": false,
+      "status": "active",
+      "createdAt": "2026-08-18T03:05:37.365Z",
+      "sizes": "37 ao 43",
+      "colors": [
+        "Preto",
+        "Vermelho",
+        "Cinza"
+      ],
+      "gender": "masculino",
+      "tags": [
+        "alpha",
+        "tênis",
+        "esportivo",
+        "masculino",
+        "leve",
+        "antiderrapante"
+      ]
+    },
+    {
+      "id": "pm-0045",
+      "name": "Rasteirinha D'Calce Preta Tiras Cruzadas Strass Prateado",
+      "description": "Rasteirinha feminina de bico quadrado com palmilha preta e tiras cruzadas cravejadas de strass prateado com ponteiras metálicas.",
+      "price": 22,
+      "category": "rasteirinhas",
+      "distributor": "dcalce",
+      "images": [
+        "/produtos/2cfacb38-0cdb-4c18-8228-6ed0ba603422.JPG"
+      ],
+      "isFeatured": false,
+      "status": "active",
+      "createdAt": "2026-08-20T10:52:11.351Z",
+      "sizes": "34 ao 39",
+      "colors": [
+        "Preto",
+        "Prata",
+        "Branco"
+      ],
+      "gender": "feminino",
+      "tags": [
+        "dcalce",
+        "rasteirinha",
+        "feminino",
+        "strass",
+        "brilho",
+        "bico quadrado"
+      ]
+    },
+    {
+      "id": "pm-0046",
+      "name": "Tênis Alpha A62 Preto e Branco",
+      "description": "Tênis esportivo preto de cadarço com grafismo ALPHA em branco e entressola com friso branco. Leve, confortável e com solado antiderrapante. Numeração 34 ao 39 esgotada no momento.",
+      "price": 37,
+      "category": "tenis",
+      "distributor": "alpha",
+      "images": [
+        "/produtos/c08cd16a-8491-44cd-8c08-b884962e140a.JPG",
+        "/produtos/b57e2172-c74d-4216-a895-021126e74dc9.JPG"
+      ],
+      "isFeatured": false,
+      "status": "active",
+      "createdAt": "2026-08-23T13:05:27.622Z",
+      "sizes": "34 ao 43",
+      "colors": [
+        "Preto",
+        "Branco"
+      ],
+      "gender": "unissex",
+      "tags": [
+        "alpha",
+        "tênis",
+        "esportivo",
+        "unissex",
+        "cadarço",
+        "leve",
+        "antiderrapante"
+      ]
+    },
+    {
+      "id": "pm-0047",
+      "name": "Sandália Dijean Flatform Tiras Cruzadas",
+      "description": "Sandália feminina preta de plataforma com tiras cruzadas, tira no tornozelo com fivela dourada e anel de dedo com detalhe dourado.",
+      "price": 106,
+      "promoPrice": 103,
+      "category": "sandalias",
+      "distributor": "dijean",
+      "images": [
+        "/produtos/5069939d-8452-4b50-a273-06a9b58d7d99.JPG"
+      ],
+      "isFeatured": false,
+      "status": "active",
+      "createdAt": "2026-08-23T14:17:49.998Z",
+      "sizes": "34 ao 39",
+      "colors": [
+        "Preto",
+        "Dourado"
+      ],
+      "gender": "feminino",
+      "tags": [
+        "dijean",
+        "sandália",
+        "feminino",
+        "flatform",
+        "plataforma",
+        "fivela",
+        "tornozelo"
+      ]
+    },
+    {
+      "id": "pm-0048",
+      "name": "Tamanco D'Calce Salto Bloco Aplique Dourado e Grafite",
+      "description": "Tamanco (mule) feminino de salto bloco e bico quadrado com aplique metálico dourado e grafite na tira. Versões dourada metalizada e off white.",
+      "price": 73,
+      "promoPrice": 71,
+      "category": "tamancos",
+      "distributor": "dcalce",
+      "images": [
+        "/produtos/bd4b3a7b-9b28-4d3a-a9d4-e476e40f9032.JPG",
+        "/produtos/1f15b97a-3ebd-42b7-98af-8423ec935a16.JPG"
+      ],
+      "isFeatured": false,
+      "status": "active",
+      "createdAt": "2026-08-25T12:24:41.966Z",
+      "sizes": "34 ao 39",
+      "colors": [
+        "Dourado",
+        "Off White",
+        "Grafite"
+      ],
+      "gender": "feminino",
+      "tags": [
+        "dcalce",
+        "tamanco",
+        "mule",
+        "feminino",
+        "salto bloco",
+        "bico quadrado",
+        "aplique",
+        "metalizado"
+      ]
+    },
+    {
+      "id": "pm-0049",
+      "name": "Chinelo Coca-Cola Feminino Tampinha com Flores",
+      "description": "Chinelo de dedo feminino com estampa de tampinha Coca-Cola e flores na palmilha e pingente de garrafinha dourada na tira. Versões preta e nude com listras pretas. Numeração 34 ao 39.",
+      "price": 0,
+      "category": "chinelos",
+      "distributor": "coca-cola-shoes",
+      "images": [
+        "/produtos/53c83f09-a644-402d-a532-fe4ba9a85244.JPG",
+        "/produtos/6a833886-c063-465b-bbb9-d557063be416.JPG"
+      ],
+      "isFeatured": false,
+      "status": "active",
+      "createdAt": "2026-08-29T09:58:33.715Z",
+      "sizes": "34 ao 39",
+      "colors": [
+        "Preto",
+        "Nude",
+        "Vermelho",
+        "Rosa",
+        "Dourado"
+      ],
+      "gender": "feminino",
+      "tags": [
+        "coca-cola",
+        "chinelo",
+        "feminino",
+        "praia",
+        "floral",
+        "pingente",
+        "licenciado"
+      ]
+    },
+    {
+      "id": "pm-0050",
+      "name": "Chinelo Coca-Cola Masculino Lata Vermelha",
+      "description": "Chinelo de dedo masculino com estampa de lata Coca-Cola vermelha na palmilha. Tira vazada com logo dourado, nas versões preta e marrom. Numeração 37 ao 43.",
+      "price": 0,
+      "category": "chinelos",
+      "distributor": "coca-cola-shoes",
+      "images": [
+        "/produtos/5d63b8d6-0e76-492e-8064-1a394ee7ec65.JPG",
+        "/produtos/4c75f6d1-aeec-4c38-9000-c1ce7e7b753a.JPG"
+      ],
+      "isFeatured": false,
+      "status": "active",
+      "createdAt": "2026-08-30T10:06:07.085Z",
+      "sizes": "37 ao 43",
+      "colors": [
+        "Preto",
+        "Marrom",
+        "Vermelho",
+        "Branco",
+        "Dourado"
+      ],
+      "gender": "masculino",
+      "tags": [
+        "coca-cola",
+        "chinelo",
+        "masculino",
+        "praia",
+        "estampado",
+        "lata",
+        "licenciado"
+      ]
+    },
+    {
+      "id": "pm-0051",
+      "name": "Tamanco Akazzo Preto Strass Grafite",
+      "description": "Tamanco feminino preto de salto bloco e bico quadrado com tiras finas cravejadas de strass grafite e ponteiras prateadas.",
+      "price": 53,
+      "promoPrice": 51,
+      "category": "tamancos",
+      "distributor": "akazzo",
+      "images": [
+        "/produtos/36ff8843-05c2-4443-9d7f-782f8639ed52.JPG"
+      ],
+      "isFeatured": false,
+      "status": "active",
+      "createdAt": "2026-08-30T23:04:37.825Z",
+      "sizes": "34 ao 39",
+      "colors": [
+        "Preto",
+        "Grafite",
+        "Prata"
+      ],
+      "gender": "feminino",
+      "tags": [
+        "akazzo",
+        "tamanco",
+        "feminino",
+        "salto",
+        "salto bloco",
+        "strass",
+        "preto"
+      ]
+    },
+    {
+      "id": "pm-0052",
+      "name": "Chinelo Zaxy Zen Rosê Apliques Dourados",
+      "description": "Chinelo de dedo feminino em EVA rosê com apliques metalizados dourados na tira. Palmilha anatômica e solado leve antiderrapante.",
+      "price": 40,
+      "promoPrice": 38,
+      "category": "chinelos",
+      "distributor": "zaxy",
+      "images": [
+        "/produtos/bae519e2-e319-4c4e-9413-12ebc1110817.JPG"
+      ],
+      "isFeatured": false,
+      "status": "active",
+      "createdAt": "2026-08-31T17:19:53.991Z",
+      "sizes": "33/34 ao 39/40",
+      "colors": [
+        "Rosê",
+        "Dourado"
+      ],
+      "gender": "feminino",
+      "tags": [
+        "zaxy",
+        "chinelo",
+        "feminino",
+        "eva",
+        "aplique",
+        "dourado",
+        "conforto"
+      ]
+    },
+    {
+      "id": "pm-0053",
+      "name": "Tamanco Akazzo Dourado Salto Baixo com Strass",
+      "description": "Tamanco feminino dourado metalizado de salto bloco baixo e bico quadrado com tiras finas cravejadas de strass dourado.",
+      "price": 53,
+      "promoPrice": 51,
+      "category": "tamancos",
+      "distributor": "akazzo",
+      "images": [
+        "/produtos/3cae5729-4842-4c72-9c3b-1e382e70c8dc.JPG"
+      ],
+      "isFeatured": false,
+      "status": "active",
+      "createdAt": "2026-09-01T00:47:46.422Z",
+      "sizes": "34 ao 39",
+      "colors": [
+        "Dourado"
+      ],
+      "gender": "feminino",
+      "tags": [
+        "akazzo",
+        "tamanco",
+        "feminino",
+        "salto baixo",
+        "salto bloco",
+        "strass",
+        "metalizado",
+        "dourado"
+      ]
+    },
+    {
+      "id": "pm-0054",
+      "name": "Sapatênis PGD Preto com Cadarço",
+      "description": "Sapatênis masculino preto em couro sintético com cadarço e solado preto. Destaque para leveza, durabilidade e solado antiderrapante, para trabalho, lazer e uso diário.",
+      "price": 122,
+      "promoPrice": 118,
+      "category": "sapatenis",
+      "distributor": "pgd",
+      "images": [
+        "/produtos/7c380055-0e6b-43df-aa95-d2bf58a62995.JPG"
+      ],
+      "isFeatured": false,
+      "status": "active",
+      "createdAt": "2026-09-01T10:07:34.935Z",
+      "sizes": "38 ao 43",
+      "colors": [
+        "Preto"
+      ],
+      "gender": "masculino",
+      "tags": [
+        "pgd",
+        "sapatênis",
+        "masculino",
+        "cadarço",
+        "casual",
+        "trabalho",
+        "antiderrapante"
+      ]
+    },
+    {
+      "id": "pm-0055",
+      "name": "Sapatênis PGD Branco Gola Cinza",
+      "description": "Sapatênis masculino branco em couro sintético com cadarço, gola cinza e logo PGD na lateral. Leve, durável e com solado antiderrapante.",
+      "price": 122,
+      "promoPrice": 118,
+      "category": "sapatenis",
+      "distributor": "pgd",
+      "images": [
+        "/produtos/d0a009b0-5f9d-4626-ba36-b394fd9ff491.JPG"
+      ],
+      "isFeatured": false,
+      "status": "active",
+      "createdAt": "2026-09-03T18:53:30.836Z",
+      "sizes": "38 ao 43",
+      "colors": [
+        "Branco",
+        "Cinza"
+      ],
+      "gender": "masculino",
+      "tags": [
+        "pgd",
+        "sapatênis",
+        "masculino",
+        "cadarço",
+        "branco",
+        "casual"
+      ]
+    },
+    {
+      "id": "pm-0056",
+      "name": "Chinelo Coca-Cola Masculino Letreiro e Garrafa",
+      "description": "Chinelo de dedo masculino com letreiro Coca-Cola branco e ilustração de garrafa com rótulo vermelho na palmilha. Tira vazada com logo dourado, nas versões preta e marrom. Numeração 37 ao 43.",
+      "price": 0,
+      "category": "chinelos",
+      "distributor": "coca-cola-shoes",
+      "images": [
+        "/produtos/c2c9e007-a021-4073-97f2-e5c86d852fc2.JPG",
+        "/produtos/2b486442-1a70-4ea3-8034-d2b5ad873797.JPG"
+      ],
+      "isFeatured": false,
+      "status": "active",
+      "createdAt": "2026-09-05T15:50:35.264Z",
+      "sizes": "37 ao 43",
+      "colors": [
+        "Preto",
+        "Marrom",
+        "Branco",
+        "Vermelho",
+        "Dourado"
+      ],
+      "gender": "masculino",
+      "tags": [
+        "coca-cola",
+        "chinelo",
+        "masculino",
+        "praia",
+        "estampado",
+        "garrafa",
+        "licenciado"
+      ]
+    },
+    {
+      "id": "pm-0057",
+      "name": "Chinelo Ipanema Day Fem Cerejas",
+      "description": "Chinelo de dedo feminino Ipanema Day Fem com estampa de cerejas e flores, nas versões off white com faixa vermelha e preta com faixa rosa. Destaque para leveza, palmilha macia e solado antiderrapante.",
+      "price": 12.5,
+      "promoPrice": 12,
+      "category": "chinelos",
+      "distributor": "ipanema",
+      "images": [
+        "/produtos/48acc9b5-a4e8-4e84-a23e-899b5ab3d661.JPG",
+        "/produtos/604c70dc-ef83-4578-b558-0ea9da7501a8.JPG"
+      ],
+      "isFeatured": false,
+      "status": "active",
+      "createdAt": "2026-09-05T18:47:24.263Z",
+      "sizes": "33/34 ao 39/40",
+      "colors": [
+        "Off White",
+        "Preto",
+        "Vermelho",
+        "Rosa",
+        "Branco"
+      ],
+      "gender": "feminino",
+      "tags": [
+        "ipanema",
+        "chinelo",
+        "feminino",
+        "praia",
+        "estampado",
+        "cerejas",
+        "conforto",
+        "antiderrapante"
+      ]
+    },
+    {
+      "id": "pm-0058",
+      "name": "Rasteirinha Dimel Preta Tiras Cruzadas Bronze",
+      "description": "Rasteirinha de dedo feminina preta de bico quadrado com tiras finas cruzadas de strass bronze e prata. Leve, com detalhe de brilho e solado antiderrapante.",
+      "price": 22,
+      "category": "rasteirinhas",
+      "distributor": "dimel",
+      "images": [
+        "/produtos/1cc085da-8396-464f-81a1-8228b970e6fc.JPG"
+      ],
+      "isFeatured": false,
+      "status": "active",
+      "createdAt": "2026-09-07T12:22:54.716Z",
+      "sizes": "34 ao 39",
+      "colors": [
+        "Preto",
+        "Bronze",
+        "Prata"
+      ],
+      "gender": "feminino",
+      "tags": [
+        "dimel",
+        "rasteirinha",
+        "feminino",
+        "strass",
+        "brilho",
+        "bico quadrado"
+      ]
+    },
+    {
+      "id": "pm-0059",
+      "name": "Chinelo Coca-Cola Masculino Garrafa e Bolhas",
+      "description": "Chinelo de dedo masculino com ilustração de garrafa Coca-Cola e bolhas na palmilha. Tira vazada com logo dourado, nas cores azul marinho e preta. Numeração 37 ao 43.",
+      "price": 0,
+      "category": "chinelos",
+      "distributor": "coca-cola-shoes",
+      "images": [
+        "/produtos/592a3f5d-a84c-4895-a424-acea051669ac.JPG",
+        "/produtos/80f92757-7ae0-42b1-b441-196ad58f6d7f.JPG"
+      ],
+      "isFeatured": false,
+      "status": "active",
+      "createdAt": "2026-09-07T14:17:20.917Z",
+      "sizes": "37 ao 43",
+      "colors": [
+        "Azul Marinho",
+        "Preto",
+        "Vermelho",
+        "Branco",
+        "Dourado"
+      ],
+      "gender": "masculino",
+      "tags": [
+        "coca-cola",
+        "chinelo",
+        "masculino",
+        "praia",
+        "estampado",
+        "garrafa",
+        "licenciado"
+      ]
+    },
+    {
+      "id": "pm-0060",
+      "name": "Sandália Pegada Couro Preta Velcro",
+      "description": "Sandália masculina em couro preto com duas tiras de velcro e tira traseira ajustáveis. Palmilha anatômica e macia e solado antiderrapante.",
+      "price": 110,
+      "promoPrice": 106,
+      "category": "sandalias",
+      "distributor": "pegada",
+      "images": [
+        "/produtos/5a50abae-9815-4e6f-a810-23f6f54d5985.JPG"
+      ],
+      "isFeatured": false,
+      "status": "active",
+      "createdAt": "2026-09-10T00:34:33.487Z",
+      "sizes": "37 ao 43",
+      "colors": [
+        "Preto"
+      ],
+      "gender": "masculino",
+      "tags": [
+        "pegada",
+        "couro",
+        "sandália",
+        "masculino",
+        "velcro",
+        "ajustável",
+        "conforto"
+      ]
+    },
+    {
+      "id": "pm-0061",
+      "name": "Chinelo Coca-Cola Feminino Rosê Logo Dourado",
+      "description": "Chinelo de dedo feminino rosê com grande logo Coca-Cola dourado na palmilha. Pingente metálico de garrafa rosê na tira. Numeração 34 ao 39.",
+      "price": 0,
+      "category": "chinelos",
+      "distributor": "coca-cola-shoes",
+      "images": [
+        "/produtos/eb707dce-2adc-46e4-9f61-e14648ea8aab.JPG"
+      ],
+      "isFeatured": false,
+      "status": "active",
+      "createdAt": "2026-09-13T06:50:52.819Z",
+      "sizes": "34 ao 39",
+      "colors": [
+        "Rosê",
+        "Nude",
+        "Dourado"
+      ],
+      "gender": "feminino",
+      "tags": [
+        "coca-cola",
+        "chinelo",
+        "feminino",
+        "praia",
+        "logo",
+        "pingente",
+        "licenciado"
+      ]
+    },
+    {
+      "id": "pm-0062",
+      "name": "Slide Modare Ultraconforto Flatform com Pedrarias",
+      "description": "Slide feminino de solado flatform com duas tiras cravejadas de pedrarias e palmilha com relevos. Disponível em preto e em marrom com pedras em tons de bronze.",
+      "price": 84,
+      "promoPrice": 82,
+      "category": "slides",
+      "distributor": "modare",
+      "images": [
+        "/produtos/8ac4cb7c-9eb8-4ec0-aca9-e25718dca4f7.JPG",
+        "/produtos/820c90ba-0ff9-4dbb-a021-91e4883c6a74.JPG"
+      ],
+      "isFeatured": false,
+      "status": "active",
+      "createdAt": "2026-09-17T13:49:04.902Z",
+      "sizes": "34 ao 39",
+      "colors": [
+        "Preto",
+        "Marrom",
+        "Bronze",
+        "Dourado"
+      ],
+      "gender": "feminino",
+      "tags": [
+        "modare",
+        "slide",
+        "feminino",
+        "pedrarias",
+        "strass",
+        "flatform",
+        "brilho"
+      ]
+    },
+    {
+      "id": "pm-0063",
+      "name": "Chinelo Coca-Cola Feminino Rosa Claro Garrafas Douradas",
+      "description": "Chinelo de dedo feminino rosa claro com estampa dourada de garrafas e logotipo Coca-Cola na palmilha. Aplique de garrafinha bronze na tira. Numeração 34 ao 39.",
+      "price": 0,
+      "category": "chinelos",
+      "distributor": "coca-cola-shoes",
+      "images": [
+        "/produtos/d5bb88aa-e40e-4a11-ad43-b6ff25519f66.JPG"
+      ],
+      "isFeatured": false,
+      "status": "active",
+      "createdAt": "2026-09-18T22:25:11.253Z",
+      "sizes": "34 ao 39",
+      "colors": [
+        "Rosa Claro",
+        "Dourado",
+        "Bronze"
+      ],
+      "gender": "feminino",
+      "tags": [
+        "coca-cola",
+        "chinelo",
+        "feminino",
+        "praia",
+        "dourado",
+        "pingente",
+        "licenciado"
+      ]
+    },
+    {
+      "id": "pm-0064",
+      "name": "Tamanco Dijean Comfy Plataforma Duas Fivelas",
+      "description": "Tamanco feminino de plataforma anabela com duas tiras largas e fivelas douradas grandes, palmilha texturizada com logo Dijean Comfy. Cores off white, preta e marrom.",
+      "price": 98,
+      "promoPrice": 96,
+      "category": "tamancos",
+      "distributor": "dijean",
+      "images": [
+        "/produtos/1a41af6d-411d-41b9-b923-d79145530fdc.JPG",
+        "/produtos/a1fc85b7-1e8d-4c62-b601-d6f7cab082d0.JPG",
+        "/produtos/4433aad4-ca0e-407c-ade0-88e02b90ed0e.JPG",
+        "/produtos/ee9bbec3-0d6c-4013-8e77-8f9977982a89.JPG"
+      ],
+      "isFeatured": true,
+      "status": "active",
+      "createdAt": "2026-09-22T14:56:35.000Z",
+      "sizes": "34 ao 39",
+      "colors": [
+        "Off White",
+        "Preto",
+        "Marrom",
+        "Bege",
+        "Dourado"
+      ],
+      "gender": "feminino",
+      "tags": [
+        "dijean",
+        "tamanco",
+        "feminino",
+        "plataforma",
+        "anabela",
+        "fivela"
+      ]
+    },
+    {
+      "id": "pm-0065",
+      "name": "Rasteirinha Akazzo Strass com Anel no Dedo",
+      "description": "Rasteirinha feminina com tiras finas e anel no dedo cravejados de strass e borda do solado caramelo com pedrinhas. Versões off white, prata metalizada e dourada com strass rosê.",
+      "price": 48,
+      "promoPrice": 46,
+      "category": "rasteirinhas",
+      "distributor": "akazzo",
+      "images": [
+        "/produtos/867ec0a1-7e55-4711-b204-05cadd677c23.JPG",
+        "/produtos/57ba7271-e557-47ea-acc2-762f47ce4e7a.JPG",
+        "/produtos/ccb596f1-948f-47a9-8b9c-eed9b82ba308.JPG"
+      ],
+      "isFeatured": false,
+      "status": "active",
+      "createdAt": "2026-09-22T18:59:11.019Z",
+      "sizes": "34 ao 39",
+      "colors": [
+        "Off White",
+        "Prata",
+        "Dourado",
+        "Rosê",
+        "Caramelo"
+      ],
+      "gender": "feminino",
+      "tags": [
+        "akazzo",
+        "rasteirinha",
+        "feminino",
+        "strass",
+        "anel no dedo",
+        "brilho",
+        "metalizado"
+      ]
+    },
+    {
+      "id": "pm-0066",
+      "name": "Tamanco D'Calce Salto Bloco Aplique Oval",
+      "description": "Tamanco feminino de salto bloco e bico quadrado com tira larga e aplique oval com moldura metálica. Versões grafite metalizada e preta.",
+      "price": 73,
+      "promoPrice": 71,
+      "category": "tamancos",
+      "distributor": "dcalce",
+      "images": [
+        "/produtos/caf77c9a-04de-4336-9751-8e2e617a9e76.JPG",
+        "/produtos/343908fb-0375-4281-8c52-df89c169f3c8.JPG"
+      ],
+      "isFeatured": false,
+      "status": "active",
+      "createdAt": "2026-09-23T05:16:48.397Z",
+      "sizes": "34 ao 39",
+      "colors": [
+        "Grafite",
+        "Preto",
+        "Prata",
+        "Dourado"
+      ],
+      "gender": "feminino",
+      "tags": [
+        "dcalce",
+        "tamanco",
+        "feminino",
+        "salto bloco",
+        "bico quadrado",
+        "aplique",
+        "metalizado"
+      ]
+    },
+    {
+      "id": "pm-0067",
+      "name": "Chinelo Zaxy Zen Apliques Gota e Estrela",
+      "description": "Chinelo de dedo feminino em EVA com tira larga e apliques metálicos de gota, estrela e pedra redonda facetada, nas cores rosa, branca e preta. Destaque para palmilha anatômica e solado leve antiderrapante.",
+      "price": 40,
+      "promoPrice": 38,
+      "category": "chinelos",
+      "distributor": "zaxy",
+      "images": [
+        "/produtos/44ef178f-7fcc-4641-9452-fb5bd1ff97ad.JPG",
+        "/produtos/b52a3ae3-b4be-4c5a-b344-0b7462bfaaeb.JPG",
+        "/produtos/ba187d59-222d-4dc0-84f7-c7c9ef9b423d.JPG"
+      ],
+      "isFeatured": false,
+      "status": "active",
+      "createdAt": "2026-09-23T17:24:23.155Z",
+      "sizes": "33/34 ao 39/40",
+      "colors": [
+        "Rosa",
+        "Branco",
+        "Preto",
+        "Dourado",
+        "Prata"
+      ],
+      "gender": "feminino",
+      "tags": [
+        "zaxy",
+        "chinelo",
+        "feminino",
+        "eva",
+        "aplique",
+        "strass",
+        "estrela",
+        "conforto"
+      ]
+    },
+    {
+      "id": "pm-0068",
+      "name": "Tênis Alpha A62 Azul Marinho",
+      "description": "Tênis esportivo em tecido azul marinho com lettering ALPHA branco na lateral e solado cinza com friso azul royal. Leve, confortável e com solado antiderrapante, com artes nas numerações 34 ao 39 e 37 ao 43.",
+      "price": 37,
+      "category": "tenis",
+      "distributor": "alpha",
+      "images": [
+        "/produtos/2ba6b402-ec9a-4432-aae1-15a015121ebe.JPG",
+        "/produtos/288a4d3c-c297-4fba-a13b-0a257a065511.JPG"
+      ],
+      "isFeatured": false,
+      "status": "active",
+      "createdAt": "2026-09-25T16:53:43.455Z",
+      "sizes": "34 ao 43",
+      "colors": [
+        "Azul Marinho",
+        "Azul Royal",
+        "Cinza",
+        "Branco"
+      ],
+      "gender": "unissex",
+      "tags": [
+        "alpha",
+        "tênis",
+        "esportivo",
+        "unissex",
+        "leve",
+        "conforto",
+        "antiderrapante"
+      ]
+    },
+    {
+      "id": "pm-0069",
+      "name": "Chinelo Coca-Cola Masculino Garrafas Vintage",
+      "description": "Chinelo de dedo masculino com tira vazada e logo Coca-Cola dourado. A palmilha traz estampa vintage de garrafas verdes com logo vermelho, nas versões preta e marrom. Numeração 37 ao 43.",
+      "price": 0,
+      "category": "chinelos",
+      "distributor": "coca-cola-shoes",
+      "images": [
+        "/produtos/01fe28e7-7999-4ecb-9eba-ea959733541d.JPG",
+        "/produtos/2a89943e-470c-43eb-a6a4-f8e28a6f4a30.JPG"
+      ],
+      "isFeatured": false,
+      "status": "active",
+      "createdAt": "2026-09-26T12:08:49.897Z",
+      "sizes": "37 ao 43",
+      "colors": [
+        "Preto",
+        "Marrom",
+        "Verde",
+        "Vermelho",
+        "Dourado"
+      ],
+      "gender": "masculino",
+      "tags": [
+        "coca-cola",
+        "chinelo",
+        "masculino",
+        "praia",
+        "estampado",
+        "vintage",
+        "garrafa",
+        "licenciado"
+      ]
+    },
+    {
+      "id": "pm-0070",
+      "name": "Sandália Infantil Barbie Duo Plus Rosa",
+      "description": "Sandália infantil rosa estilo aranha com tiras e fivela metálica rosa, da linha Barbie Duo Plus.",
+      "price": 35,
+      "category": "sandalias",
+      "distributor": "barbie",
+      "images": [
+        "/produtos/06cb8504-0fdc-4202-98f6-cd7b18d92ad8.JPG"
+      ],
+      "isFeatured": false,
+      "status": "active",
+      "createdAt": "2026-09-26T13:32:32.580Z",
+      "colors": [
+        "Rosa"
+      ],
+      "gender": "infantil",
+      "tags": [
+        "barbie",
+        "infantil",
+        "kids",
+        "sandália",
+        "rosa",
+        "fivela",
+        "dia das crianças",
+        "licenciado"
+      ]
+    },
+    {
+      "id": "pm-0071",
+      "name": "Chinelo Coca-Cola Feminino Garrafas e Logos",
+      "description": "Chinelo de dedo feminino com estampa de garrafas e logos Coca-Cola na palmilha e aplique metálico de garrafinha na tira. Versões preta com bege e pingente cobre, e marrom com caramelo e pingente rosê. Numeração 34 ao 39.",
+      "price": 0,
+      "category": "chinelos",
+      "distributor": "coca-cola-shoes",
+      "images": [
+        "/produtos/08003b11-9f8d-4f19-97a9-752021289c86.JPG",
+        "/produtos/e8ed53ff-f3a9-4291-af5b-2843a2e8a92f.JPG"
+      ],
+      "isFeatured": false,
+      "status": "active",
+      "createdAt": "2026-09-28T20:00:49.157Z",
+      "sizes": "34 ao 39",
+      "colors": [
+        "Preto",
+        "Marrom",
+        "Bege",
+        "Caramelo",
+        "Cobre",
+        "Rosê"
+      ],
+      "gender": "feminino",
+      "tags": [
+        "coca-cola",
+        "chinelo",
+        "feminino",
+        "praia",
+        "garrafa",
+        "pingente",
+        "licenciado"
+      ]
+    },
+    {
+      "id": "pm-0072",
+      "name": "Rasteirinha Mississipi Dourada Pingente de Coração",
+      "description": "Sandália rasteira de dedo feminina com tira larga dourada metalizada e texturizada, pingente de coração e palmilha bege, sobre solado levemente elevado.",
+      "price": 39.99,
+      "category": "rasteirinhas",
+      "distributor": "mississipi",
+      "images": [
+        "/produtos/1680f637-2d4f-4ebe-9a11-0f972f082127.JPG"
+      ],
+      "isFeatured": false,
+      "status": "active",
+      "createdAt": "2026-09-29T08:23:16.514Z",
+      "sizes": "34 ao 39",
+      "colors": [
+        "Dourado",
+        "Bege"
+      ],
+      "gender": "feminino",
+      "tags": [
+        "mississipi",
+        "rasteirinha",
+        "feminino",
+        "metalizado",
+        "dourado",
+        "coração",
+        "pingente"
+      ]
+    },
+    {
+      "id": "pm-0073",
+      "name": "Sapatênis PGD Slip-On Caramelo",
+      "description": "Sapatênis masculino sem cadarço em couro sintético caramelo texturizado, com elástico lateral e solado off white. Destaque para calce prático, leveza e solado antiderrapante.",
+      "price": 121,
+      "promoPrice": 117,
+      "category": "sapatenis",
+      "distributor": "pgd",
+      "images": [
+        "/produtos/69959f51-7ee9-4145-9274-1df7614ff27e.JPG"
+      ],
+      "isFeatured": true,
+      "status": "active",
+      "createdAt": "2026-09-30T00:07:25.995Z",
+      "sizes": "37 ao 43",
+      "colors": [
+        "Caramelo",
+        "Off White"
+      ],
+      "gender": "masculino",
+      "tags": [
+        "pgd",
+        "sapatênis",
+        "masculino",
+        "slip-on",
+        "elástico",
+        "casual",
+        "antiderrapante"
+      ]
+    },
+    {
+      "id": "pm-0074",
+      "name": "Tamanco Akazzo Preto Salto Médio com Strass",
+      "description": "Tamanco feminino preto de salto bloco médio e bico quadrado com tiras finas cravejadas de strass.",
+      "price": 53,
+      "promoPrice": 51,
+      "category": "tamancos",
+      "distributor": "akazzo",
+      "images": [
+        "/produtos/7ef9399d-08b8-41be-96bf-b42eec809d8e.JPG"
+      ],
+      "isFeatured": false,
+      "status": "active",
+      "createdAt": "2026-10-03T18:15:52.051Z",
+      "sizes": "34 ao 39",
+      "colors": [
+        "Preto",
+        "Prata"
+      ],
+      "gender": "feminino",
+      "tags": [
+        "akazzo",
+        "tamanco",
+        "feminino",
+        "salto",
+        "salto bloco",
+        "strass",
+        "preto"
+      ]
+    },
+    {
+      "id": "pm-0075",
+      "name": "Sandália Pegada Couro Preta Tiras Cruzadas",
+      "description": "Sandália masculina em couro legítimo preto com tiras largas cruzadas, ajuste em velcro, tira traseira ajustável e plaquinha metálica com logo. Palmilha anatômica e solado leve antiderrapante.",
+      "price": 110,
+      "promoPrice": 106,
+      "category": "sandalias",
+      "distributor": "pegada",
+      "images": [
+        "/produtos/cf5bf0f8-aa8d-4493-b8c5-311853dd1164.JPG"
+      ],
+      "isFeatured": false,
+      "status": "active",
+      "createdAt": "2026-10-05T03:34:20.953Z",
+      "sizes": "37 ao 43",
+      "colors": [
+        "Preto"
+      ],
+      "gender": "masculino",
+      "tags": [
+        "pegada",
+        "couro",
+        "sandália",
+        "masculino",
+        "velcro",
+        "conforto",
+        "antiderrapante"
+      ]
+    },
+    {
+      "id": "pm-0076",
+      "name": "Chinelo Ipanema Day Fem Marrom Corações",
+      "description": "Chinelo de dedo feminino marrom com estampa de corações rosa e pretos na borda da palmilha e faixa rosa com logo. Leve, com palmilha macia e solado antiderrapante.",
+      "price": 12.5,
+      "promoPrice": 12,
+      "category": "chinelos",
+      "distributor": "ipanema",
+      "images": [
+        "/produtos/dc010ca0-64de-4f05-b28d-31ed00118c32.JPG"
+      ],
+      "isFeatured": false,
+      "status": "active",
+      "createdAt": "2026-10-05T03:43:25.444Z",
+      "sizes": "33/34 ao 39/40",
+      "colors": [
+        "Marrom",
+        "Rosa",
+        "Preto"
+      ],
+      "gender": "feminino",
+      "tags": [
+        "ipanema",
+        "chinelo",
+        "feminino",
+        "praia",
+        "corações",
+        "conforto"
+      ]
+    },
+    {
+      "id": "pm-0077",
+      "name": "Chinelo Coca-Cola Feminino Listrado 98",
+      "description": "Chinelo de dedo feminino com palmilha listrada, número 98 e logo Coca-Cola, e pingente metálico de garrafinha na tira. Versões bege com lilás e salmão, marrom com lilás e nude, e preta com vermelho e branco. Numeração 34 ao 39.",
+      "price": 0,
+      "category": "chinelos",
+      "distributor": "coca-cola-shoes",
+      "images": [
+        "/produtos/e86b33fc-86ac-404f-bbc6-ac1bc1776fa3.JPG",
+        "/produtos/12e9eadf-aed7-4345-a182-8820b3cd6ded.JPG",
+        "/produtos/21bb96d3-58cd-46fc-8b93-8e72e28e53f5.JPG"
+      ],
+      "isFeatured": false,
+      "status": "active",
+      "createdAt": "2026-10-05T15:00:26.899Z",
+      "sizes": "34 ao 39",
+      "colors": [
+        "Bege",
+        "Marrom",
+        "Preto",
+        "Lilás",
+        "Salmão",
+        "Nude",
+        "Vermelho",
+        "Branco",
+        "Dourado",
+        "Cobre"
+      ],
+      "gender": "feminino",
+      "tags": [
+        "coca-cola",
+        "chinelo",
+        "feminino",
+        "praia",
+        "listrado",
+        "pingente",
+        "licenciado"
+      ]
+    },
+    {
+      "id": "pm-0078",
+      "name": "Sandália Pegada Couro Estilo Birken Preta",
+      "description": "Sandália masculina em couro legítimo no estilo birken, com duas tiras largas pretas e fivelas com regulagem. Palmilha anatômica marrom e solado leve antiderrapante.",
+      "price": 120,
+      "promoPrice": 115,
+      "category": "slides",
+      "distributor": "pegada",
+      "images": [
+        "/produtos/d92938b8-7cf1-46ad-8922-a4cf56a3edad.JPG"
+      ],
+      "isFeatured": false,
+      "status": "active",
+      "createdAt": "2026-10-08T07:15:20.473Z",
+      "sizes": "37 ao 43",
+      "colors": [
+        "Preto",
+        "Marrom"
+      ],
+      "gender": "masculino",
+      "tags": [
+        "pegada",
+        "couro",
+        "birken",
+        "masculino",
+        "fivela",
+        "conforto"
+      ]
+    },
+    {
+      "id": "pm-0079",
+      "name": "Chinelo Coca-Cola Masculino Copo com Gelo e Limão",
+      "description": "Chinelo de dedo masculino com estampa verde de copo com gelo e limão na palmilha; a versão preta traz o texto \"Always Cold\". Tira vazada com logo Coca-Cola dourado, nas cores preta e marrom. Numeração 37 ao 43.",
+      "price": 0,
+      "category": "chinelos",
+      "distributor": "coca-cola-shoes",
+      "images": [
+        "/produtos/f07e60a4-13d0-4f88-8745-094e9f8700ab.JPG",
+        "/produtos/4177360a-1f36-44ee-98d8-80496eb992f5.JPG"
+      ],
+      "isFeatured": false,
+      "status": "active",
+      "createdAt": "2026-10-09T05:51:48.780Z",
+      "sizes": "37 ao 43",
+      "colors": [
+        "Preto",
+        "Marrom",
+        "Verde",
+        "Amarelo",
+        "Dourado"
+      ],
+      "gender": "masculino",
+      "tags": [
+        "coca-cola",
+        "chinelo",
+        "masculino",
+        "praia",
+        "estampado",
+        "vintage",
+        "licenciado"
+      ]
+    },
+    {
+      "id": "pm-0080",
+      "name": "Rasteirinha Akazzo Anel no Dedo Aplique Dourado",
+      "description": "Rasteirinha feminina com tira larga, tira fina diagonal e anel no dedo com aplique metálico dourado texturizado. Versões off white, dourada metalizada e caramelo.",
+      "price": 39,
+      "promoPrice": 37,
+      "category": "rasteirinhas",
+      "distributor": "akazzo",
+      "images": [
+        "/produtos/e62e3c40-c100-40a2-9c5f-a6456776469d.JPG",
+        "/produtos/c347302c-2927-48c7-90d0-2c0a73289019.JPG",
+        "/produtos/cfbd2381-07c9-4538-a706-602fd5ff60e4.JPG"
+      ],
+      "isFeatured": false,
+      "status": "active",
+      "createdAt": "2026-10-09T19:03:09.200Z",
+      "sizes": "34 ao 39",
+      "colors": [
+        "Off White",
+        "Dourado",
+        "Caramelo"
+      ],
+      "gender": "feminino",
+      "tags": [
+        "akazzo",
+        "rasteirinha",
+        "feminino",
+        "anel no dedo",
+        "aplique",
+        "dourado"
+      ]
+    },
+    {
+      "id": "pm-0081",
+      "name": "Tamanco Beira Rio Salto Bloco Fivela de Corrente",
+      "description": "Tamanco feminino de salto bloco baixo com tira larga, fivela de corrente dourada e borda dourada no solado. Nas cores off white e preta.",
+      "price": 59.99,
+      "category": "tamancos",
+      "distributor": "beira-rio",
+      "images": [
+        "/produtos/65349063-b3c0-4f6e-bd0e-111abb9d39eb.JPG",
+        "/produtos/ef52f0d0-d50a-4474-91f3-76c7af008528.JPG"
+      ],
+      "isFeatured": true,
+      "status": "active",
+      "createdAt": "2026-10-09T21:50:52.955Z",
+      "sizes": "34 ao 39",
+      "colors": [
+        "Off White",
+        "Preto",
+        "Dourado"
+      ],
+      "gender": "feminino",
+      "tags": [
+        "beira rio",
+        "tamanco",
+        "feminino",
+        "salto bloco",
+        "corrente",
+        "fivela",
+        "dourado"
+      ]
+    },
+    {
+      "id": "pm-0082",
+      "name": "Sandália Mississipi Salto Bloco Tiras Trançadas",
+      "description": "Sandália feminina preta de salto bloco médio com tiras trançadas com strass e tira traseira elástica.",
+      "price": 77,
+      "category": "sandalias",
+      "distributor": "mississipi",
+      "images": [
+        "/produtos/c5a457fa-186d-470c-aedf-c1b37232d8df.JPG"
+      ],
+      "isFeatured": false,
+      "status": "active",
+      "createdAt": "2026-10-10T00:21:42.470Z",
+      "sizes": "34 ao 39",
+      "colors": [
+        "Preto",
+        "Prata"
+      ],
+      "gender": "feminino",
+      "tags": [
+        "mississipi",
+        "sandália",
+        "feminino",
+        "salto",
+        "salto bloco",
+        "trançada",
+        "strass"
+      ]
+    },
+    {
+      "id": "pm-0083",
+      "name": "Slide Modare Ultraconforto Laço com Nó",
+      "description": "Slide feminino com tira larga acolchoada em laço com nó e enfeite metálico dourado com o logo Modare, sobre solado flatform baixo. Super confortável, leve e com palmilha macia, nas cores nude, preta, off white e caramelo.",
+      "price": 83,
+      "promoPrice": 81,
+      "category": "slides",
+      "distributor": "modare",
+      "images": [
+        "/produtos/9cfc386e-b50e-41a3-9082-ab61fa32b95f.JPG",
+        "/produtos/c15426d4-75b8-4612-bd91-69a54b83d67b.JPG",
+        "/produtos/9c94be4b-6263-47db-8614-cfed5286cbdb.JPG",
+        "/produtos/d262fb70-92f1-41ae-a498-2297d601cfdc.JPG"
+      ],
+      "isFeatured": true,
+      "status": "active",
+      "createdAt": "2026-10-10T02:45:28.206Z",
+      "sizes": "34 ao 40",
+      "colors": [
+        "Nude",
+        "Preto",
+        "Off White",
+        "Caramelo",
+        "Dourado"
+      ],
+      "gender": "feminino",
+      "tags": [
+        "modare",
+        "slide",
+        "feminino",
+        "laço",
+        "nó",
+        "flatform",
+        "conforto"
+      ]
+    },
+    {
+      "id": "pm-0084",
+      "name": "Rasteirinha Dimel Rosê Metalizada com Strass e Argola",
+      "description": "Rasteirinha feminina de bico quadrado em metalizado rosê, com tiras e argola no dedo cravejadas de strass. Destaque para leveza, detalhe com brilho e solado antiderrapante.",
+      "price": 22,
+      "category": "rasteirinhas",
+      "distributor": "dimel",
+      "images": [
+        "/produtos/56ef5e36-da7f-4012-b51a-d65794ae34b0.JPG",
+        "/produtos/2fad5496-70e3-4cac-8bb2-385c0513a052.JPG"
+      ],
+      "isFeatured": true,
+      "status": "active",
+      "createdAt": "2026-10-10T06:59:27.788Z",
+      "sizes": "34 ao 39",
+      "colors": [
+        "Rosê",
+        "Dourado"
+      ],
+      "gender": "feminino",
+      "tags": [
+        "dimel",
+        "rasteirinha",
+        "feminino",
+        "strass",
+        "metalizado",
+        "brilho",
+        "bico quadrado"
+      ]
+    },
+    {
+      "id": "pm-0085",
+      "name": "Chinelo Coca-Cola Masculino Águia",
+      "description": "Chinelo de dedo masculino com estampa de águia e logo Coca-Cola na palmilha. Tira vazada com logo metálico: dourado na versão preta e prateado na versão azul. Numeração 37 ao 43.",
+      "price": 0,
+      "category": "chinelos",
+      "distributor": "coca-cola-shoes",
+      "images": [
+        "/produtos/058cc7fd-2789-4eb6-a3cb-fa6df5f0dcbe.JPG",
+        "/produtos/f9e21052-7c2f-4691-a8f5-6e55714040b5.JPG"
+      ],
+      "isFeatured": false,
+      "status": "active",
+      "createdAt": "2026-10-11T14:32:46.825Z",
+      "sizes": "37 ao 43",
+      "colors": [
+        "Preto",
+        "Azul",
+        "Branco",
+        "Vermelho",
+        "Dourado",
+        "Prata"
+      ],
+      "gender": "masculino",
+      "tags": [
+        "coca-cola",
+        "chinelo",
+        "masculino",
+        "praia",
+        "estampado",
+        "águia",
+        "licenciado"
+      ]
+    },
+    {
+      "id": "pm-0086",
+      "name": "Chinelo Ipanema Day Fem Preto Flores e Corações",
+      "description": "Chinelo de dedo feminino preto com estampa de flores e corações rosa na palmilha. Leve, com palmilha macia e solado antiderrapante.",
+      "price": 12.5,
+      "promoPrice": 12,
+      "category": "chinelos",
+      "distributor": "ipanema",
+      "images": [
+        "/produtos/05519483-6a28-434f-97ef-d21376f122ba.JPG"
+      ],
+      "isFeatured": false,
+      "status": "active",
+      "createdAt": "2026-10-11T20:28:24.517Z",
+      "sizes": "33/34 ao 39/40",
+      "colors": [
+        "Preto",
+        "Rosa"
+      ],
+      "gender": "feminino",
+      "tags": [
+        "ipanema",
+        "chinelo",
+        "feminino",
+        "praia",
+        "floral",
+        "corações",
+        "conforto"
+      ]
+    },
+    {
+      "id": "pm-0087",
+      "name": "Sandália Mississipi Flatform Rosê com Strass",
+      "description": "Sandália feminina flatform rosê metalizada com tiras acolchoadas, faixa de strass e tira traseira elástica.",
+      "price": 63,
+      "category": "sandalias",
+      "distributor": "mississipi",
+      "images": [
+        "/produtos/a5102c09-a41e-435e-b93a-bbedf3e8d7fd.JPG"
+      ],
+      "isFeatured": false,
+      "status": "active",
+      "createdAt": "2026-10-11T23:51:17.242Z",
+      "sizes": "34 ao 39",
+      "colors": [
+        "Rosê Gold",
+        "Nude"
+      ],
+      "gender": "feminino",
+      "tags": [
+        "mississipi",
+        "sandália",
+        "feminino",
+        "flatform",
+        "plataforma",
+        "strass",
+        "metalizado"
+      ]
+    },
+    {
+      "id": "pm-0088",
+      "name": "Slide Pegada Couro Duas Fivelas Marrom",
+      "description": "Slide masculino em couro legítimo marrom com duas tiras e fivelas com regulagem. Destaque para palmilha anatômica e macia e solado leve antiderrapante.",
+      "price": 122,
+      "promoPrice": 118,
+      "category": "slides",
+      "distributor": "pegada",
+      "images": [
+        "/produtos/529ccb51-d236-4ec8-a202-84151f8b7b64.JPG"
+      ],
+      "isFeatured": true,
+      "status": "active",
+      "createdAt": "2026-10-12T11:41:44.117Z",
+      "sizes": "37 ao 43",
+      "colors": [
+        "Marrom",
+        "Preto"
+      ],
+      "gender": "masculino",
+      "tags": [
+        "pegada",
+        "couro",
+        "slide",
+        "masculino",
+        "fivela",
+        "conforto",
+        "antiderrapante"
+      ]
+    },
+    {
+      "id": "pm-0089",
+      "name": "Rasteirinha D'Calce Dourada Amarração no Tornozelo",
+      "description": "Sandália rasteira feminina dourada metalizada de bico quadrado, com tira larga frontal e tira fina amarrada no tornozelo.",
+      "price": 22,
+      "category": "rasteirinhas",
+      "distributor": "dcalce",
+      "images": [
+        "/produtos/d889d39f-033b-4f90-b575-21786c06e291.JPG"
+      ],
+      "isFeatured": true,
+      "status": "active",
+      "createdAt": "2026-10-14T17:33:45.138Z",
+      "sizes": "34 ao 39",
+      "colors": [
+        "Dourado"
+      ],
+      "gender": "feminino",
+      "tags": [
+        "dcalce",
+        "rasteirinha",
+        "feminino",
+        "metalizado",
+        "dourado",
+        "amarração",
+        "tornozelo"
+      ]
+    },
+    {
+      "id": "pm-0090",
+      "name": "Tamanco Akazzo Off White com Strass",
+      "description": "Tamanco feminino off white de salto bloco com tiras finas cravejadas de strass e ponteiras prateadas.",
+      "price": 53,
+      "promoPrice": 51,
+      "category": "tamancos",
+      "distributor": "akazzo",
+      "images": [
+        "/produtos/acfd708f-56d1-460e-87a6-e145b3bf37e6.JPG"
+      ],
+      "isFeatured": true,
+      "status": "active",
+      "createdAt": "2026-10-15T00:57:28.110Z",
+      "sizes": "34 ao 39",
+      "colors": [
+        "Off White",
+        "Prata"
+      ],
+      "gender": "feminino",
+      "tags": [
+        "akazzo",
+        "tamanco",
+        "feminino",
+        "salto",
+        "salto bloco",
+        "strass",
+        "brilho"
+      ]
+    },
+    {
+      "id": "pm-0091",
+      "name": "Chinelo Coca-Cola Masculino It's the Real Thing",
+      "description": "Chinelo de dedo masculino com estampa dourada de logo, estrelas, garrafas e a frase \"It's the real thing\" na palmilha. Tira vazada com logo Coca-Cola dourado, nas cores verde-escuro, azul royal e preta. Numeração 37 ao 43.",
+      "price": 0,
+      "category": "chinelos",
+      "distributor": "coca-cola-shoes",
+      "images": [
+        "/produtos/b7b6fe8a-ebc1-47f3-a309-4d4f76141233.JPG",
+        "/produtos/3f182c4b-12ab-4f61-bdcc-4524993fdbd2.JPG",
+        "/produtos/48d93ba8-2469-4ddf-9a10-066d1c989fb9.JPG"
+      ],
+      "isFeatured": true,
+      "status": "active",
+      "createdAt": "2026-10-16T01:25:11.649Z",
+      "sizes": "37 ao 43",
+      "colors": [
+        "Verde",
+        "Azul Royal",
+        "Preto",
+        "Dourado"
+      ],
+      "gender": "masculino",
+      "tags": [
+        "coca-cola",
+        "chinelo",
+        "masculino",
+        "praia",
+        "estampado",
+        "dourado",
+        "licenciado"
+      ]
+    }
+  ]
+}

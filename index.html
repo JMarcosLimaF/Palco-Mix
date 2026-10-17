@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Palco Mix · Calçados e Acessórios</title>
+    <meta
+      name="description"
+      content="Palco Mix Calçados e Acessórios — chinelos, rasteirinhas, tamancos, sandálias e tênis das marcas que você ama. Peça pelo WhatsApp."
+    />
+    <meta name="theme-color" content="#0D0D0D" />
+    <link rel="icon" type="image/png" sizes="64x64" href="/brand/favicon-64.png" />
+    <link rel="apple-touch-icon" href="/brand/apple-touch-icon.png" />
+    <meta property="og:title" content="Palco Mix · Calçados e Acessórios" />
+    <meta property="og:description" content="Catálogo digital Palco Mix: as melhores marcas de calçados e acessórios." />
+    <meta property="og:image" content="/brand/logo-palcomix.webp" />
+    <script>
+      // Aplica o tema antes da primeira pintura (evita flash claro/escuro).
+      ;(function () {
+        try {
+          var stored = JSON.parse(localStorage.getItem('palcomix:theme') || 'null')
+          var mode = (stored && stored.state && stored.state.mode) || 'light'
+          var dark = mode === 'dark' || (mode === 'system' && matchMedia('(prefers-color-scheme: dark)').matches)
+          if (dark) document.documentElement.classList.add('dark')
+        } catch (e) {}
+      })()
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
